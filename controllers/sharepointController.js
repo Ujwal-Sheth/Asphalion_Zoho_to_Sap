@@ -129,9 +129,17 @@ exports.handleDraftProposalSync = async (req, res) => {
             return;
         }
 
-        // Assuming you want to sync the most recent attachment 
-        // (Or you could add a filter here based on file name, e.g., att.File_Name.includes('Draft'))
-        const targetAttachment = attachments[0]; 
+        // Filter to only include the pdf file whose name contains Draft_Deal_Contract
+        const targetAttachment = attachments.find(att => 
+            att.File_Name && 
+            att.File_Name.includes('Draft_Deal_Contract') && 
+            att.File_Name.toLowerCase().endsWith('.pdf')
+        );
+
+        if (!targetAttachment) {
+            console.log(`⚠️ No 'Draft_Deal_Contract' PDF attachment found for Deal: ${zohoDealId}. Aborting.`);
+            return;
+        }
         
         console.log(`⬇️ Downloading Draft Proposal: ${targetAttachment.File_Name}`);
         const fileBuffer = await zohoService.downloadAttachment(zohoDealId, targetAttachment.id);

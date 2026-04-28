@@ -147,7 +147,7 @@ const buildSapXmlPayload = (zohoData, accountId) => {
    <soap:Body>
       <glob:CustomerQuoteBundleMaintainRequest_sync>
          <CustomerQuote itemListCompleteTransmissionIndicator="true">
-            <BuyerID>${zohoData.id}</BuyerID>
+            
             <PostingDate>${sapPostingDate}</PostingDate>
             <Name languageCode="EN">${sapDescription}</Name>
             <CashDiscountTermsCode>${sapPaymentTerms}</CashDiscountTermsCode>
@@ -175,6 +175,7 @@ const buildSapXmlPayload = (zohoData, accountId) => {
             </PricingTerms>
             
             ${itemsXml}
+            <a3z:DEALreferenceZOHO>${zohoData.id}</a3z:DEALreferenceZOHO>
             <a3z:Personadecontacto>${sapContactName}</a3z:Personadecontacto>
             <a3z:DuracionProyectoEstimada>${sapEstimatedTimeline}</a3z:DuracionProyectoEstimada>
             <a3z:Discount>true</a3z:Discount>
@@ -211,3 +212,5 @@ const buildSapXmlPayload = (zohoData, accountId) => {
 // ${sapProbability ? `<a3z:ProbabilidadOfertaAsphalion>${sapProbability}</a3z:ProbabilidadOfertaAsphalion>` : ""}
 
 module.exports = { buildSapXmlPayload };
+
+// <BuyerID>${zohoData.id}</BuyerID>
