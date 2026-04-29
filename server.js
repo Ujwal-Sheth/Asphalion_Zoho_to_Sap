@@ -13,9 +13,17 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // runWeeklyReconciliation();
+app.get('/', (req, res) => {
+    res.send(`
+        <div style="font-family: sans-serif; padding: 50px; text-align: center;">
+            <h1 style="color: #4CAF50;">✅ Request Successful!</h1>
+            <p>Your Node.js server is running perfectly on port ${PORT || 3000}.</p>
+        </div>
+    `);
+});
 
 //Sync Route
-app.get('/api/sync-deal/:dealId', authenticateWebhook, syncController.syncDealToSap);
+app.get('/api/sync-deal/:dealId', syncController.syncDealToSap);
 // app.post('/api/webhook/zoho-deal', authenticateWebhook, syncController.handleWebhook);
 
 // 1. The SAP ByDesign Integration Route
