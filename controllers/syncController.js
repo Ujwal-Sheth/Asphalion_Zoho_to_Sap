@@ -46,6 +46,18 @@ exports.syncDealToSap = async (req, res) => {
       console.warn(`[!] BLOCKING: Deal ${dealId} already has an SAP Quote ID (${existingQuoteId}).`);
       await logToMongo(dealId, null, existingQuoteId, "WARNING", "BLOCKED_QUOTE_ALREADY_EXISTS", `Deal already synced with SAP Quote: ${existingQuoteId}`, { dealId });
       
+      try {
+        console.log(`Pushing already exists status back to Zoho Deal ${dealId}...`);
+        await zohoService.updateDealField(dealId, {
+          SAP_Shipment_Status: "Error",
+          SAP_Error_Message: "Process stopped: SAP Quote already exists for this Deal.",
+          SAP_Shipment_Date: getCurrentIsoDateTimeForZoho(),
+        });
+        console.log(`SUCCESS: Zoho Deal updated with already exists message.`);
+      } catch (zohoError) {
+        console.error(`Failed to update Zoho with existing quote status:\n`, zohoError.message);
+      }
+
       return res.status(400).json({
         success: false,
         message: "Process stopped: SAP Quote already exists for this Deal.",
