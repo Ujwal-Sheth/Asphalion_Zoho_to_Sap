@@ -54,27 +54,26 @@ exports.handleQuoteApproval = async (req, res) => {
             const fileBuffer = await zohoService.downloadAttachment(zohoDealId, att.id);
             
             // --- NEW: Dynamic Folder Routing Logic ---
-            let targetSubFolder = 'bd'; // Fallback root folder
+            // let targetSubFolder = 'bd'; // Fallback root folder
             
-            // Convert to uppercase once for safe case-insensitive checking
-            const upperFileName = att.File_Name.toUpperCase(); 
+            // // Convert to uppercase once for safe case-insensitive checking
+            // const upperFileName = att.File_Name.toUpperCase(); 
 
-            if (upperFileName.includes('SIGNED_DEAL_CONTRACT') || upperFileName.includes('ZOHO_SIGNED')) {
-                targetSubFolder = 'bd/Offers';
-            } else if (upperFileName.startsWith('MSA') || upperFileName.startsWith('PO')) {
-                targetSubFolder = 'bd/Contracts';
-            } else if (upperFileName.startsWith('NDA')) {
-                targetSubFolder = 'bd/CDAs';
-            }
+            // if (upperFileName.includes('SIGNED_DEAL_CONTRACT') || upperFileName.includes('ZOHO_SIGNED')) {
+            //     targetSubFolder = 'bd/Offers';
+            // } else if (upperFileName.startsWith('MSA') || upperFileName.startsWith('PO')) {
+            //     targetSubFolder = 'bd/Contracts';
+            // } else if (upperFileName.startsWith('NDA')) {
+            //     targetSubFolder = 'bd/CDAs';
+            // }
             // -----------------------------------------
 
-            console.log(`⬆️ Uploading to SharePoint -> /${targetSubFolder}...`);
+            // console.log(`⬆️ Uploading to SharePoint -> /${targetSubFolder}...`);
             const spUrl = await sharepointService.uploadFileToSharePoint(
                 att.File_Name, 
                 fileBuffer, 
                 dealName,
-                sapId, 
-                targetSubFolder // Passes the dynamic folder path
+                sapId,
             );
             uploadedFilesInfo.push({ fileName: att.File_Name, sharepointUrl: spUrl });
         }
@@ -88,7 +87,7 @@ exports.handleQuoteApproval = async (req, res) => {
             let folderUrl = firstFileUrl.split('?')[0]; 
             // Navigates up two directories to capture the parent "bd" folder, not the specific subfolder
             folderUrl = folderUrl.substring(0, folderUrl.lastIndexOf('/')); 
-            folderUrl = folderUrl.substring(0, folderUrl.lastIndexOf('/'));
+            // folderUrl = folderUrl.substring(0, folderUrl.lastIndexOf('/'));
 
             console.log(`🔗 Updating Zoho Deal with SharePoint Folder URL...`);
             await zohoService.updateDealField(zohoDealId, {
