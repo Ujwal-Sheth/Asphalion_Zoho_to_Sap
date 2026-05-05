@@ -26,7 +26,7 @@ const getSalesUnit = (categoryText) => {
 const buildSapXmlPayload = (zohoData, accountId) => {
   // --- FIXED VARIABLES FOR TESTING ---
   // const fixedProductId = "1000001717";
-  const sapDescription = zohoData.Description || zohoData.Deal_Name;
+  const sapDescription = zohoData.Deal_Name;
   const sapPostingDate = zohoData.Creation_Date
     ? `${zohoData.Creation_Date}T00:00:00Z`
     : new Date().toISOString();
@@ -55,6 +55,7 @@ const buildSapXmlPayload = (zohoData, accountId) => {
 
   const sapMailInvoiceRepository = zohoData.Mail_invoice_repository || "";
   const sapInvoiceEmails = zohoData.Invoicing_emails || "";
+  const sapZohoOwnerName = zohoData.Owner?.name || "";
 
   const sapProductType = getCode("ProjectType", zohoData.Project_Type);
   const sapSource = getCode("Source", zohoData.Source || zohoData.Lead_Source);
@@ -72,7 +73,6 @@ const buildSapXmlPayload = (zohoData, accountId) => {
   const sapTypeOfProduct = getCode("TypeOfProduct", zohoData.Type_of_Product);
 
   // const productTotal = parseFloat(zohoData.Total || 0).toFixed(2);
-
   let itemsXml = "";
   const subformItems = zohoData.Product_Details || [];
   // console.log(`Building XML Payload: Found ${subformItems.length} items in Product_Details subform.`);
@@ -88,7 +88,6 @@ const buildSapXmlPayload = (zohoData, accountId) => {
       const sapProcessingTypeCode = getCode("PricingType", item.Pricing_Type);
       const sapAccordingToFee = (item.According_to_Fee === true || item.According_to_Fee === "true") ? "true" : "false";
       const sapOptional = (item.Optional === true || item.Optional === "true") ? "true" : "false";
-
       if (productCode) {
         itemsXml += `
                 <Items itemScheduleLineListCompleteTransmissionIndicator="true" actionCode="01">
@@ -111,16 +110,15 @@ const buildSapXmlPayload = (zohoData, accountId) => {
                     <PriceAndTaxCalculationItem actionCode="01" 
                         itemPriceComponentListCompleteTransmissionIndicator="true"
                         itemProductTaxDetailsListCompleteTransmissionIndicator="true">
-                        ${
-                          itemDiscount > 0
-                            ? `
+                        ${itemDiscount > 0
+            ? `
                         <ItemMainDiscount actionCode="01">
                             <Rate>
                                 <DecimalValue>${itemDiscount}</DecimalValue>
                             </Rate>
                         </ItemMainDiscount>`
-                            : ""
-                        }
+            : ""
+          }
                         <ItemMainPrice actionCode="01">
                             <Rate>
                                 <DecimalValue>${unitPrice}</DecimalValue>
@@ -175,7 +173,7 @@ const buildSapXmlPayload = (zohoData, accountId) => {
             </PricingTerms>
             
             ${itemsXml}
-            <a3z:DEALreferenceZOHO>${zohoData.id}</a3z:DEALreferenceZOHO>
+            <a3z:DEALreferenceZOHO>${zohoData.id} " + "${sapZohoOwnerName}  </a3z:DEALreferenceZOHO>
             <a3z:Personadecontacto>${sapContactName}</a3z:Personadecontacto>
             <a3z:DuracionProyectoEstimada>${sapEstimatedTimeline}</a3z:DuracionProyectoEstimada>
             <a3z:Discount>true</a3z:Discount>
