@@ -32,6 +32,7 @@ exports.handleQuoteApproval = async (req, res) => {
         const accountData = await zohoService.getRecord('Accounts', dealData.Account_Name.id);
         
         const sapId = accountData.SAP_Customer_ID;
+        const accountName = accountData.Account_Name || dealData.Account_Name.name || "Unknown_Account";
         
         if (!sapId) {
             throw new Error("Linked Account does not have an SAP Customer ID.");
@@ -74,6 +75,7 @@ exports.handleQuoteApproval = async (req, res) => {
                 fileBuffer, 
                 dealName,
                 sapId,
+                accountName
             );
             uploadedFilesInfo.push({ fileName: att.File_Name, sharepointUrl: spUrl });
         }
