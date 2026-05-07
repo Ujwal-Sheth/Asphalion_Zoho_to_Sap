@@ -145,11 +145,10 @@ const buildSapXmlPayload = (zohoData, accountId) => {
    <soap:Body>
       <glob:CustomerQuoteBundleMaintainRequest_sync>
          <CustomerQuote itemListCompleteTransmissionIndicator="true">
-            
             <PostingDate>${sapPostingDate}</PostingDate>
             <Name languageCode="EN">${sapDescription}</Name>
             <CashDiscountTermsCode>${sapPaymentTerms}</CashDiscountTermsCode>
-            
+            <SubmitIndicator>true</SubmitIndicator>
             <SalesAndServiceBusinessArea actionCode="01">
                <DistributionChannelCode>01</DistributionChannelCode> 
             </SalesAndServiceBusinessArea>
