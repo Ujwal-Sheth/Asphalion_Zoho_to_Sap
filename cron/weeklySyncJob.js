@@ -9,8 +9,23 @@ const runWeeklyReconciliation = async () => {
     console.log(`\n🔄 [CRON] Starting Weekly SAP-Zoho Reconciliation: ${new Date().toISOString()}`);
 
     try {
-        const coqlQuery = "select id, Deal_Name, SAP_Offer_Code, Stage from Deals where SAP_Offer_Code = '11006'";
-        const dealsToSync = await zohoService.runCoqlQuery(coqlQuery);
+        let dealsToSync = [];
+        let offset = 0;
+        const limit = 200;
+        let hasMore = true;
+
+        while (hasMore) {
+            const coqlQuery = `select id, Deal_Name, SAP_Offer_Code, Stage from Deals where SAP_Offer_Code is not null limit ${limit} offset ${offset}`;
+            const chunk = await zohoService.runCoqlQuery(coqlQuery);
+            dealsToSync = dealsToSync.concat(chunk);
+            
+            if (chunk.length < limit) {
+                hasMore = false;
+            } else {
+                offset += limit;
+            }
+        }
+
         console.log(`📊 Found ${dealsToSync.length} Deals in Zoho linked to an SAP Quote.`);
 
         let successCount = 0;

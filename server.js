@@ -12,7 +12,7 @@ app.use(express.json());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-//  runWeeklyReconciliation();
+ runWeeklyReconciliation();
 app.get('/', (req, res) => {
     res.send(`
         <div style="font-family: sans-serif; padding: 50px; text-align: center;">
