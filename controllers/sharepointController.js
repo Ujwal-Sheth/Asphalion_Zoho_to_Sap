@@ -10,7 +10,7 @@ exports.handleQuoteApproval = async (req, res) => {
     res.status(202).json({ message: "Webhook accepted, processing files in background." });
 
     const payload = req.body;
-    const zohoDealId = payload.dealId || payload.quote_details?.zoho_deal_id; 
+    const zohoDealId = payload.dealId || payload.quote_details?.zoho_deal_id;
     const dealName = payload.dealName || payload.quote_details?.title || 'Unknown_Deal';
 
     if (!zohoDealId) {
@@ -23,28 +23,28 @@ exports.handleQuoteApproval = async (req, res) => {
     try {
         console.log(`[1/4] Fetching Deal data to find linked Account...`);
         const dealData = await zohoService.getRecord('Deals', zohoDealId);
-        
+
         if (!dealData.Account_Name || !dealData.Account_Name.id) {
             throw new Error("No Account linked to this Deal. Cannot fetch SAP ID.");
         }
-        
+
         console.log(`[2/4] Fetching Account data to extract SAP ID...`);
         const accountData = await zohoService.getRecord('Accounts', dealData.Account_Name.id);
-        
+
         const sapId = accountData.SAP_Customer_ID;
         const accountName = accountData.Account_Name || dealData.Account_Name.name || "Unknown_Account";
-        
+
         if (!sapId) {
             throw new Error("Linked Account does not have an SAP Customer ID.");
         }
-        
+
         console.log(`✅ Extracted SAP ID: ${sapId}`);
 
         console.log(`[3/4] Fetching Deal Attachments...`);
         const attachments = await zohoService.getDealAttachments(zohoDealId);
         if (!attachments || attachments.length === 0) {
             console.log(`⚠️ No attachments found for Deal: ${zohoDealId}`);
-            return; 
+            return;
         }
 
         console.log(`✅ Found ${attachments.length} attachment(s). Starting sync...`);
@@ -53,10 +53,10 @@ exports.handleQuoteApproval = async (req, res) => {
         for (const att of attachments) {
             console.log(`⬇️ Downloading: ${att.File_Name}`);
             const fileBuffer = await zohoService.downloadAttachment(zohoDealId, att.id);
-            
+
             // --- NEW: Dynamic Folder Routing Logic ---
             // let targetSubFolder = 'bd'; // Fallback root folder
-            
+
             // // Convert to uppercase once for safe case-insensitive checking
             // const upperFileName = att.File_Name.toUpperCase(); 
 
@@ -71,8 +71,8 @@ exports.handleQuoteApproval = async (req, res) => {
 
             // console.log(`⬆️ Uploading to SharePoint -> /${targetSubFolder}...`);
             const spUrl = await sharepointService.uploadFileToSharePoint(
-                att.File_Name, 
-                fileBuffer, 
+                att.File_Name,
+                fileBuffer,
                 dealName,
                 sapId,
                 accountName
@@ -86,9 +86,9 @@ exports.handleQuoteApproval = async (req, res) => {
         // --- Push Folder URL back to Zoho ---
         if (uploadedFilesInfo.length > 0) {
             let firstFileUrl = uploadedFilesInfo[0].sharepointUrl;
-            let folderUrl = firstFileUrl.split('?')[0]; 
+            let folderUrl = firstFileUrl.split('?')[0];
             // Navigates up two directories to capture the parent "bd" folder, not the specific subfolder
-            folderUrl = folderUrl.substring(0, folderUrl.lastIndexOf('/')); 
+            folderUrl = folderUrl.substring(0, folderUrl.lastIndexOf('/'));
             // folderUrl = folderUrl.substring(0, folderUrl.lastIndexOf('/'));
 
             console.log(`🔗 Updating Zoho Deal with SharePoint Folder URL...`);
@@ -114,7 +114,7 @@ exports.handleDraftProposalSync = async (req, res) => {
     const payload = req.body;
     const zohoDealId = payload.dealId;
     const dealName = payload.dealName || 'Unknown_Deal';
-    
+
     if (!zohoDealId) {
         console.error("Missing Deal ID for Draft Sync.");
         return;
@@ -123,6 +123,19 @@ exports.handleDraftProposalSync = async (req, res) => {
     console.log(`\n--- Draft Proposal Sync Triggered for Deal: ${zohoDealId} ---`);
 
     try {
+        // Fetch Deal to get Deal_Name, Deal_Code, and Account ID
+        const dealData = await zohoService.getRecord('Deals', zohoDealId);
+        const actualDealName = dealData.Deal_Name || '';
+        const dealCode = dealData.Deal_Code || '';
+
+        let sapCustomerId = '';
+        if (dealData.Account_Name && dealData.Account_Name.id) {
+            const accountData = await zohoService.getRecord('Accounts', dealData.Account_Name.id);
+            sapCustomerId = accountData.SAP_Customer_ID || '';
+        }
+
+        const expectedNamePart = `${actualDealName.replace(/ /g, '_').replace(/\//g, '-')}_${dealCode}_${sapCustomerId}`;
+
         // 1. Get Attachments
         const attachments = await zohoService.getDealAttachments(zohoDealId);
         if (!attachments || attachments.length === 0) {
@@ -130,27 +143,27 @@ exports.handleDraftProposalSync = async (req, res) => {
             return;
         }
 
-        // Filter to only include the pdf file whose name contains Draft_Deal_Contract
-        const targetAttachment = attachments.find(att => 
-            att.File_Name && 
-            att.File_Name.includes('Draft_Deal_Contract') && 
+        // Filter to only include the pdf file whose name contains the expected name part or the old Draft_Deal_Contract convention
+        const targetAttachment = attachments.find(att =>
+            att.File_Name &&
+            (att.File_Name.includes(expectedNamePart) || att.File_Name.includes('Draft_Deal_Contract')) &&
             att.File_Name.toLowerCase().endsWith('.pdf')
         );
 
         if (!targetAttachment) {
-            console.log(`⚠️ No 'Draft_Deal_Contract' PDF attachment found for Deal: ${zohoDealId}. Aborting.`);
+            console.log(`⚠️ No PDF attachment containing '${expectedNamePart}' or 'Draft_Deal_Contract' found for Deal: ${zohoDealId}. Aborting.`);
             return;
         }
-        
+
         console.log(`⬇️ Downloading Draft Proposal: ${targetAttachment.File_Name}`);
         const fileBuffer = await zohoService.downloadAttachment(zohoDealId, targetAttachment.id);
 
         // 2. Upload to the Draft Proposal Library in SharePoint
         console.log(`⬆️ Uploading to SharePoint Draft Library...`);
         const spUrl = await sharepointService.uploadDraftProposal(
-            targetAttachment.File_Name, 
-            fileBuffer, 
-            dealName, 
+            targetAttachment.File_Name,
+            fileBuffer,
+            dealName,
             zohoDealId
         );
 
