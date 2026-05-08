@@ -1,7 +1,7 @@
 const cron = require('node-cron');
 const zohoService = require('../services/zohoService');
 const { getSapQuoteDetails } = require('../services/sapService');
-const { mapSapDataToZoho } = require('../utils/sapMapper');
+const { mapSapDataToZoho, mapSapItemToZohoSubformItem } = require('../utils/sapMapper');
 const ErrorLog = require('../models/errorLogModel');
 const { getCurrentIsoDateTimeForZoho } = require('../utils/dateUtils');
 
@@ -9,7 +9,7 @@ const runWeeklyReconciliation = async () => {
     console.log(`\n🔄 [CRON] Starting Weekly SAP-Zoho Reconciliation: ${new Date().toISOString()}`);
 
     try {
-        const coqlQuery = "select id, Deal_Name, SAP_Offer_Code, Stage from Deals where SAP_Offer_Code is not null";
+        const coqlQuery = "select id, Deal_Name, SAP_Offer_Code, Stage from Deals where SAP_Offer_Code = '11006'";
         const dealsToSync = await zohoService.runCoqlQuery(coqlQuery);
         console.log(`📊 Found ${dealsToSync.length} Deals in Zoho linked to an SAP Quote.`);
 
@@ -37,10 +37,46 @@ const runWeeklyReconciliation = async () => {
             if (sapStatusCode === "4") zohoStatusUpdate = "Lost";
             if (sapStatusCode === "5") zohoStatusUpdate = "Canceled";
 
+            // --- PRODUCT LINES SYNC ---
+            // 1. Fetch full deal data to get existing subform
+            const fullDealData = await zohoService.getRecord('Deals', deal.id);
+            const existingSubform = fullDealData.Product_Details || [];
+
+            // 2. Extract SAP Items
+            const sapItems = rawSapQuote.Item ? (Array.isArray(rawSapQuote.Item) ? rawSapQuote.Item : [rawSapQuote.Item]) : [];
+            const newSubformData = [];
+
+            for (const sapItem of sapItems) {
+                const mappedSapItem = mapSapItemToZohoSubformItem(sapItem);
+
+                // Match with existing row to preserve custom fields like Notes
+                const existingRow = existingSubform.find(r => r.Activity_description === mappedSapItem.Activity_description || r.Product_Code === mappedSapItem.Product_Code);
+
+                let productId = existingRow?.Product_Name?.id;
+
+                // If not linked yet, search product by name
+                if (!productId && mappedSapItem.Activity_description) {
+                    const products = await zohoService.searchProductsByName(mappedSapItem.Activity_description);
+                    if (products.length > 0) productId = products[0].id;
+                }
+
+                newSubformData.push({
+                    ...(existingRow || {}), // retains `id` and Zoho-only fields
+                    Product_Name: productId ? { id: productId } : null,
+                    Product_Code: mappedSapItem.Product_Code,
+                    Activity_description: mappedSapItem.Activity_description,
+                    Quantity: mappedSapItem.Quantity,
+                    Unit_Price: mappedSapItem.Unit_Price,
+                    Discount: mappedSapItem.Discount,
+                    Optional: mappedSapItem.Optional
+                });
+            }
+
             try {
                 await zohoService.updateDealField(deal.id, {
                     SAP_Shipment_Status: zohoStatusUpdate,
                     SAP_Shipment_Date: getCurrentIsoDateTimeForZoho(),
+                    Product_Details: newSubformData,
                     ...zohoMappedFields
                 });
 
@@ -65,9 +101,15 @@ const runWeeklyReconciliation = async () => {
     }
 };
 
+// To run weekly on Sundays at 2:00 AM
 cron.schedule('0 2 * * 0', () => {
     runWeeklyReconciliation();
 });
+
+// To run daily at 2:00 AM
+// cron.schedule('0 2 * * *', () => {
+//     runWeeklyReconciliation();
+// });
 
 module.exports = { runWeeklyReconciliation };
 

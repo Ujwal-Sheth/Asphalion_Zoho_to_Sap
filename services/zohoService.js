@@ -8,12 +8,12 @@ exports.getDealAttachments = async (dealId) => {
             `${process.env.ZOHO_API_DOMAIN}/Deals/${dealId}/Attachments`,
             {
                 headers: { 'Authorization': `Zoho-oauthtoken ${token}` },
-                params: { fields: 'id,File_Name,Size' } 
+                params: { fields: 'id,File_Name,Size' }
             }
         );
-        return response.data.data || []; 
+        return response.data.data || [];
     } catch (error) {
-        if (error.response && error.response.status === 204) return []; 
+        if (error.response && error.response.status === 204) return [];
         throw new Error(`Failed to fetch attachments: ${error.message}`);
     }
 };
@@ -25,10 +25,10 @@ exports.downloadAttachment = async (dealId, attachmentId) => {
             `${process.env.ZOHO_API_DOMAIN}/Deals/${dealId}/Attachments/${attachmentId}`,
             {
                 headers: { 'Authorization': `Zoho-oauthtoken ${token}` },
-                responseType: 'arraybuffer' 
+                responseType: 'arraybuffer'
             }
         );
-        return response.data; 
+        return response.data;
     } catch (error) {
         throw new Error(`Failed to download attachment ${attachmentId}: ${error.message}`);
     }
@@ -43,7 +43,7 @@ exports.getRecord = async (moduleName, recordId) => {
                 headers: { 'Authorization': `Zoho-oauthtoken ${token}` }
             }
         );
-        return response.data.data[0]; 
+        return response.data.data[0];
     } catch (error) {
         throw new Error(`Failed to fetch ${moduleName} record ${recordId}: ${error.message}`);
     }
@@ -69,7 +69,11 @@ exports.updateDealField = async (dealId, updateData) => {
         );
         return response.data;
     } catch (error) {
-        throw new Error(`Failed to update deal ${dealId}: ${error.message}`);
+        let details = '';
+        if (error.response && error.response.data) {
+            details = JSON.stringify(error.response.data);
+        }
+        throw new Error(`Failed to update deal ${dealId}: ${error.message}. Details: ${details}`);
     }
 };
 
@@ -86,3 +90,22 @@ exports.runCoqlQuery = async (query) => {
         throw new Error(`Failed to run COQL query: ${error.message}`);
     }
 };
+
+exports.searchProductsByName = async (productName) => {
+    const token = await getAccessToken();
+    try {
+        const response = await axios.get(
+            `${process.env.ZOHO_API_DOMAIN}/Products/search`,
+            {
+                headers: { 'Authorization': `Zoho-oauthtoken ${token}` },
+                // Escape parentheses which break Zoho's criteria parser
+                params: { criteria: `(Product_Name:equals:${productName.replace(/[()]/g, '')})` }
+            }
+        );
+        return response.data.data || [];
+    } catch (error) {
+        if (error.response && (error.response.status === 204 || error.response.status === 400)) {
+            console.warn(`⚠️ Could not search product "${productName}":`, error.response.data?.message || 'Invalid criteria');
+        }
+    }
+}

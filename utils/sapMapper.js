@@ -77,4 +77,42 @@ const mapSapDataToZoho = (sapQuote) => {
     };
 };
 
-module.exports = { mapSapDataToZoho };
+const mapSapItemToZohoSubformItem = (sapItem) => {
+    const getVal = (field) => (field && field._ !== undefined) ? field._ : field;
+    
+    // Extract Discount from ItemPriceComponent array
+    let discountVal = 0;
+    if (sapItem.PriceAndTaxCalculationItem && sapItem.PriceAndTaxCalculationItem.ItemPriceComponent) {
+        const components = Array.isArray(sapItem.PriceAndTaxCalculationItem.ItemPriceComponent) 
+            ? sapItem.PriceAndTaxCalculationItem.ItemPriceComponent 
+            : [sapItem.PriceAndTaxCalculationItem.ItemPriceComponent];
+            
+        // Prefer "Total Given Discounts (%)" if available, else fallback to any discount
+        let discountComp = components.find(c => getVal(c.Description) === "Total Given Discounts (%)");
+        if (!discountComp) {
+            discountComp = components.find(c => {
+                const desc = getVal(c.Description);
+                return desc && desc.toLowerCase().includes('discount');
+            });
+        }
+        
+        if (discountComp && discountComp.Rate && discountComp.Rate.DecimalValue) {
+            discountVal = Math.round(Math.abs(parseFloat(discountComp.Rate.DecimalValue)));
+        }
+    }
+
+    const qty = sapItem.ItemScheduleLine?.Quantity;
+    const price = sapItem.PriceAndTaxCalculationItem?.ItemMainPrice?.Rate;
+
+    return {
+        Product_Code: getVal(sapItem.ItemProduct?.ProductInternalID) || getVal(sapItem.ProductID),
+        Activity_description: getVal(sapItem.Description),
+        Quantity: qty ? parseFloat(getVal(qty)) : 0,
+        Unit: qty && qty.$ ? qty.$.unitCode : '',
+        Unit_Price: price ? parseFloat(price.DecimalValue) : 0,
+        Discount: discountVal,
+        Optional: getVal(sapItem.OptionalIndicator) === 'true' || sapItem.OptionalIndicator === true,
+    };
+};
+
+module.exports = { mapSapDataToZoho, mapSapItemToZohoSubformItem };
