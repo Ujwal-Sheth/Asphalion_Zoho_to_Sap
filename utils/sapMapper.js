@@ -32,7 +32,11 @@ const ZOHO_MAPS = {
 const mapSapDataToZoho = (sapQuote) => {
     // Helper to safely extract values from the xml2js output.
     // Handles if it's an object { _: 'value' } or a direct string.
-    const getVal = (field) => (field && field._ !== undefined) ? field._ : field;
+    const getVal = (field) => {
+        if (field == null) return null;
+        if (typeof field === 'object') return field._ !== undefined ? field._ : null;
+        return field;
+    };
     
     return {
         Creation_Date: formatDateOnly(sapQuote.PostingDate),
@@ -78,7 +82,11 @@ const mapSapDataToZoho = (sapQuote) => {
 };
 
 const mapSapItemToZohoSubformItem = (sapItem) => {
-    const getVal = (field) => (field && field._ !== undefined) ? field._ : field;
+    const getVal = (field) => {
+        if (field == null) return null;
+        if (typeof field === 'object') return field._ !== undefined ? field._ : null;
+        return field;
+    };
     
     // Extract Discount from ItemPriceComponent array
     let discountVal = 0;

@@ -17,7 +17,9 @@ const getCurrentIsoDateTimeForZoho = () => {
  * @returns {string|null}
  */
 const formatDateOnly = (dateString) => {
-    return dateString ? String(dateString).split('T')[0] : null;
+    const str = String(dateString).trim();
+    if (!dateString || str === '' || str.toLowerCase() === 'unlimited') return null;
+    return str.split('T')[0];
 };
 
 module.exports = { getCurrentIsoDateTimeForZoho, formatDateOnly };
