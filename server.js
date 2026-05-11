@@ -12,7 +12,7 @@ app.use(express.json());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-//  runWeeklyReconciliation();
+runWeeklyReconciliation();
 app.get('/', (req, res) => {
     res.send(`
         <div style="font-family: sans-serif; padding: 50px; text-align: center;">
@@ -40,7 +40,9 @@ app.post('/api/webhook/zoho-deal-draft', authenticateWebhook, sharepointControll
 connectDB();
 
 
+const logger = require('./utils/logger');
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-    console.log(`Server running. Trigger sync at http://localhost:${PORT}/api/webhook/zoho-deal`);
+    logger.info(`Server running. Trigger sync at http://localhost:${PORT}/api/webhook/zoho-deal`);
 });

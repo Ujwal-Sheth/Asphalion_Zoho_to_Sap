@@ -4,9 +4,10 @@ const { getSapQuoteDetails } = require('../services/sapService');
 const { mapSapDataToZoho, mapSapItemToZohoSubformItem } = require('../utils/sapMapper');
 const ErrorLog = require('../models/errorLogModel');
 const { getCurrentIsoDateTimeForZoho } = require('../utils/dateUtils');
+const logger = require('../utils/logger');
 
 const runWeeklyReconciliation = async () => {
-    console.log(`\n🔄 [CRON] Starting Weekly SAP-Zoho Reconciliation: ${new Date().toISOString()}`);
+    logger.info(`\n🔄 [CRON] Starting Weekly SAP-Zoho Reconciliation: ${new Date().toISOString()}`);
 
     try {
         let dealsToSync = [];
@@ -26,7 +27,7 @@ const runWeeklyReconciliation = async () => {
             }
         }
 
-        console.log(`📊 Found ${dealsToSync.length} Deals in Zoho linked to an SAP Quote.`);
+        logger.info(`📊 Found ${dealsToSync.length} Deals in Zoho linked to an SAP Quote.`);
 
         let successCount = 0;
         let failCount = 0;
@@ -34,12 +35,12 @@ const runWeeklyReconciliation = async () => {
         for (const deal of dealsToSync) {
             const sapQuoteId = deal.SAP_Offer_Code;
 
-            console.log(`\nReconciling Deal ${deal.id} (SAP Quote: ${sapQuoteId})...`);
+            logger.info(`\nReconciling Deal ${deal.id} (SAP Quote: ${sapQuoteId})...`);
 
             const rawSapQuote = await getSapQuoteDetails(sapQuoteId);
 
             if (!rawSapQuote) {
-                console.warn(`⚠️ SAP Quote ${sapQuoteId} not found in SAP ByDesign. Skipping.`);
+                logger.warn(`⚠️ SAP Quote ${sapQuoteId} not found in SAP ByDesign. Skipping.`);
                 failCount++;
                 continue;
             }
@@ -95,16 +96,16 @@ const runWeeklyReconciliation = async () => {
                     ...zohoMappedFields
                 });
 
-                console.log(`✅ Deal ${deal.id} successfully updated from SAP.`);
+                logger.info(`✅ Deal ${deal.id} successfully updated from SAP.`);
                 successCount++;
 
             } catch (zohoErr) {
-                console.error(`❌ Failed to update Zoho Deal ${deal.id}:`, zohoErr.message);
+                logger.error(`❌ Failed to update Zoho Deal ${deal.id}: ${zohoErr.message}`);
                 failCount++;
             }
         }
 
-        console.log(`\n🏁 [CRON] Reconciliation Complete. Success: ${successCount}, Failed: ${failCount}`);
+        logger.info(`\n🏁 [CRON] Reconciliation Complete. Success: ${successCount}, Failed: ${failCount}`);
 
         await ErrorLog.create({
             dealId: "SYSTEM", logType: 'INFO', stage: 'WEEKLY_RECONCILIATION',
@@ -112,7 +113,7 @@ const runWeeklyReconciliation = async () => {
         });
 
     } catch (error) {
-        console.error("CRITICAL CRON ERROR:", error.message);
+        logger.error(`CRITICAL CRON ERROR: ${error.message}`);
     }
 };
 
