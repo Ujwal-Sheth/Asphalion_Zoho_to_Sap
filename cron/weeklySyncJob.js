@@ -16,7 +16,7 @@ const runWeeklyReconciliation = async () => {
         let hasMore = true;
 
         while (hasMore) {
-            const coqlQuery = `select id, Deal_Name, SAP_Offer_Code, Stage from Deals where SAP_Offer_Code = '10000' limit ${limit} offset ${offset}`;
+            const coqlQuery = `select id, Deal_Name, SAP_Offer_Code, Stage from Deals where SAP_Offer_Code is not null limit ${limit} offset ${offset}`;
             const chunk = await zohoService.runCoqlQuery(coqlQuery);
             dealsToSync = dealsToSync.concat(chunk);
             
