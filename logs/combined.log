@@ -12868,3 +12868,41 @@ Reconciling Deal 931793000005538065 (SAP Quote: 10000)...
 [2026-05-12 20:11:51] INFO: ✅ Deal 931793000005538065 successfully updated from SAP.
 [2026-05-12 20:11:51] INFO: 
 🏁 [CRON] Reconciliation Complete. Success: 1, Failed: 0
+[2026-05-12 20:29:45] INFO: 
+🔄 [CRON] Starting Weekly SAP-Zoho Reconciliation: 2026-05-12T14:59:45.961Z
+[2026-05-12 20:29:45] INFO: Server running. Trigger sync at http://localhost:3000/api/webhook/zoho-deal
+[2026-05-12 20:30:09] INFO: 
+🔄 [CRON] Starting Weekly SAP-Zoho Reconciliation: 2026-05-12T15:00:09.631Z
+[2026-05-12 20:30:09] INFO: Server running. Trigger sync at http://localhost:3000/api/webhook/zoho-deal
+[2026-05-12 20:30:27] INFO: 
+🔄 [CRON] Starting Weekly SAP-Zoho Reconciliation: 2026-05-12T15:00:27.940Z
+[2026-05-12 20:30:27] INFO: Server running. Trigger sync at http://localhost:3000/api/webhook/zoho-deal
+[2026-05-12 20:30:53] INFO: 
+🔄 [CRON] Starting Weekly SAP-Zoho Reconciliation: 2026-05-12T15:00:53.309Z
+[2026-05-12 20:30:53] INFO: Server running. Trigger sync at http://localhost:3000/api/webhook/zoho-deal
+[2026-05-12 20:31:05] INFO: 📊 Found 1 Deals in Zoho linked to an SAP Quote.
+[2026-05-12 20:31:05] INFO: 
+Reconciling Deal 931793000005538065 (SAP Quote: 10000)...
+[2026-05-12 20:32:13] INFO: ✅ Deal 931793000005538065 successfully updated from SAP.
+[2026-05-12 20:32:13] INFO: 
+🏁 [CRON] Reconciliation Complete. Success: 1, Failed: 0
+[2026-05-12 20:33:26] INFO: 
+🔄 [CRON] Starting Weekly SAP-Zoho Reconciliation: 2026-05-12T15:03:26.450Z
+[2026-05-12 20:33:26] INFO: Server running. Trigger sync at http://localhost:3000/api/webhook/zoho-deal
+[2026-05-12 20:33:53] ERROR: CRITICAL CRON ERROR: Failed to run COQL query: connect ETIMEDOUT 185.230.212.121:443
+[2026-05-12 20:34:28] INFO: 
+🔄 [CRON] Starting Weekly SAP-Zoho Reconciliation: 2026-05-12T15:04:28.383Z
+[2026-05-12 20:34:28] INFO: Server running. Trigger sync at http://localhost:3000/api/webhook/zoho-deal
+[2026-05-12 20:35:22] INFO: 📊 Found 1 Deals in Zoho linked to an SAP Quote.
+[2026-05-12 20:35:22] INFO: 
+Reconciling Deal 931793000005538065 (SAP Quote: 10000)...
+[2026-05-12 20:37:10] ERROR: CRITICAL CRON ERROR: Failed to fetch Deals record 931793000005538065: read ECONNRESET
+[2026-05-12 20:41:34] INFO: 
+🔄 [CRON] Starting Weekly SAP-Zoho Reconciliation: 2026-05-12T15:11:34.889Z
+[2026-05-12 20:41:34] INFO: Server running. Trigger sync at http://localhost:3000/api/webhook/zoho-deal
+[2026-05-12 20:41:41] INFO: 📊 Found 1 Deals in Zoho linked to an SAP Quote.
+[2026-05-12 20:41:41] INFO: 
+Reconciling Deal 931793000005538065 (SAP Quote: 10000)...
+[2026-05-12 20:41:47] INFO: ✅ Deal 931793000005538065 successfully updated from SAP.
+[2026-05-12 20:41:47] INFO: 
+🏁 [CRON] Reconciliation Complete. Success: 1, Failed: 0

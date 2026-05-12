@@ -45,7 +45,7 @@ const mapSapDataToZoho = (sapQuote) => {
         // --- DROPDOWN FIELDS (Reverse Mapped) ---
         Project_Type: ZOHO_MAPS.ProjectType[getVal(sapQuote.TipodeProyecto)],
         Source: ZOHO_MAPS.Source[getVal(sapQuote.Origen)],
-        Category: ZOHO_MAPS.Category[getVal(sapQuote.Categoria)],
+        Main_Technical_Unit: ZOHO_MAPS.Category[getVal(sapQuote.Categoria)],
         Therapeutical_area: ZOHO_MAPS.TherapeuticalArea[getVal(sapQuote.reateraputica)],
         Legal_Basis: ZOHO_MAPS.LegalBasis[getVal(sapQuote.Baselegal)],
         Procedure: ZOHO_MAPS.Procedure[getVal(sapQuote.Procedimiento1)],
