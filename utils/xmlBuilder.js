@@ -79,7 +79,10 @@ const buildSapXmlPayload = (zohoData, accountId) => {
   if (subformItems.length > 0) {
     subformItems.forEach((item, index) => {
       const sapItemId = (index + 1) * 10;
-      const productCode = item.Product_Code || "";
+      let productCode = "";
+      if (item.Product_Code) {
+        productCode = typeof item.Product_Code === 'object' ? item.Product_Code.name : item.Product_Code;
+      }
       const quantity = item.Quantity || 1;
       const unitPrice = parseFloat(item.Unit_Price || 0).toFixed(2);
       // const productTotal = parseFloat(item.Product_Total || (quantity * unitPrice)).toFixed(2);

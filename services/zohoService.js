@@ -107,5 +107,25 @@ exports.searchProductsByName = async (productName) => {
         if (error.response && (error.response.status === 204 || error.response.status === 400)) {
             console.warn(`⚠️ Could not search product "${productName}":`, error.response.data?.message || 'Invalid criteria');
         }
+        return [];
+    }
+}
+
+exports.searchProductsByCode = async (productCode) => {
+    const token = await getAccessToken();
+    try {
+        const response = await axios.get(
+            `${process.env.ZOHO_API_DOMAIN}/Products/search`,
+            {
+                headers: { 'Authorization': `Zoho-oauthtoken ${token}` },
+                params: { criteria: `(Product_Name:equals:${productCode})` }
+            }
+        );
+        return response.data.data || [];
+    } catch (error) {
+        if (error.response && (error.response.status === 204 || error.response.status === 400)) {
+            console.warn(`⚠️ Could not search product code "${productCode}":`, error.response.data?.message || 'Invalid criteria');
+        }
+        return [];
     }
 }

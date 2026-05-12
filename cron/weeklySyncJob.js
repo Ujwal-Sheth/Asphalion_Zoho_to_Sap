@@ -16,7 +16,7 @@ const runWeeklyReconciliation = async () => {
         let hasMore = true;
 
         while (hasMore) {
-            const coqlQuery = `select id, Deal_Name, SAP_Offer_Code, Stage from Deals where SAP_Offer_Code is not null limit ${limit} offset ${offset}`;
+            const coqlQuery = `select id, Deal_Name, SAP_Offer_Code, Stage from Deals where SAP_Offer_Code = '10000' limit ${limit} offset ${offset}`;
             const chunk = await zohoService.runCoqlQuery(coqlQuery);
             dealsToSync = dealsToSync.concat(chunk);
             
@@ -68,18 +68,18 @@ const runWeeklyReconciliation = async () => {
                 // Match with existing row to preserve custom fields like Notes
                 const existingRow = existingSubform.find(r => r.Activity_description === mappedSapItem.Activity_description || r.Product_Code === mappedSapItem.Product_Code);
 
-                let productId = existingRow?.Product_Name?.id;
+                let productId = existingRow?.Product_Code?.id;
 
-                // If not linked yet, search product by name
-                if (!productId && mappedSapItem.Activity_description) {
-                    const products = await zohoService.searchProductsByName(mappedSapItem.Activity_description);
+                // If not linked yet, search product by code
+                if (!productId && mappedSapItem.Product_Code) {
+                    const products = await zohoService.searchProductsByCode(mappedSapItem.Product_Code);
                     if (products.length > 0) productId = products[0].id;
                 }
 
                 newSubformData.push({
                     ...(existingRow || {}), // retains `id` and Zoho-only fields
-                    Product_Name: productId ? { id: productId } : null,
-                    Product_Code: mappedSapItem.Product_Code,
+                    Product_Code: productId ? { id: productId } : null,
+                    Product_Name: mappedSapItem.Activity_description,
                     Activity_description: mappedSapItem.Activity_description,
                     Quantity: mappedSapItem.Quantity,
                     Unit_Price: mappedSapItem.Unit_Price,
