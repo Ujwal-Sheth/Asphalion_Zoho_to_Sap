@@ -66,7 +66,15 @@ const runWeeklyReconciliation = async () => {
                 const mappedSapItem = mapSapItemToZohoSubformItem(sapItem);
 
                 // Match with existing row to preserve custom fields like Notes
-                const existingRow = existingSubform.find(r => r.Activity_description === mappedSapItem.Activity_description || r.Product_Code === mappedSapItem.Product_Code);
+                const existingRowIndex = existingSubform.findIndex(r => {
+                    const rCode = typeof r.Product_Code === 'object' && r.Product_Code !== null ? r.Product_Code.name : r.Product_Code;
+                    return r.Activity_description === mappedSapItem.Activity_description || rCode === mappedSapItem.Product_Code;
+                });
+
+                let existingRow = null;
+                if (existingRowIndex > -1) {
+                    existingRow = existingSubform.splice(existingRowIndex, 1)[0];
+                }
 
                 let productId = existingRow?.Product_Code?.id;
 
@@ -79,9 +87,9 @@ const runWeeklyReconciliation = async () => {
                 newSubformData.push({
                     ...(existingRow || {}), // retains `id` and Zoho-only fields
                     Product_Code: productId ? { id: productId } : null,
-                    Product_Name: mappedSapItem.Activity_description,
                     Activity_description: mappedSapItem.Activity_description,
                     Quantity: mappedSapItem.Quantity,
+                    Unidad_de_medida: mappedSapItem.Unit,
                     Unit_Price: mappedSapItem.Unit_Price,
                     Discount: mappedSapItem.Discount,
                     Optional: mappedSapItem.Optional

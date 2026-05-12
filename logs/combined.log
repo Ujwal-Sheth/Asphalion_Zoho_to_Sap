@@ -12775,3 +12775,96 @@ Reconciling Deal 931793000005589349 (SAP Quote: 10000)...
 [2026-05-12 18:57:32] INFO: ✅ Deal 931793000005589349 successfully updated from SAP.
 [2026-05-12 18:57:32] INFO: 
 🏁 [CRON] Reconciliation Complete. Success: 1, Failed: 0
+[2026-05-12 19:25:55] INFO: 
+🔄 [CRON] Starting Weekly SAP-Zoho Reconciliation: 2026-05-12T13:55:55.735Z
+[2026-05-12 19:25:55] INFO: Server running. Trigger sync at http://localhost:3000/api/webhook/zoho-deal
+[2026-05-12 19:25:57] INFO: 📊 Found 1 Deals in Zoho linked to an SAP Quote.
+[2026-05-12 19:25:57] INFO: 
+Reconciling Deal 931793000005589349 (SAP Quote: 10000)...
+[2026-05-12 19:26:04] WARN: ⚠️ SAP Quote 10000 not found in SAP ByDesign. Skipping.
+[2026-05-12 19:26:04] INFO: 
+🏁 [CRON] Reconciliation Complete. Success: 0, Failed: 1
+[2026-05-12 19:26:30] INFO: 
+🔄 [CRON] Starting Weekly SAP-Zoho Reconciliation: 2026-05-12T13:56:30.490Z
+[2026-05-12 19:26:30] INFO: Server running. Trigger sync at http://localhost:3000/api/webhook/zoho-deal
+[2026-05-12 19:26:31] INFO: 📊 Found 1 Deals in Zoho linked to an SAP Quote.
+[2026-05-12 19:26:31] INFO: 
+Reconciling Deal 931793000005589349 (SAP Quote: 10000)...
+[2026-05-12 19:26:35] INFO: ✅ Deal 931793000005589349 successfully updated from SAP.
+[2026-05-12 19:26:35] INFO: 
+🏁 [CRON] Reconciliation Complete. Success: 1, Failed: 0
+[2026-05-12 19:32:49] INFO: 
+🔄 [CRON] Starting Weekly SAP-Zoho Reconciliation: 2026-05-12T14:02:49.660Z
+[2026-05-12 19:32:49] INFO: Server running. Trigger sync at http://localhost:3000/api/webhook/zoho-deal
+[2026-05-12 19:32:51] INFO: 📊 Found 1 Deals in Zoho linked to an SAP Quote.
+[2026-05-12 19:32:51] INFO: 
+Reconciling Deal 931793000005589349 (SAP Quote: 10000)...
+[2026-05-12 19:32:52] WARN: ⚠️ SAP Quote 10000 not found in SAP ByDesign. Skipping.
+[2026-05-12 19:32:52] INFO: 
+🏁 [CRON] Reconciliation Complete. Success: 0, Failed: 1
+[2026-05-12 19:33:04] INFO: 
+🔄 [CRON] Starting Weekly SAP-Zoho Reconciliation: 2026-05-12T14:03:04.043Z
+[2026-05-12 19:33:04] INFO: Server running. Trigger sync at http://localhost:3000/api/webhook/zoho-deal
+[2026-05-12 19:33:05] INFO: 📊 Found 1 Deals in Zoho linked to an SAP Quote.
+[2026-05-12 19:33:05] INFO: 
+Reconciling Deal 931793000005589349 (SAP Quote: 10000)...
+[2026-05-12 19:33:09] INFO: ✅ Deal 931793000005589349 successfully updated from SAP.
+[2026-05-12 19:33:09] INFO: 
+🏁 [CRON] Reconciliation Complete. Success: 1, Failed: 0
+[2026-05-12 19:37:16] INFO: 
+🔄 [CRON] Starting Weekly SAP-Zoho Reconciliation: 2026-05-12T14:07:16.348Z
+[2026-05-12 19:37:16] INFO: Server running. Trigger sync at http://localhost:3000/api/webhook/zoho-deal
+[2026-05-12 19:37:17] INFO: 📊 Found 1 Deals in Zoho linked to an SAP Quote.
+[2026-05-12 19:37:17] INFO: 
+Reconciling Deal 931793000005589349 (SAP Quote: 10000)...
+[2026-05-12 19:37:21] INFO: ✅ Deal 931793000005589349 successfully updated from SAP.
+[2026-05-12 19:37:21] INFO: 
+🏁 [CRON] Reconciliation Complete. Success: 1, Failed: 0
+[2026-05-12 19:37:40] INFO: 
+🔄 [CRON] Starting Weekly SAP-Zoho Reconciliation: 2026-05-12T14:07:40.597Z
+[2026-05-12 19:37:40] INFO: Server running. Trigger sync at http://localhost:3000/api/webhook/zoho-deal
+[2026-05-12 19:37:42] INFO: 📊 Found 1 Deals in Zoho linked to an SAP Quote.
+[2026-05-12 19:37:42] INFO: 
+Reconciling Deal 931793000005589349 (SAP Quote: 10000)...
+[2026-05-12 19:37:45] INFO: ✅ Deal 931793000005589349 successfully updated from SAP.
+[2026-05-12 19:37:45] INFO: 
+🏁 [CRON] Reconciliation Complete. Success: 1, Failed: 0
+[2026-05-12 19:52:01] INFO: 
+🔄 [CRON] Starting Weekly SAP-Zoho Reconciliation: 2026-05-12T14:22:01.754Z
+[2026-05-12 19:52:01] INFO: Server running. Trigger sync at http://localhost:3000/api/webhook/zoho-deal
+[2026-05-12 19:52:03] INFO: 📊 Found 1 Deals in Zoho linked to an SAP Quote.
+[2026-05-12 19:52:03] INFO: 
+Reconciling Deal 931793000005589349 (SAP Quote: 10000)...
+[2026-05-12 19:52:04] WARN: ⚠️ SAP Quote 10000 not found in SAP ByDesign. Skipping.
+[2026-05-12 19:52:04] INFO: 
+🏁 [CRON] Reconciliation Complete. Success: 0, Failed: 1
+[2026-05-12 19:53:40] INFO: 
+🔄 [CRON] Starting Weekly SAP-Zoho Reconciliation: 2026-05-12T14:23:40.588Z
+[2026-05-12 19:53:40] INFO: Server running. Trigger sync at http://localhost:3000/api/webhook/zoho-deal
+[2026-05-12 19:53:42] INFO: 📊 Found 0 Deals in Zoho linked to an SAP Quote.
+[2026-05-12 19:53:42] INFO: 
+🏁 [CRON] Reconciliation Complete. Success: 0, Failed: 0
+[2026-05-12 20:08:43] INFO: 
+🔄 [CRON] Starting Weekly SAP-Zoho Reconciliation: 2026-05-12T14:38:43.851Z
+[2026-05-12 20:08:43] INFO: Server running. Trigger sync at http://localhost:3000/api/webhook/zoho-deal
+[2026-05-12 20:08:45] INFO: 📊 Found 0 Deals in Zoho linked to an SAP Quote.
+[2026-05-12 20:08:45] INFO: 
+🏁 [CRON] Reconciliation Complete. Success: 0, Failed: 0
+[2026-05-12 20:09:05] INFO: 
+🔄 [CRON] Starting Weekly SAP-Zoho Reconciliation: 2026-05-12T14:39:05.413Z
+[2026-05-12 20:09:05] INFO: Server running. Trigger sync at http://localhost:3000/api/webhook/zoho-deal
+[2026-05-12 20:09:06] INFO: 📊 Found 1 Deals in Zoho linked to an SAP Quote.
+[2026-05-12 20:09:06] INFO: 
+Reconciling Deal 931793000005589349 (SAP Quote: 10000)...
+[2026-05-12 20:09:10] INFO: ✅ Deal 931793000005589349 successfully updated from SAP.
+[2026-05-12 20:09:10] INFO: 
+🏁 [CRON] Reconciliation Complete. Success: 1, Failed: 0
+[2026-05-12 20:11:41] INFO: 
+🔄 [CRON] Starting Weekly SAP-Zoho Reconciliation: 2026-05-12T14:41:41.451Z
+[2026-05-12 20:11:41] INFO: Server running. Trigger sync at http://localhost:3000/api/webhook/zoho-deal
+[2026-05-12 20:11:42] INFO: 📊 Found 1 Deals in Zoho linked to an SAP Quote.
+[2026-05-12 20:11:42] INFO: 
+Reconciling Deal 931793000005538065 (SAP Quote: 10000)...
+[2026-05-12 20:11:51] INFO: ✅ Deal 931793000005538065 successfully updated from SAP.
+[2026-05-12 20:11:51] INFO: 
+🏁 [CRON] Reconciliation Complete. Success: 1, Failed: 0
