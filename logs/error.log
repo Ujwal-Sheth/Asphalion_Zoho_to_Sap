@@ -228,3 +228,7 @@
 [2026-05-12 18:40:19] ERROR: ❌ Failed to update Zoho Deal 931793000005589349: Failed to update deal 931793000005589349: Request failed with status code 400. Details: {"data":[{"code":"INVALID_DATA","details":{"api_name":"Product_Code","json_path":"$.data[0].Product_Details[1].Product_Code"},"message":"invalid data","status":"error"}]}
 [2026-05-12 20:33:53] ERROR: CRITICAL CRON ERROR: Failed to run COQL query: connect ETIMEDOUT 185.230.212.121:443
 [2026-05-12 20:37:10] ERROR: CRITICAL CRON ERROR: Failed to fetch Deals record 931793000005538065: read ECONNRESET
+[2026-05-13 14:23:28] ERROR: ❌ Failed to update Zoho Deal 931793000005514151: Failed to update deal 931793000005514151: Request failed with status code 400. Details: {"data":[{"code":"INVALID_DATA","details":{"maximum_length":16,"api_name":"Amount","maximum_decimal_place":2,"json_path":"$.data[0].Amount"},"message":"invalid data","status":"error"}]}
+[2026-05-13 14:25:22] ERROR: ❌ Failed to update Zoho Deal 931793000005514151: Failed to update deal 931793000005514151: Request failed with status code 400. Details: {"data":[{"code":"INVALID_DATA","details":{"maximum_length":16,"api_name":"Amount","maximum_decimal_place":3,"json_path":"$.data[0].Amount"},"message":"invalid data","status":"error"}]}
+[2026-05-13 14:27:47] ERROR: CRITICAL CRON ERROR: Operation `errorlogs.insertOne()` buffering timed out after 10000ms
+[2026-05-13 17:43:04] ERROR: CRITICAL CRON ERROR: EndDateTime is not defined

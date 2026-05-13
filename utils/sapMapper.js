@@ -1,5 +1,5 @@
 const SAP_MAPS = require('../constants/sapMaps');
-const { formatDateOnly } = require('./dateUtils');
+const { formatDateOnly, formatSapDatePeriod } = require('./dateUtils');
 
 // Helper to invert the map (SAP Code -> Zoho Text)
 const invertMap = (map) => {
@@ -38,9 +38,22 @@ const mapSapDataToZoho = (sapQuote) => {
         return field;
     };
     
+    let totalAmount = 0;
+    let hasAmount = false;
+    if (sapQuote.Item) {
+        const items = Array.isArray(sapQuote.Item) ? sapQuote.Item : [sapQuote.Item];
+        items.forEach(item => {
+            const val = getVal(item.EstimacionIngresos);
+            if (val != null && val !== '') {
+                totalAmount += parseFloat(val) || 0;
+                hasAmount = true;
+            }
+        });
+    }
+    
     return {
         Creation_Date: formatDateOnly(sapQuote.PostingDate),
-        Closing_Date: formatDateOnly(getVal(sapQuote.RequestedFulfillmentPeriodPeriodTerms?.EndDateTime)),
+        Closing_Date: formatSapDatePeriod(sapQuote.RequestedFulfillmentPeriodPeriodTerms),
         
         // --- DROPDOWN FIELDS (Reverse Mapped) ---
         Project_Type: ZOHO_MAPS.ProjectType[getVal(sapQuote.TipodeProyecto)],
@@ -56,7 +69,7 @@ const mapSapDataToZoho = (sapQuote) => {
 
         // --- DIRECT TEXT/NUMBER FIELDS ---
         Description: getVal(sapQuote.Name),
-        Amount: getVal(sapQuote.EstimacionIngresos),
+        Amount: hasAmount ? Number(totalAmount.toFixed(2)) : null,
         
         // --- LONG TEXT AREAS ---
         Background_intro_ES: getVal(sapQuote.BackgroundBymeans),
