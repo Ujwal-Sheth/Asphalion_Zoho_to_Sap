@@ -16,7 +16,7 @@ const runWeeklyReconciliation = async () => {
         let hasMore = true;
 
         while (hasMore) {
-            const coqlQuery = `select id, Deal_Name, SAP_Offer_Code, Stage from Deals where SAP_Offer_Code = '9988' limit ${limit} offset ${offset}`;
+            const coqlQuery = `select id, Deal_Name, SAP_Offer_Code, Stage from Deals where SAP_Offer_Code = '9977' limit ${limit} offset ${offset}`;
             const chunk = await zohoService.runCoqlQuery(coqlQuery);
             dealsToSync = dealsToSync.concat(chunk);
             
@@ -125,10 +125,10 @@ const runWeeklyReconciliation = async () => {
     }
 };
 
-// To run weekly on Sundays at 2:00 AM
-cron.schedule('0 2 * * 0', () => {
-    runWeeklyReconciliation();
-});
+// // To run weekly on Sundays at 2:00 AM
+// cron.schedule('0 2 * * 0', () => {
+//     runWeeklyReconciliation();
+// });
 
 // To run daily at 2:00 AM
 // cron.schedule('0 2 * * *', () => {
