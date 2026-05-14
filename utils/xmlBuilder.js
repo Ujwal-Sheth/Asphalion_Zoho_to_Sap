@@ -56,6 +56,7 @@ const buildSapXmlPayload = (zohoData, accountId) => {
   const sapMailInvoiceRepository = zohoData.Mail_invoice_repository || "";
   const sapInvoiceEmails = zohoData.Invoicing_emails || "";
   const sapZohoOwnerName = zohoData.Owner?.name || "";
+  const sapAcceptanceDate = zohoData.Acceptance_Date || "";
 
   const sapProductType = getCode("ProjectType", zohoData.Project_Type);
   const sapSource = getCode("Source", zohoData.Source || zohoData.Lead_Source);
@@ -178,7 +179,8 @@ const buildSapXmlPayload = (zohoData, accountId) => {
             <a3z:DEALreferenceZOHO>${zohoData.id} " + "${sapZohoOwnerName}  </a3z:DEALreferenceZOHO>
             <a3z:Personadecontacto>${sapContactName}</a3z:Personadecontacto>
             <a3z:DuracionProyectoEstimada>${sapEstimatedTimeline}</a3z:DuracionProyectoEstimada>
-            <a3z:Discount>true</a3z:Discount>
+            <a3z:Discount>${subformItems.some(item => (item.Discount && parseFloat(item.Discount) > 0)) ? "true" : "false"}</a3z:Discount>
+            ${sapAcceptanceDate ? `<a3z:Fechadeaceptacin>${sapAcceptanceDate}</a3z:Fechadeaceptacin>` : ""}
             ${sapProductType ? `<a3z:TipodeProyecto>${sapProductType}</a3z:TipodeProyecto>` : ""}
             ${sapSource ? `<a3z:Origen>${sapSource}</a3z:Origen>` : ""}
             ${sapTechnicalUnit ? `<a3z:Categoria>${sapTechnicalUnit}</a3z:Categoria>` : ""}
