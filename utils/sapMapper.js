@@ -37,7 +37,7 @@ const mapSapDataToZoho = (sapQuote) => {
         if (typeof field === 'object') return field._ !== undefined ? field._ : null;
         return field;
     };
-    
+
     let totalAmount = 0;
     let hasAmount = false;
     if (sapQuote.Item) {
@@ -50,11 +50,11 @@ const mapSapDataToZoho = (sapQuote) => {
             }
         });
     }
-    
-    return {
-        Creation_Date: formatDateOnly(sapQuote.PostingDate),
-        Closing_Date: formatSapDatePeriod(sapQuote.RequestedFulfillmentPeriodPeriodTerms),
-        
+
+    const result = {
+        Creation_Date: formatDateOnly(getVal(sapQuote.PostingDate)),
+        // Closing_Date: formatSapDatePeriod(sapQuote.ValidityPeriodPeriodTerms),
+
         // --- DROPDOWN FIELDS (Reverse Mapped) ---
         Project_Type: ZOHO_MAPS.ProjectType[getVal(sapQuote.TipodeProyecto)],
         Source: ZOHO_MAPS.Source[getVal(sapQuote.Origen)],
@@ -63,14 +63,14 @@ const mapSapDataToZoho = (sapQuote) => {
         Legal_Basis: ZOHO_MAPS.LegalBasis[getVal(sapQuote.Baselegal)],
         Procedure: ZOHO_MAPS.Procedure[getVal(sapQuote.Procedimiento1)],
         Hunting_Farming: ZOHO_MAPS.HuntingFarming[getVal(sapQuote.HuntingFarming)],
-        Payment_Terms: ZOHO_MAPS.PaymentTerms[sapQuote.CashDiscountTerms?.Code], 
+        Payment_Terms: ZOHO_MAPS.PaymentTerms[sapQuote.CashDiscountTerms?.Code],
         Probability1: ZOHO_MAPS.Probability[getVal(sapQuote.ProbabilidadOfertaAsphalion)],
         Type_of_Product: ZOHO_MAPS.TypeOfProduct[getVal(sapQuote.Tipodeproducto)],
 
         // --- DIRECT TEXT/NUMBER FIELDS ---
         Description: getVal(sapQuote.Name),
         Amount: hasAmount ? Number(totalAmount.toFixed(2)) : null,
-        
+
         // --- LONG TEXT AREAS ---
         Background_intro_ES: getVal(sapQuote.BackgroundBymeans),
         Agreed_fees_sales_quote_EN: getVal(sapQuote.AgreedfeessalesquoteEN),
@@ -89,9 +89,22 @@ const mapSapDataToZoho = (sapQuote) => {
         // --- BOOLEANS ---
         STAND_BY: getVal(sapQuote.STANDBY) === "true",
 
-        // Note: Contact_Name mapping is excluded here assuming Zoho uses a Lookup field
-        // which requires a specific Record ID rather than a plain string name.
+        // --- NEW FIELDS FROM SAP EXTENSIONS ---
+        Acceptance_Date: formatDateOnly(getVal(sapQuote.Fechadeaceptacin)),
     };
+
+    // Add Approval Status mapping using standard SAP codes
+    const approvalCode = getVal(sapQuote.Status?.ApprovalStatusCode);
+    const approvalMap = {
+        "1": "No relevante",
+        "2": "Pendiente",
+        "3": "Ganada",
+        "4": "Pérdida"
+    };
+
+    result.Approval_Status = approvalMap[approvalCode] || getVal(sapQuote.estadopendiente);
+
+    return result;
 };
 
 const mapSapItemToZohoSubformItem = (sapItem) => {
@@ -100,14 +113,14 @@ const mapSapItemToZohoSubformItem = (sapItem) => {
         if (typeof field === 'object') return field._ !== undefined ? field._ : null;
         return field;
     };
-    
+
     // Extract Discount from ItemPriceComponent array
     let discountVal = 0;
     if (sapItem.PriceAndTaxCalculationItem && sapItem.PriceAndTaxCalculationItem.ItemPriceComponent) {
-        const components = Array.isArray(sapItem.PriceAndTaxCalculationItem.ItemPriceComponent) 
-            ? sapItem.PriceAndTaxCalculationItem.ItemPriceComponent 
+        const components = Array.isArray(sapItem.PriceAndTaxCalculationItem.ItemPriceComponent)
+            ? sapItem.PriceAndTaxCalculationItem.ItemPriceComponent
             : [sapItem.PriceAndTaxCalculationItem.ItemPriceComponent];
-            
+
         // Prefer "Total Given Discounts (%)" if available, else fallback to any discount
         let discountComp = components.find(c => getVal(c.Description) === "Total Given Discounts (%)");
         if (!discountComp) {
@@ -116,7 +129,7 @@ const mapSapItemToZohoSubformItem = (sapItem) => {
                 return desc && desc.toLowerCase().includes('discount');
             });
         }
-        
+
         if (discountComp && discountComp.Rate && discountComp.Rate.DecimalValue) {
             discountVal = Math.round(Math.abs(parseFloat(discountComp.Rate.DecimalValue)));
         }

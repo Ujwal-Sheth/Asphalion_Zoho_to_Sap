@@ -6,6 +6,10 @@ const ErrorLog = require('../models/errorLogModel');
 const { getCurrentIsoDateTimeForZoho } = require('../utils/dateUtils');
 const logger = require('../utils/logger');
 
+const sapOfferCodes = [
+  '10189'
+];
+
 const runWeeklyReconciliation = async () => {
     logger.info(`\n🔄 [CRON] Starting Weekly SAP-Zoho Reconciliation: ${new Date().toISOString()}`);
 
@@ -16,7 +20,7 @@ const runWeeklyReconciliation = async () => {
         let hasMore = true;
 
         while (hasMore) {
-            const coqlQuery = `select id, Deal_Name, SAP_Offer_Code, Stage from Deals where SAP_Offer_Code = '9977' limit ${limit} offset ${offset}`;
+            const coqlQuery = `select id, Deal_Name, SAP_Offer_Code, Stage from Deals where SAP_Offer_Code in (${sapOfferCodes.map(code => `'${code}'`).join(',')}) limit ${limit} offset ${offset}`;
             const chunk = await zohoService.runCoqlQuery(coqlQuery);
             dealsToSync = dealsToSync.concat(chunk);
             

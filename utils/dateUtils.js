@@ -24,11 +24,11 @@ const formatDateOnly = (dateString) => {
         try {
             const date = new Date(str);
             if (!isNaN(date.getTime())) {
-                return date.toLocaleDateString('en-CA', { 
-                    timeZone: 'Europe/Madrid', 
-                    year: 'numeric', 
-                    month: '2-digit', 
-                    day: '2-digit' 
+                return date.toLocaleDateString('en-CA', {
+                    timeZone: 'Europe/Madrid',
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit'
                 });
             }
         } catch (e) {
@@ -49,7 +49,7 @@ const formatSapDatePeriod = (periodTerms) => {
     const endStr = typeof periodTerms.EndDateTime === 'object' ? periodTerms.EndDateTime._ : periodTerms.EndDateTime;
     const endTz = typeof periodTerms.EndDateTime === 'object' ? periodTerms.EndDateTime.$?.timeZoneCode : null;
     const startStr = periodTerms.StartDateTime ? (typeof periodTerms.StartDateTime === 'object' ? periodTerms.StartDateTime._ : periodTerms.StartDateTime) : null;
-    
+
     if (!endStr || String(endStr).trim() === '' || String(endStr).trim().toLowerCase() === 'unlimited') return null;
 
     try {
@@ -59,7 +59,7 @@ const formatSapDatePeriod = (periodTerms) => {
         let startDate = startStr ? new Date(startStr) : null;
         let ianaTz = 'UTC';
         if (endTz === 'CET' || endTz === 'CEST') ianaTz = 'Europe/Madrid';
-        
+
         // Check if the time is exactly midnight in the target timezone
         const timeInTz = endDate.toLocaleTimeString('en-GB', { timeZone: ianaTz, hourCycle: 'h23' });
         if (timeInTz === '00:00:00') {
@@ -68,7 +68,7 @@ const formatSapDatePeriod = (periodTerms) => {
                 endDate = new Date(endDate.getTime() - 1);
             }
         }
-        
+
         return endDate.toLocaleDateString('en-CA', { timeZone: ianaTz, year: 'numeric', month: '2-digit', day: '2-digit' });
     } catch (e) {
         return String(endStr).split('T')[0];

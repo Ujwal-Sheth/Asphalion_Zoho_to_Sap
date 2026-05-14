@@ -1,4 +1,6 @@
 .env
 /node_modules
-/logs
 /scratch
+quote_debug.json
+logs/combined.log
+logs/error.log

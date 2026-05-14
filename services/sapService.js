@@ -78,6 +78,7 @@ const getSapQuoteDetails = async (sapQuoteId) => {
                    <LowerBoundaryID>${sapQuoteId}</LowerBoundaryID>
                 </SelectionByID>
              </CustomerQuoteSelectionByElements>
+             <CustomerQuoteRequestedElements TransmissionRequestCode="1" />
           </glob:CustomerQuoteByElementsQuery_sync>
        </soapenv:Body>
     </soapenv:Envelope>

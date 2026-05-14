@@ -13135,3 +13135,277 @@ Reconciling Deal 627875000005514226 (SAP Quote: 9988)...
 [2026-05-13 18:22:49] INFO: ✅ Deal 627875000005514226 successfully updated from SAP.
 [2026-05-13 18:22:49] INFO: 
 🏁 [CRON] Reconciliation Complete. Success: 1, Failed: 0
+[2026-05-13 20:56:25] INFO: 
+🔄 [CRON] Starting Weekly SAP-Zoho Reconciliation: 2026-05-13T15:26:25.162Z
+[2026-05-13 20:56:25] INFO: Server running. Trigger sync at http://localhost:3000/api/webhook/zoho-deal
+[2026-05-13 20:56:26] INFO: 📊 Found 1 Deals in Zoho linked to an SAP Quote.
+[2026-05-13 20:56:26] INFO: 
+Reconciling Deal 627875000005514216 (SAP Quote: 9977)...
+[2026-05-13 20:56:30] ERROR: ❌ Failed to update Zoho Deal 627875000005514216: Failed to update deal 627875000005514216: Request failed with status code 400. Details: {"data":[{"code":"INVALID_DATA","details":{"expected_data_type":"datetime","api_name":"Sent_to_the_client_date","json_path":"$.data[0].Sent_to_the_client_date"},"message":"invalid data","status":"error"}]}
+[2026-05-13 20:56:30] INFO: 
+🏁 [CRON] Reconciliation Complete. Success: 0, Failed: 1
+[2026-05-13 20:59:13] INFO: 
+🔄 [CRON] Starting Weekly SAP-Zoho Reconciliation: 2026-05-13T15:29:13.325Z
+[2026-05-13 20:59:13] INFO: Server running. Trigger sync at http://localhost:3000/api/webhook/zoho-deal
+[2026-05-13 20:59:15] INFO: 📊 Found 1 Deals in Zoho linked to an SAP Quote.
+[2026-05-13 20:59:15] INFO: 
+Reconciling Deal 627875000005514216 (SAP Quote: 9977)...
+[2026-05-13 20:59:18] ERROR: ❌ Failed to update Zoho Deal 627875000005514216: Failed to update deal 627875000005514216: Request failed with status code 400. Details: {"data":[{"code":"INVALID_DATA","details":{"expected_data_type":"date","api_name":"Acceptance_Date","json_path":"$.data[0].Acceptance_Date"},"message":"invalid data","status":"error"}]}
+[2026-05-13 20:59:18] INFO: 
+🏁 [CRON] Reconciliation Complete. Success: 0, Failed: 1
+[2026-05-13 21:00:17] INFO: 
+🔄 [CRON] Starting Weekly SAP-Zoho Reconciliation: 2026-05-13T15:30:17.521Z
+[2026-05-13 21:00:17] INFO: Server running. Trigger sync at http://localhost:3000/api/webhook/zoho-deal
+[2026-05-13 21:00:19] INFO: 📊 Found 1 Deals in Zoho linked to an SAP Quote.
+[2026-05-13 21:00:19] INFO: 
+Reconciling Deal 627875000005514216 (SAP Quote: 9977)...
+[2026-05-13 21:00:24] INFO: ✅ Deal 627875000005514216 successfully updated from SAP.
+[2026-05-13 21:00:24] INFO: 
+🏁 [CRON] Reconciliation Complete. Success: 1, Failed: 0
+[2026-05-13 21:00:48] INFO: 
+🔄 [CRON] Starting Weekly SAP-Zoho Reconciliation: 2026-05-13T15:30:48.644Z
+[2026-05-13 21:00:48] INFO: Server running. Trigger sync at http://localhost:3000/api/webhook/zoho-deal
+[2026-05-13 21:00:49] INFO: 📊 Found 1 Deals in Zoho linked to an SAP Quote.
+[2026-05-13 21:00:49] INFO: 
+Reconciling Deal 627875000005514216 (SAP Quote: 9977)...
+[2026-05-13 21:00:53] INFO: ✅ Deal 627875000005514216 successfully updated from SAP.
+[2026-05-13 21:00:53] INFO: 
+🏁 [CRON] Reconciliation Complete. Success: 1, Failed: 0
+[2026-05-13 21:19:41] INFO: 
+🔄 [CRON] Starting Weekly SAP-Zoho Reconciliation: 2026-05-13T15:49:41.660Z
+[2026-05-13 21:19:41] INFO: Server running. Trigger sync at http://localhost:3000/api/webhook/zoho-deal
+[2026-05-13 21:19:43] INFO: 📊 Found 1 Deals in Zoho linked to an SAP Quote.
+[2026-05-13 21:19:43] INFO: 
+Reconciling Deal 627875000005514216 (SAP Quote: 9977)...
+[2026-05-13 21:19:47] INFO: ✅ Deal 627875000005514216 successfully updated from SAP.
+[2026-05-13 21:19:47] INFO: 
+🏁 [CRON] Reconciliation Complete. Success: 1, Failed: 0
+[2026-05-13 21:23:07] INFO: 
+🔄 [CRON] Starting Weekly SAP-Zoho Reconciliation: 2026-05-13T15:53:07.730Z
+[2026-05-13 21:23:07] INFO: Server running. Trigger sync at http://localhost:3000/api/webhook/zoho-deal
+[2026-05-13 21:23:09] INFO: 📊 Found 1 Deals in Zoho linked to an SAP Quote.
+[2026-05-13 21:23:09] INFO: 
+Reconciling Deal 627875000005514216 (SAP Quote: 9977)...
+[2026-05-13 21:23:13] INFO: ✅ Deal 627875000005514216 successfully updated from SAP.
+[2026-05-13 21:23:13] INFO: 
+🏁 [CRON] Reconciliation Complete. Success: 1, Failed: 0
+[2026-05-14 13:20:54] INFO: Server running. Trigger sync at http://localhost:3000/api/webhook/zoho-deal
+[2026-05-14 13:37:41] INFO: Server running. Trigger sync at http://localhost:3000/api/webhook/zoho-deal
+[2026-05-14 13:47:46] INFO: 
+🔄 [CRON] Starting Weekly SAP-Zoho Reconciliation: 2026-05-14T08:17:46.906Z
+[2026-05-14 13:47:46] INFO: Server running. Trigger sync at http://localhost:3000/api/webhook/zoho-deal
+[2026-05-14 13:47:48] INFO: 📊 Found 1 Deals in Zoho linked to an SAP Quote.
+[2026-05-14 13:47:48] INFO: 
+Reconciling Deal 627875000005514216 (SAP Quote: 11022)...
+[2026-05-14 13:47:51] INFO: ✅ Deal 627875000005514216 successfully updated from SAP.
+[2026-05-14 13:47:51] INFO: 
+🏁 [CRON] Reconciliation Complete. Success: 1, Failed: 0
+[2026-05-14 13:53:23] INFO: 
+🔄 [CRON] Starting Weekly SAP-Zoho Reconciliation: 2026-05-14T08:23:23.002Z
+[2026-05-14 13:53:23] INFO: Server running. Trigger sync at http://localhost:3000/api/webhook/zoho-deal
+[2026-05-14 13:53:24] INFO: 📊 Found 1 Deals in Zoho linked to an SAP Quote.
+[2026-05-14 13:53:24] INFO: 
+Reconciling Deal 627875000005514216 (SAP Quote: 11022)...
+[2026-05-14 13:53:27] INFO: ✅ Deal 627875000005514216 successfully updated from SAP.
+[2026-05-14 13:53:27] INFO: 
+🏁 [CRON] Reconciliation Complete. Success: 1, Failed: 0
+[2026-05-14 13:57:02] INFO: 
+🔄 [CRON] Starting Weekly SAP-Zoho Reconciliation: 2026-05-14T08:27:02.677Z
+[2026-05-14 13:57:02] INFO: Server running. Trigger sync at http://localhost:3000/api/webhook/zoho-deal
+[2026-05-14 13:57:04] INFO: 📊 Found 1 Deals in Zoho linked to an SAP Quote.
+[2026-05-14 13:57:04] INFO: 
+Reconciling Deal 627875000005514216 (SAP Quote: 11022)...
+[2026-05-14 13:57:07] INFO: ✅ Deal 627875000005514216 successfully updated from SAP.
+[2026-05-14 13:57:07] INFO: 
+🏁 [CRON] Reconciliation Complete. Success: 1, Failed: 0
+[2026-05-14 13:58:31] INFO: 
+🔄 [CRON] Starting Weekly SAP-Zoho Reconciliation: 2026-05-14T08:28:31.974Z
+[2026-05-14 13:58:32] INFO: Server running. Trigger sync at http://localhost:3000/api/webhook/zoho-deal
+[2026-05-14 13:58:33] INFO: 📊 Found 1 Deals in Zoho linked to an SAP Quote.
+[2026-05-14 13:58:33] INFO: 
+Reconciling Deal 627875000005514216 (SAP Quote: 11022)...
+[2026-05-14 13:58:36] INFO: ✅ Deal 627875000005514216 successfully updated from SAP.
+[2026-05-14 13:58:36] INFO: 
+🏁 [CRON] Reconciliation Complete. Success: 1, Failed: 0
+[2026-05-14 13:59:40] INFO: 
+🔄 [CRON] Starting Weekly SAP-Zoho Reconciliation: 2026-05-14T08:29:40.814Z
+[2026-05-14 13:59:40] INFO: Server running. Trigger sync at http://localhost:3000/api/webhook/zoho-deal
+[2026-05-14 13:59:42] INFO: 📊 Found 1 Deals in Zoho linked to an SAP Quote.
+[2026-05-14 13:59:42] INFO: 
+Reconciling Deal 627875000005514216 (SAP Quote: 11022)...
+[2026-05-14 13:59:44] INFO: ✅ Deal 627875000005514216 successfully updated from SAP.
+[2026-05-14 13:59:44] INFO: 
+🏁 [CRON] Reconciliation Complete. Success: 1, Failed: 0
+[2026-05-14 14:03:46] INFO: 
+🔄 [CRON] Starting Weekly SAP-Zoho Reconciliation: 2026-05-14T08:33:46.143Z
+[2026-05-14 14:03:46] INFO: Server running. Trigger sync at http://localhost:3000/api/webhook/zoho-deal
+[2026-05-14 14:03:47] INFO: 📊 Found 1 Deals in Zoho linked to an SAP Quote.
+[2026-05-14 14:03:47] INFO: 
+Reconciling Deal 627875000005514216 (SAP Quote: 11022)...
+[2026-05-14 14:03:50] INFO: ✅ Deal 627875000005514216 successfully updated from SAP.
+[2026-05-14 14:03:50] INFO: 
+🏁 [CRON] Reconciliation Complete. Success: 1, Failed: 0
+[2026-05-14 14:20:58] INFO: 
+🔄 [CRON] Starting Weekly SAP-Zoho Reconciliation: 2026-05-14T08:50:58.787Z
+[2026-05-14 14:20:58] INFO: Server running. Trigger sync at http://localhost:3000/api/webhook/zoho-deal
+[2026-05-14 14:21:00] INFO: 📊 Found 1 Deals in Zoho linked to an SAP Quote.
+[2026-05-14 14:21:00] INFO: 
+Reconciling Deal 627875000005514216 (SAP Quote: 11022)...
+[2026-05-14 14:21:02] INFO: ✅ Deal 627875000005514216 successfully updated from SAP.
+[2026-05-14 14:21:02] INFO: 
+🏁 [CRON] Reconciliation Complete. Success: 1, Failed: 0
+[2026-05-14 15:40:40] INFO: 
+🔄 [CRON] Starting Weekly SAP-Zoho Reconciliation: 2026-05-14T10:10:40.148Z
+[2026-05-14 15:40:40] INFO: Server running. Trigger sync at http://localhost:3000/api/webhook/zoho-deal
+[2026-05-14 15:40:41] INFO: 📊 Found 1 Deals in Zoho linked to an SAP Quote.
+[2026-05-14 15:40:41] INFO: 
+Reconciling Deal 931793000005780349 (SAP Quote: 10133)...
+[2026-05-14 15:40:47] INFO: ✅ Deal 931793000005780349 successfully updated from SAP.
+[2026-05-14 15:40:47] INFO: 
+🏁 [CRON] Reconciliation Complete. Success: 1, Failed: 0
+[2026-05-14 15:55:44] INFO: 
+🔄 [CRON] Starting Weekly SAP-Zoho Reconciliation: 2026-05-14T10:25:44.343Z
+[2026-05-14 15:55:44] INFO: Server running. Trigger sync at http://localhost:3000/api/webhook/zoho-deal
+[2026-05-14 15:55:45] ERROR: CRITICAL CRON ERROR: Failed to run COQL query: Request failed with status code 400
+[2026-05-14 15:56:12] INFO: 
+🔄 [CRON] Starting Weekly SAP-Zoho Reconciliation: 2026-05-14T10:26:12.008Z
+[2026-05-14 15:56:12] INFO: Server running. Trigger sync at http://localhost:3000/api/webhook/zoho-deal
+[2026-05-14 15:56:13] ERROR: CRITICAL CRON ERROR: Failed to run COQL query: Request failed with status code 400
+[2026-05-14 16:03:19] INFO: 
+🔄 [CRON] Starting Weekly SAP-Zoho Reconciliation: 2026-05-14T10:33:19.886Z
+[2026-05-14 16:03:19] INFO: Server running. Trigger sync at http://localhost:3000/api/webhook/zoho-deal
+[2026-05-14 16:03:21] INFO: 📊 Found 41 Deals in Zoho linked to an SAP Quote.
+[2026-05-14 16:03:21] INFO: 
+Reconciling Deal 931793000005780332 (SAP Quote: 10007)...
+[2026-05-14 16:03:24] INFO: ✅ Deal 931793000005780332 successfully updated from SAP.
+[2026-05-14 16:03:24] INFO: 
+Reconciling Deal 931793000005780333 (SAP Quote: 10014)...
+[2026-05-14 16:03:27] INFO: ✅ Deal 931793000005780333 successfully updated from SAP.
+[2026-05-14 16:03:27] INFO: 
+Reconciling Deal 931793000005780334 (SAP Quote: 10019)...
+[2026-05-14 16:03:31] INFO: ✅ Deal 931793000005780334 successfully updated from SAP.
+[2026-05-14 16:03:31] INFO: 
+Reconciling Deal 931793000005780335 (SAP Quote: 10020)...
+[2026-05-14 16:03:34] INFO: ✅ Deal 931793000005780335 successfully updated from SAP.
+[2026-05-14 16:03:34] INFO: 
+Reconciling Deal 931793000005780336 (SAP Quote: 10035)...
+[2026-05-14 16:03:36] INFO: ✅ Deal 931793000005780336 successfully updated from SAP.
+[2026-05-14 16:03:36] INFO: 
+Reconciling Deal 931793000005780337 (SAP Quote: 10036)...
+[2026-05-14 16:03:39] INFO: ✅ Deal 931793000005780337 successfully updated from SAP.
+[2026-05-14 16:03:39] INFO: 
+Reconciling Deal 931793000005780338 (SAP Quote: 10038)...
+[2026-05-14 16:03:42] INFO: ✅ Deal 931793000005780338 successfully updated from SAP.
+[2026-05-14 16:03:42] INFO: 
+Reconciling Deal 931793000005780339 (SAP Quote: 10039)...
+[2026-05-14 16:03:44] INFO: ✅ Deal 931793000005780339 successfully updated from SAP.
+[2026-05-14 16:03:44] INFO: 
+Reconciling Deal 931793000005780340 (SAP Quote: 10050)...
+[2026-05-14 16:03:47] INFO: ✅ Deal 931793000005780340 successfully updated from SAP.
+[2026-05-14 16:03:47] INFO: 
+Reconciling Deal 931793000005780341 (SAP Quote: 10051)...
+[2026-05-14 16:03:50] INFO: ✅ Deal 931793000005780341 successfully updated from SAP.
+[2026-05-14 16:03:50] INFO: 
+Reconciling Deal 931793000005780342 (SAP Quote: 10061)...
+[2026-05-14 16:03:52] INFO: ✅ Deal 931793000005780342 successfully updated from SAP.
+[2026-05-14 16:03:52] INFO: 
+Reconciling Deal 931793000005780343 (SAP Quote: 10101)...
+[2026-05-14 16:03:57] INFO: ✅ Deal 931793000005780343 successfully updated from SAP.
+[2026-05-14 16:03:57] INFO: 
+Reconciling Deal 931793000005780344 (SAP Quote: 10104)...
+[2026-05-14 16:04:01] INFO: ✅ Deal 931793000005780344 successfully updated from SAP.
+[2026-05-14 16:04:01] INFO: 
+Reconciling Deal 931793000005780345 (SAP Quote: 10106)...
+[2026-05-14 16:04:04] INFO: ✅ Deal 931793000005780345 successfully updated from SAP.
+[2026-05-14 16:04:04] INFO: 
+Reconciling Deal 931793000005780346 (SAP Quote: 10111)...
+[2026-05-14 16:04:06] INFO: ✅ Deal 931793000005780346 successfully updated from SAP.
+[2026-05-14 16:04:06] INFO: 
+Reconciling Deal 931793000005780347 (SAP Quote: 10128)...
+[2026-05-14 16:04:09] INFO: ✅ Deal 931793000005780347 successfully updated from SAP.
+[2026-05-14 16:04:09] INFO: 
+Reconciling Deal 931793000005780348 (SAP Quote: 10129)...
+[2026-05-14 16:04:12] INFO: ✅ Deal 931793000005780348 successfully updated from SAP.
+[2026-05-14 16:04:12] INFO: 
+Reconciling Deal 931793000005780350 (SAP Quote: 10150)...
+[2026-05-14 16:04:14] INFO: ✅ Deal 931793000005780350 successfully updated from SAP.
+[2026-05-14 16:04:14] INFO: 
+Reconciling Deal 931793000005780351 (SAP Quote: 10153)...
+[2026-05-14 16:04:16] INFO: ✅ Deal 931793000005780351 successfully updated from SAP.
+[2026-05-14 16:04:16] INFO: 
+Reconciling Deal 931793000005780352 (SAP Quote: 10154)...
+[2026-05-14 16:04:20] INFO: ✅ Deal 931793000005780352 successfully updated from SAP.
+[2026-05-14 16:04:20] INFO: 
+Reconciling Deal 931793000005780353 (SAP Quote: 10159)...
+[2026-05-14 16:04:27] INFO: ✅ Deal 931793000005780353 successfully updated from SAP.
+[2026-05-14 16:04:27] INFO: 
+Reconciling Deal 931793000005780354 (SAP Quote: 10169)...
+[2026-05-14 16:04:30] INFO: ✅ Deal 931793000005780354 successfully updated from SAP.
+[2026-05-14 16:04:30] INFO: 
+Reconciling Deal 931793000005780355 (SAP Quote: 10175)...
+[2026-05-14 16:04:33] INFO: ✅ Deal 931793000005780355 successfully updated from SAP.
+[2026-05-14 16:04:33] INFO: 
+Reconciling Deal 931793000005780356 (SAP Quote: 10181)...
+[2026-05-14 16:04:37] INFO: ✅ Deal 931793000005780356 successfully updated from SAP.
+[2026-05-14 16:04:37] INFO: 
+Reconciling Deal 931793000005780357 (SAP Quote: 10182)...
+[2026-05-14 16:04:40] INFO: ✅ Deal 931793000005780357 successfully updated from SAP.
+[2026-05-14 16:04:40] INFO: 
+Reconciling Deal 931793000005780358 (SAP Quote: 10194)...
+[2026-05-14 16:04:42] INFO: ✅ Deal 931793000005780358 successfully updated from SAP.
+[2026-05-14 16:04:42] INFO: 
+Reconciling Deal 931793000005780359 (SAP Quote: 10196)...
+[2026-05-14 16:04:46] INFO: ✅ Deal 931793000005780359 successfully updated from SAP.
+[2026-05-14 16:04:46] INFO: 
+Reconciling Deal 931793000005780360 (SAP Quote: 11003)...
+[2026-05-14 16:04:49] INFO: ✅ Deal 931793000005780360 successfully updated from SAP.
+[2026-05-14 16:04:49] INFO: 
+Reconciling Deal 931793000005780361 (SAP Quote: 11004)...
+[2026-05-14 16:04:52] INFO: ✅ Deal 931793000005780361 successfully updated from SAP.
+[2026-05-14 16:04:52] INFO: 
+Reconciling Deal 931793000005780362 (SAP Quote: 11005)...
+[2026-05-14 16:04:54] INFO: ✅ Deal 931793000005780362 successfully updated from SAP.
+[2026-05-14 16:04:54] INFO: 
+Reconciling Deal 931793000005780363 (SAP Quote: 9929)...
+[2026-05-14 16:04:56] INFO: ✅ Deal 931793000005780363 successfully updated from SAP.
+[2026-05-14 16:04:56] INFO: 
+Reconciling Deal 931793000005780364 (SAP Quote: 9934)...
+[2026-05-14 16:04:59] INFO: ✅ Deal 931793000005780364 successfully updated from SAP.
+[2026-05-14 16:04:59] INFO: 
+Reconciling Deal 931793000005780365 (SAP Quote: 9938)...
+[2026-05-14 16:05:03] INFO: ✅ Deal 931793000005780365 successfully updated from SAP.
+[2026-05-14 16:05:03] INFO: 
+Reconciling Deal 931793000005780366 (SAP Quote: 9950)...
+[2026-05-14 16:05:07] INFO: ✅ Deal 931793000005780366 successfully updated from SAP.
+[2026-05-14 16:05:07] INFO: 
+Reconciling Deal 931793000005780367 (SAP Quote: 9960)...
+[2026-05-14 16:05:10] INFO: ✅ Deal 931793000005780367 successfully updated from SAP.
+[2026-05-14 16:05:10] INFO: 
+Reconciling Deal 931793000005780368 (SAP Quote: 9966)...
+[2026-05-14 16:05:12] INFO: ✅ Deal 931793000005780368 successfully updated from SAP.
+[2026-05-14 16:05:12] INFO: 
+Reconciling Deal 931793000005780369 (SAP Quote: 9973)...
+[2026-05-14 16:05:14] INFO: ✅ Deal 931793000005780369 successfully updated from SAP.
+[2026-05-14 16:05:14] INFO: 
+Reconciling Deal 931793000005780370 (SAP Quote: 9974)...
+[2026-05-14 16:05:17] INFO: ✅ Deal 931793000005780370 successfully updated from SAP.
+[2026-05-14 16:05:17] INFO: 
+Reconciling Deal 931793000005780371 (SAP Quote: 9976)...
+[2026-05-14 16:05:20] INFO: ✅ Deal 931793000005780371 successfully updated from SAP.
+[2026-05-14 16:05:20] INFO: 
+Reconciling Deal 931793000005780372 (SAP Quote: 9991)...
+[2026-05-14 16:05:22] INFO: ✅ Deal 931793000005780372 successfully updated from SAP.
+[2026-05-14 16:05:22] INFO: 
+Reconciling Deal 931793000005780373 (SAP Quote: 9992)...
+[2026-05-14 16:05:25] INFO: ✅ Deal 931793000005780373 successfully updated from SAP.
+[2026-05-14 16:05:25] INFO: 
+🏁 [CRON] Reconciliation Complete. Success: 41, Failed: 0
+[2026-05-14 16:23:34] INFO: 
+🔄 [CRON] Starting Weekly SAP-Zoho Reconciliation: 2026-05-14T10:53:34.858Z
+[2026-05-14 16:23:34] INFO: Server running. Trigger sync at http://localhost:3000/api/webhook/zoho-deal
+[2026-05-14 16:23:36] INFO: 📊 Found 1 Deals in Zoho linked to an SAP Quote.
+[2026-05-14 16:23:36] INFO: 
+Reconciling Deal 931793000005514192 (SAP Quote: 10189)...
+[2026-05-14 16:23:39] INFO: ✅ Deal 931793000005514192 successfully updated from SAP.
+[2026-05-14 16:23:39] INFO: 
+🏁 [CRON] Reconciliation Complete. Success: 1, Failed: 0
