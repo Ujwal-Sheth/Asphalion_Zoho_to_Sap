@@ -158,10 +158,11 @@ const buildSapXmlPayload = (zohoData, accountId, sapQuoteId = null) => {
   const sapIndication = zohoData.Indication || "";
   const sapStandBy = zohoData.STAND_BY ? "true" : "false";
 
-  const sapAcceptanceDate = formatDateOnly(zohoData.Acceptance_Date) || "";
   const sapMailInvoiceRepository = zohoData.Mail_invoice_repository || "";
   const sapInvoiceEmails = zohoData.Invoicing_emails || "";
-   const sapProbability = getCode("Probability", zohoData.Approval);
+  const sapProbability = getCode("Probability", zohoData.Approval);
+  const sapAcceptanceDate = zohoData.Acceptance_Date || "";
+
   const sapProductType = getCode("ProjectType", zohoData.Project_Type);
   const sapSource = getCode("Source", zohoData.Source || zohoData.Lead_Source);
   const sapTechnicalUnit = getCode("TechnicalUnit", zohoData.Main_Technical_Unit);
@@ -277,7 +278,7 @@ const buildSapXmlPayload = (zohoData, accountId, sapQuoteId = null) => {
             <a3z:Personadecontacto>${sapContactName}</a3z:Personadecontacto>
             <a3z:DuracionProyectoEstimada>${sapEstimatedTimeline}</a3z:DuracionProyectoEstimada>
             <a3z:Discount>${subformItems.some(item => (item.Discount && parseFloat(item.Discount) > 0)) ? "true" : "false"}</a3z:Discount>
-             ${sapAcceptanceDate ? `<a3z:Fechadeaceptacin>${sapAcceptanceDate}</a3z:Fechadeaceptacin>` : ""}
+            ${sapAcceptanceDate ? `<a3z:Fechadeaceptacin>${sapAcceptanceDate}</a3z:Fechadeaceptacin>` : ""}
             ${sapProductType ? `<a3z:TipodeProyecto>${sapProductType}</a3z:TipodeProyecto>` : ""}
             ${sapSource ? `<a3z:Origen>${sapSource}</a3z:Origen>` : ""}
             ${sapTechnicalUnit ? `<a3z:Categoria>${sapTechnicalUnit}</a3z:Categoria>` : ""}

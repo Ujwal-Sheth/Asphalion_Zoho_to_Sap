@@ -716,3 +716,11 @@
 [2026-05-15 20:38:19] ERROR: ❌ [Accounts Sync] Failed for SAP Customer PRTS (Tax: PT514394285): Request failed with status code 401
 [2026-05-15 20:38:26] ERROR: ❌ [Accounts Sync] Failed for SAP Customer REIT (Tax: IT05205491219): Request failed with status code 401
 [2026-05-15 20:38:33] ERROR: ❌ [Accounts Sync] Failed for SAP Customer RELS (Tax: CHE276079851): Request failed with status code 401
+[2026-05-15 20:38:40] ERROR: ❌ [Accounts Sync] Failed for SAP Customer ROCH (Tax: 100674): Request failed with status code 401
+[2026-05-15 20:38:47] ERROR: ❌ [Accounts Sync] Failed for SAP Customer ROFA (Tax: A08023145): Request failed with status code 401
+[2026-05-15 20:38:54] ERROR: ❌ [Accounts Sync] Failed for SAP Customer ROSE (Tax: 82-5117567): Request failed with status code 401
+[2026-05-15 20:39:01] ERROR: ❌ [Accounts Sync] Failed for SAP Customer ROXL (Tax: A48956445): Request failed with status code 401
+[2026-05-15 20:39:07] ERROR: ❌ [Accounts Sync] Failed for SAP Customer RSEN (Tax: CHE200494152): Request failed with status code 401
+[2026-05-15 20:39:14] ERROR: ❌ [Accounts Sync] Failed for SAP Customer SATH (Tax: CHE116329274): Request failed with status code 401
+[2026-05-15 20:39:21] ERROR: ❌ [Accounts Sync] Failed for SAP Customer SEBI (Tax: B65947814): Request failed with status code 401
+[2026-05-15 20:39:28] ERROR: ❌ [Accounts Sync] Failed for SAP Customer SEEK (Tax: FR28840236574): Request failed with status code 401
