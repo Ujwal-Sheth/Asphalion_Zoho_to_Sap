@@ -23,23 +23,128 @@ const getSalesUnit = (categoryText) => {
   return salesUnitMapping[categoryText] || "1180";
 };
 
-const buildSapXmlPayload = (zohoData, accountId) => {
-  // --- FIXED VARIABLES FOR TESTING ---
-  // const fixedProductId = "1000001717";
+const formatDateOnly = (dateStr) => {
+  if (!dateStr) return null;
+  const date = new Date(dateStr);
+  return isNaN(date.getTime()) ? null : date.toISOString().split('T')[0];
+};
+
+const formatDateTime = (dateStr) => {
+  if (!dateStr) return null;
+  const date = new Date(dateStr);
+  return isNaN(date.getTime()) ? null : date.toISOString().split('.')[0] + 'Z';
+};
+
+const buildSapXmlPayload = (zohoData, accountId, sapQuoteId = null) => {
+  console.log(`[XML] Building payload for Deal ID: ${zohoData.id}, Quote ID: ${sapQuoteId}`);
+
+
+  // --- UPDATE FLOW ---
+  if (sapQuoteId) {
+    const subformItems = zohoData.Product_Details || [];
+    const sapZohoOwnerName = zohoData.Owner?.name || "";
+    const sapContactName = zohoData.Contact_Name?.name || "";
+    const sapDescription = zohoData.Deal_Name;
+    const sapPaymentTerms = getCode("PaymentTerms", zohoData.Payment_Terms);
+    const sapEstimatedTimeline = zohoData.Estimated_Project_Timeline_in_months || "";
+    const sapAcceptanceDate = formatDateOnly(zohoData.Acceptance_Date) || "";
+    const sapValidityStart = formatDateTime(zohoData.Creation_Date) || "";
+    const sapValidityEnd = formatDateTime(zohoData.Closing_Date) || "";
+    const sapProductType = getCode("ProjectType", zohoData.Project_Type);
+    const sapSource = getCode("Source", zohoData.Source || zohoData.Lead_Source);
+    const sapTechnicalUnit = getCode("TechnicalUnit", zohoData.Main_Technical_Unit);
+    const sapTherapeuticalArea = getCode("TherapeuticalArea", zohoData.Therapeutical_area);
+    const sapLegalBasis = getCode("LegalBasis", zohoData.Legal_Basis);
+    const sapProcedure = getCode("Procedure", zohoData.Procedure);
+    const sapHuntingFarming = getCode("HuntingFarming", zohoData.Hunting_Farming);
+    const sapSalesUnit = getSalesUnit(zohoData.Main_Technical_Unit);
+    const sapProbability = getCode("Probability", zohoData.Approval);
+    const sapTypeOfProduct = getCode("TypeOfProduct", zohoData.Type_of_Product);
+    const sapStandBy = (zohoData.STAND_BY === true || zohoData.STAND_BY === "true") ? "true" : "false";
+
+    // Long text fields
+    const sapBackgroundIntroES = zohoData.Background_intro_ES || "";
+    const sapAgreedFeesEN = zohoData.Agreed_fees_sales_quote_EN || "";
+    const sapEndNotesES = zohoData.End_notes_sales_quote_ES || "";
+    const sapEndNotesEN = zohoData.End_notes_sales_quote_EN || "";
+    const sapBackgroundIntroEN = zohoData.Background_intro_EN || "";
+    const sapBackground = zohoData.Background || "";
+    const sapInvoicingTypeEN = zohoData.Invoicing_type_EN || "";
+    const sapInvoicingTypeES = zohoData.Invoicing_type_ES || "";
+    const sapProcedureCountry = zohoData.Procedure_country || "";
+    const sapActiveSubstance = zohoData.Active_substance || "";
+    // const sapIndication = zohoData.Indication || "";
+    const sapMailInvoiceRepository = zohoData.Mail_invoice_repository || "";
+    const sapInvoiceEmails = zohoData.Invoicing_emails || "";
+    return `
+<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:glob="http://sap.com/xi/SAPGlobal20/Global" xmlns:a3z="http://sap.com/xi/AP/CustomerExtension/BYD/A3Z5O">
+   <soap:Header/>
+   <soap:Body>
+      <glob:CustomerQuoteBundleMaintainRequest_sync>
+         <CustomerQuote actionCode="02">
+            <ID>${sapQuoteId}</ID>
+            <Name languageCode="EN">${sapDescription}</Name>
+            <CashDiscountTermsCode>${sapPaymentTerms}</CashDiscountTermsCode>
+
+            <SalesUnitParty actionCode="04">
+               <PartyID>${sapSalesUnit}</PartyID>
+            </SalesUnitParty>
+            <SubmitIndicator>true</SubmitIndicator>
+            <a3z:DEALreferenceZOHO><![CDATA[${zohoData.id} ${sapZohoOwnerName}]]></a3z:DEALreferenceZOHO>
+            <a3z:Personadecontacto>${sapContactName}</a3z:Personadecontacto>
+            ${sapEstimatedTimeline ? `<a3z:DuracionProyectoEstimada>${sapEstimatedTimeline}</a3z:DuracionProyectoEstimada>` : ""}
+            <a3z:Discount>${subformItems.some(item => (item.Discount && parseFloat(item.Discount) > 0)) ? "true" : "false"}</a3z:Discount>
+            ${sapAcceptanceDate ? `<a3z:Fechadeaceptacin>${sapAcceptanceDate}</a3z:Fechadeaceptacin>` : ""}
+            ${sapProductType ? `<a3z:TipodeProyecto>${sapProductType}</a3z:TipodeProyecto>` : ""}
+            ${sapSource ? `<a3z:Origen>${sapSource}</a3z:Origen>` : ""}
+            ${sapTechnicalUnit ? `<a3z:Categoria>${sapTechnicalUnit}</a3z:Categoria>` : ""}
+            ${sapTherapeuticalArea ? `<a3z:reateraputica>${sapTherapeuticalArea}</a3z:reateraputica>` : ""}
+            ${sapLegalBasis ? `<a3z:Baselegal>${sapLegalBasis}</a3z:Baselegal>` : ""}
+            ${sapProcedure ? `<a3z:Procedimiento1>${sapProcedure}</a3z:Procedimiento1>` : ""}
+            ${sapHuntingFarming ? `<a3z:HuntingFarming>${sapHuntingFarming}</a3z:HuntingFarming>` : ""}
+            ${sapTypeOfProduct ? `<a3z:Tipodeproducto>${sapTypeOfProduct}</a3z:Tipodeproducto>` : ""}
+            <a3z:STANDBY>${sapStandBy}</a3z:STANDBY>
+            
+            ${(sapValidityStart || sapValidityEnd) ? `
+            <ValidityPeriodPeriodTerms actionCode="04">
+               ${sapValidityStart ? `<StartDateTime>${sapValidityStart}</StartDateTime>` : ""}
+               ${sapValidityEnd ? `<EndDateTime>${sapValidityEnd}</EndDateTime>` : ""}
+            </ValidityPeriodPeriodTerms>` : ""}
+            ${sapProbability ? `<a3z:ProbabilidadOfertaAsphalion>${sapProbability}</a3z:ProbabilidadOfertaAsphalion>` : ""}
+            <a3z:Pasdelprocedimiento><![CDATA[${sapProcedureCountry}]]></a3z:Pasdelprocedimiento>
+            <a3z:Sustanciaactiva1><![CDATA[${sapActiveSubstance}]]></a3z:Sustanciaactiva1>
+            <a3z:Repositoriocorreosdefacturacin><![CDATA[${sapMailInvoiceRepository}]]></a3z:Repositoriocorreosdefacturacin>
+            <a3z:Correosdefacturacin><![CDATA[${sapInvoiceEmails}]]></a3z:Correosdefacturacin>
+            
+            <a3z:BackgroundBymeans><![CDATA[${sapBackgroundIntroES}]]></a3z:BackgroundBymeans>
+            <a3z:AgreedfeessalesquoteEN><![CDATA[${sapAgreedFeesEN}]]></a3z:AgreedfeessalesquoteEN>
+            <a3z:Footnotes1><![CDATA[${sapEndNotesES}]]></a3z:Footnotes1>
+            <a3z:EndnotessalesquoteEN><![CDATA[${sapEndNotesEN}]]></a3z:EndnotessalesquoteEN>
+            <a3z:BackgroundintroEN><![CDATA[${sapBackgroundIntroEN}]]></a3z:BackgroundintroEN>
+            <a3z:Background1><![CDATA[${sapBackground}]]></a3z:Background1>
+            <a3z:InvoicingtypeEN><![CDATA[${sapInvoicingTypeEN}]]></a3z:InvoicingtypeEN>
+            <a3z:InvoicingtypeES><![CDATA[${sapInvoicingTypeES}]]></a3z:InvoicingtypeES>
+         </CustomerQuote>
+      </glob:CustomerQuoteBundleMaintainRequest_sync>
+   </soap:Body>
+</soap:Envelope>`.trim();
+  }
+    
+  const subformItems = zohoData.Product_Details || [];
+  const sapZohoOwnerName = zohoData.Owner?.name || "";
+  const sapContactName = zohoData.Contact_Name?.name || "";
   const sapDescription = zohoData.Deal_Name;
+  const sapPaymentTerms = getCode("PaymentTerms", zohoData.Payment_Terms);
+  // --- CREATE FLOW (AS PROVIDED BY USER) ---
   const sapPostingDate = zohoData.Creation_Date
     ? `${zohoData.Creation_Date}T00:00:00Z`
     : new Date().toISOString();
   const sapValidToDate = zohoData.Closing_Date
     ? `${zohoData.Closing_Date}T00:00:00Z`
     : new Date().toISOString();
-  const sapEstimatedTimeline =
-    zohoData.Estimated_Project_Timeline_in_months || 0;
-  const sapContactName = zohoData.Contact_Name?.name || "Unknown Contact";
-  const sapTotalAmount = parseFloat(zohoData.Estimated_Revenue || 0).toFixed(
-    1,
-  );
-
+  const sapEstimatedTimeline = zohoData.Estimated_Project_Timeline_in_months || 0;
+  const sapTotalAmount = parseFloat(zohoData.Estimated_Revenue || 0).toFixed(1);
+  
   const sapBackgroundIntroES = zohoData.Background_intro_ES || "";
   const sapAgreedFeesEN = zohoData.Agreed_fees_sales_quote_EN || "";
   const sapEndNotesES = zohoData.End_notes_sales_quote_ES || "";
@@ -53,29 +158,21 @@ const buildSapXmlPayload = (zohoData, accountId) => {
   const sapIndication = zohoData.Indication || "";
   const sapStandBy = zohoData.STAND_BY ? "true" : "false";
 
+  const sapAcceptanceDate = formatDateOnly(zohoData.Acceptance_Date) || "";
   const sapMailInvoiceRepository = zohoData.Mail_invoice_repository || "";
   const sapInvoiceEmails = zohoData.Invoicing_emails || "";
-  const sapZohoOwnerName = zohoData.Owner?.name || "";
-
+   const sapProbability = getCode("Probability", zohoData.Approval);
   const sapProductType = getCode("ProjectType", zohoData.Project_Type);
   const sapSource = getCode("Source", zohoData.Source || zohoData.Lead_Source);
   const sapTechnicalUnit = getCode("TechnicalUnit", zohoData.Main_Technical_Unit);
-  const sapTherapeuticalArea = getCode(
-    "TherapeuticalArea",
-    zohoData.Therapeutical_area,
-  );
+  const sapTherapeuticalArea = getCode("TherapeuticalArea", zohoData.Therapeutical_area);
   const sapLegalBasis = getCode("LegalBasis", zohoData.Legal_Basis);
   const sapProcedure = getCode("Procedure", zohoData.Procedure);
   const sapHuntingFarming = getCode("HuntingFarming", zohoData.Hunting_Farming);
-  const sapPaymentTerms = getCode("PaymentTerms", zohoData.Payment_Terms);
   const sapSalesUnit = getSalesUnit(zohoData.Main_Technical_Unit);
-  // const sapProbability = getCode("Probability", zohoData.Chance_Of_Success_Aspalion);
   const sapTypeOfProduct = getCode("TypeOfProduct", zohoData.Type_of_Product);
 
-  // const productTotal = parseFloat(zohoData.Total || 0).toFixed(2);
   let itemsXml = "";
-  const subformItems = zohoData.Product_Details || [];
-  // console.log(`Building XML Payload: Found ${subformItems.length} items in Product_Details subform.`);
   if (subformItems.length > 0) {
     subformItems.forEach((item, index) => {
       const sapItemId = (index + 1) * 10;
@@ -85,12 +182,12 @@ const buildSapXmlPayload = (zohoData, accountId) => {
       }
       const quantity = item.Quantity || 1;
       const unitPrice = parseFloat(item.Unit_Price || 0).toFixed(2);
-      // const productTotal = parseFloat(item.Product_Total || (quantity * unitPrice)).toFixed(2);
       const itemDiscount = item.Discount || 0;
       const sapUoM = item.Unidad_de_medida || "";
       const sapProcessingTypeCode = getCode("PricingType", item.Pricing_Type);
       const sapAccordingToFee = (item.According_to_Fee === true || item.According_to_Fee === "true") ? "true" : "false";
       const sapOptional = (item.Optional === true || item.Optional === "true") ? "true" : "false";
+      
       if (productCode) {
         itemsXml += `
                 <Items itemScheduleLineListCompleteTransmissionIndicator="true" actionCode="01">
@@ -141,7 +238,7 @@ const buildSapXmlPayload = (zohoData, accountId) => {
       }
     });
   }
-
+// <SubmitIndicator>true</SubmitIndicator> on line after <CashDiscountTermsCode>${sapPaymentTerms}</CashDiscountTermsCode>
   return `
 <soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:glob="http://sap.com/xi/SAPGlobal20/Global" xmlns:a3z="http://sap.com/xi/AP/CustomerExtension/BYD/A3Z5O">
    <soap:Header/>
@@ -175,10 +272,12 @@ const buildSapXmlPayload = (zohoData, accountId) => {
             </PricingTerms>
             
             ${itemsXml}
-            <a3z:DEALreferenceZOHO>${zohoData.id} " + "${sapZohoOwnerName}  </a3z:DEALreferenceZOHO>
+            ${sapProbability ? `<a3z:ProbabilidadOfertaAsphalion>${sapProbability}</a3z:ProbabilidadOfertaAsphalion>` : ""}
+            <a3z:DEALreferenceZOHO>${zohoData.id} " + " ${sapZohoOwnerName}</a3z:DEALreferenceZOHO>
             <a3z:Personadecontacto>${sapContactName}</a3z:Personadecontacto>
             <a3z:DuracionProyectoEstimada>${sapEstimatedTimeline}</a3z:DuracionProyectoEstimada>
-            <a3z:Discount>true</a3z:Discount>
+            <a3z:Discount>${subformItems.some(item => (item.Discount && parseFloat(item.Discount) > 0)) ? "true" : "false"}</a3z:Discount>
+             ${sapAcceptanceDate ? `<a3z:Fechadeaceptacin>${sapAcceptanceDate}</a3z:Fechadeaceptacin>` : ""}
             ${sapProductType ? `<a3z:TipodeProyecto>${sapProductType}</a3z:TipodeProyecto>` : ""}
             ${sapSource ? `<a3z:Origen>${sapSource}</a3z:Origen>` : ""}
             ${sapTechnicalUnit ? `<a3z:Categoria>${sapTechnicalUnit}</a3z:Categoria>` : ""}
@@ -209,8 +308,5 @@ const buildSapXmlPayload = (zohoData, accountId) => {
 </soap:Envelope>
     `.trim();
 };
-// ${sapProbability ? `<a3z:ProbabilidadOfertaAsphalion>${sapProbability}</a3z:ProbabilidadOfertaAsphalion>` : ""}
 
 module.exports = { buildSapXmlPayload };
-
-// <BuyerID>${zohoData.id}</BuyerID>

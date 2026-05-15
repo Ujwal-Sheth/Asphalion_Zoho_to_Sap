@@ -34,37 +34,15 @@ exports.syncDealToSap = async (req, res) => {
   let zohoDealData = null;
   let sapAccountId = null; 
   let soapPayload = null;
+  let existingQuoteId = null;
 
   try {
     // --- STEP 1: Fetch Deal from Zoho ---
     console.log(`[1/4] Fetching Deal ${dealId} from Zoho...`);
     zohoDealData = await zohoService.getRecord('Deals', dealId);
 
-    const existingQuoteId = zohoDealData.SAP_Offer_Code || null; 
+    existingQuoteId = zohoDealData.SAP_Offer_Code || null; 
     
-    if (existingQuoteId) {
-      console.warn(`[!] BLOCKING: Deal ${dealId} already has an SAP Quote ID (${existingQuoteId}).`);
-      await logToMongo(dealId, null, existingQuoteId, "WARNING", "BLOCKED_QUOTE_ALREADY_EXISTS", `Deal already synced with SAP Quote: ${existingQuoteId}`, { dealId });
-      
-      try {
-        console.log(`Pushing already exists status back to Zoho Deal ${dealId}...`);
-        await zohoService.updateDealField(dealId, {
-          SAP_Shipment_Status: "Error",
-          SAP_Error_Message: "Process stopped: SAP Quote already exists for this Deal.",
-          SAP_Shipment_Date: getCurrentIsoDateTimeForZoho(),
-        });
-        console.log(`SUCCESS: Zoho Deal updated with already exists message.`);
-      } catch (zohoError) {
-        console.error(`Failed to update Zoho with existing quote status:\n`, zohoError.message);
-      }
-
-      return res.status(400).json({
-        success: false,
-        message: "Process stopped: SAP Quote already exists for this Deal.",
-        existingQuoteId: existingQuoteId
-      });
-    }
-
     // --- STEP 1.5: Fetch related Account to get SAP ID ---
     if (!zohoDealData.Account_Name || !zohoDealData.Account_Name.id) {
       throw new Error("No Account linked to this Deal.");
@@ -107,9 +85,15 @@ exports.syncDealToSap = async (req, res) => {
 
   try {
     // --- STEP 3: Transform to XML ---
-    console.log(`[3/4] Transforming Zoho JSON to SAP XML...`);
-    soapPayload = buildSapXmlPayload(zohoDealData, sapAccountId);
+    const mode = existingQuoteId ? 'UPDATE' : 'CREATE';
+    if (existingQuoteId) {
+        console.log(`[!] Deal ${dealId} already has SAP Quote ID (${existingQuoteId}). Routing to UPDATE flow.`);
+    }
+    console.log(`[3/4] Transforming Zoho JSON to SAP XML (${mode} mode)...`);
+    soapPayload = buildSapXmlPayload(zohoDealData, sapAccountId, existingQuoteId);
+    // console.log(`[DEBUG] Raw SOAP Payload:\n`, soapPayload);
   } catch (error) {
+    console.error(`[!] Error building XML:`, error.message);
     await logToMongo(dealId, sapAccountId, null, "ERROR", "XML_BUILD_ERROR", error.message, zohoDealData);
     return res.status(500).json({
       success: false,
@@ -182,6 +166,7 @@ exports.syncDealToSap = async (req, res) => {
   } catch (error) {
     let errorMessages = [error.message];
     if (error.response && error.response.data) {
+        console.error(`[!] SAP Error Response Data:\n`, error.response.data);
         errorMessages = ["SAP API rejected the payload (Raw XML error recorded in database)"];
     }
 

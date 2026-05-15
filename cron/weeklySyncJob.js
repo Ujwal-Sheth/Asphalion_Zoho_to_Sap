@@ -7,7 +7,7 @@ const { getCurrentIsoDateTimeForZoho } = require('../utils/dateUtils');
 const logger = require('../utils/logger');
 
 const sapOfferCodes = [
-  '10189'
+  '9939'
 ];
 
 const runWeeklyReconciliation = async () => {
