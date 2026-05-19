@@ -73,7 +73,7 @@ const buildSapXmlPayload = (zohoData, accountId, sapQuoteId = null) => {
     const sapInvoicingTypeES = zohoData.Invoicing_type_ES || "";
     const sapProcedureCountry = zohoData.Procedure_country || "";
     const sapActiveSubstance = zohoData.Active_substance || "";
-    // const sapIndication = zohoData.Indication || "";
+    const sapIndication = zohoData.Indication || "";
     const sapMailInvoiceRepository = zohoData.Mail_invoice_repository || "";
     const sapInvoiceEmails = zohoData.Invoicing_emails || "";
     return `
@@ -83,6 +83,7 @@ const buildSapXmlPayload = (zohoData, accountId, sapQuoteId = null) => {
       <glob:CustomerQuoteBundleMaintainRequest_sync>
          <CustomerQuote actionCode="02">
             <ID>${sapQuoteId}</ID>
+            <PostingDate>${sapValidityStart}</PostingDate>
             <Name languageCode="EN">${sapDescription}</Name>
             <CashDiscountTermsCode>${sapPaymentTerms}</CashDiscountTermsCode>
 
@@ -106,7 +107,7 @@ const buildSapXmlPayload = (zohoData, accountId, sapQuoteId = null) => {
             <a3z:STANDBY>${sapStandBy}</a3z:STANDBY>
             
             ${(sapValidityStart || sapValidityEnd) ? `
-            <ValidityPeriodPeriodTerms actionCode="04">
+            <ValidityPeriodPeriodTerms actionCode="02">
                ${sapValidityStart ? `<StartDateTime>${sapValidityStart}</StartDateTime>` : ""}
                ${sapValidityEnd ? `<EndDateTime>${sapValidityEnd}</EndDateTime>` : ""}
             </ValidityPeriodPeriodTerms>` : ""}
@@ -115,7 +116,7 @@ const buildSapXmlPayload = (zohoData, accountId, sapQuoteId = null) => {
             <a3z:Sustanciaactiva1><![CDATA[${sapActiveSubstance}]]></a3z:Sustanciaactiva1>
             <a3z:Repositoriocorreosdefacturacin><![CDATA[${sapMailInvoiceRepository}]]></a3z:Repositoriocorreosdefacturacin>
             <a3z:Correosdefacturacin><![CDATA[${sapInvoiceEmails}]]></a3z:Correosdefacturacin>
-            
+            ${sapIndication ? `<a3z:Indicacin><![CDATA[${sapIndication}]]></a3z:Indicacin>` : ""}
             <a3z:BackgroundBymeans><![CDATA[${sapBackgroundIntroES}]]></a3z:BackgroundBymeans>
             <a3z:AgreedfeessalesquoteEN><![CDATA[${sapAgreedFeesEN}]]></a3z:AgreedfeessalesquoteEN>
             <a3z:Footnotes1><![CDATA[${sapEndNotesES}]]></a3z:Footnotes1>
@@ -135,7 +136,6 @@ const buildSapXmlPayload = (zohoData, accountId, sapQuoteId = null) => {
   const sapContactName = zohoData.Contact_Name?.name || "";
   const sapDescription = zohoData.Deal_Name;
   const sapPaymentTerms = getCode("PaymentTerms", zohoData.Payment_Terms);
-  // --- CREATE FLOW (AS PROVIDED BY USER) ---
   const sapPostingDate = zohoData.Creation_Date
     ? `${zohoData.Creation_Date}T00:00:00Z`
     : new Date().toISOString();
