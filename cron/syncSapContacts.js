@@ -54,7 +54,7 @@ const syncContacts = async () => {
     let created = 0, updated = 0, skipped = 0, failed = 0;
 
     for (const sapContact of sapContacts) {
-        const internalId = sapContact.InternalID?._ || sapContact.InternalID || '(unknown)';
+        const internalId = sapContact.BusinessPartnerContactInternalID?._ || sapContact.BusinessPartnerContactInternalID || sapContact.InternalID?._ || sapContact.InternalID || '(unknown)';
 
         try {
             // ── 1. Map SAP → Zoho fields ─────────────────────────────────────

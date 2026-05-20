@@ -236,3 +236,6 @@
 [2026-05-13 20:59:18] ERROR: ❌ Failed to update Zoho Deal 627875000005514216: Failed to update deal 627875000005514216: Request failed with status code 400. Details: {"data":[{"code":"INVALID_DATA","details":{"expected_data_type":"date","api_name":"Acceptance_Date","json_path":"$.data[0].Acceptance_Date"},"message":"invalid data","status":"error"}]}
 [2026-05-14 15:55:45] ERROR: CRITICAL CRON ERROR: Failed to run COQL query: Request failed with status code 400
 [2026-05-14 15:56:13] ERROR: CRITICAL CRON ERROR: Failed to run COQL query: Request failed with status code 400
+[2026-05-19 17:56:24] ERROR: ❌ [Contacts Sync] Failed for SAP Contact (unknown): Request failed with status code 400
+[2026-05-19 17:56:32] ERROR: ❌ [Contacts Sync] Failed for SAP Contact (unknown): Request failed with status code 400
+[2026-05-20 11:41:46] ERROR: ❌ [Contacts Sync] Failed for SAP Contact 624: Request failed with status code 400

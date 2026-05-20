@@ -1,3 +1,61 @@
+const SAP_MAPS = require('../constants/sapMaps');
+
+// ISO-3166-1 alpha-2 country codes mapped to Zoho picklist country names
+const COUNTRY_MAP = {
+    'AL': 'Albania',
+    'AD': 'Andorra',
+    'AT': 'Austria',
+    'BY': 'Belarus',
+    'BE': 'Belgium',
+    'BA': 'Bosnia and Herzegovina',
+    'BG': 'Bulgaria',
+    'HR': 'Croatia',
+    'CY': 'Cyprus',
+    'CZ': 'Czechia (Czech Republic)',
+    'DK': 'Denmark',
+    'EE': 'Estonia',
+    'FI': 'Finland',
+    'FR': 'France',
+    'DE': 'Germany',
+    'GR': 'Greece',
+    'HU': 'Hungary',
+    'IS': 'Iceland',
+    'IE': 'Ireland',
+    'IT': 'Italy',
+    'XK': 'Kosovo',
+    'LV': 'Latvia',
+    'LI': 'Liechtenstein',
+    'LT': 'Lithuania',
+    'LU': 'Luxembourg',
+    'MT': 'Malta',
+    'MD': 'Moldova',
+    'MC': 'Monaco',
+    'ME': 'Montenegro',
+    'NL': 'Netherlands',
+    'MK': 'North Macedonia',
+    'NO': 'Norway',
+    'PL': 'Poland',
+    'PT': 'Portugal',
+    'RO': 'Romania',
+    'RU': 'Russia',
+    'SM': 'San Marino',
+    'RS': 'Serbia',
+    'SK': 'Slovakia',
+    'SI': 'Slovenia',
+    'ES': 'Spain',
+    'SE': 'Sweden',
+    'CH': 'Switzerland',
+    'UA': 'Ukraine',
+    'GB': 'United Kingdom',
+    'VA': 'Vatican City',
+    'CR': 'Costa Rica',
+    'US': 'Estados Unidos',
+    'JP': 'Japón',
+    'AR': 'Argentina',
+    'CN': 'China',
+    'BR': 'Brasil'
+};
+
 /**
  * Utility: safely extracts a string value from an xml2js parsed field.
  * Handles both plain strings and { _: 'value', $: {...} } objects.
@@ -7,6 +65,12 @@ const getVal = (field) => {
     if (typeof field === 'object') return field._ !== undefined ? String(field._).trim() : null;
     return String(field).trim() || null;
 };
+
+// Inverted PaymentTerms map (SAP Code -> Zoho Picklist Value)
+const PAYMENT_TERMS_MAP = {};
+for (const [zohoVal, sapCode] of Object.entries(SAP_MAPS.PaymentTerms || {})) {
+    PAYMENT_TERMS_MAP[sapCode] = zohoVal;
+}
 
 /**
  * Maps a raw SAP Customer (Account) object to Zoho Account fields.
@@ -38,13 +102,39 @@ const mapSapCustomerToZohoAccount = (sapCustomer) => {
     // Fallback: DunAndBradstreet number as a unique identifier
     if (!taxId) taxId = getVal(sapCustomer.DunAndBradstreetNumberID) || null;
 
-    // Address — inside AddressInformation.Address.PostalAddress
-    const addr = sapCustomer.AddressInformation?.Address?.PostalAddress;
+    // Extract default address block safely
+    const addrInfo = sapCustomer.AddressInformation;
+    let mainAddress = null;
+    if (addrInfo) {
+        const arr = Array.isArray(addrInfo) ? addrInfo : [addrInfo];
+        // Prefer XXDEFAULT or the first element
+        mainAddress = arr.find(a => a.AddressUsage?.AddressUsageCode === 'XXDEFAULT') || arr[0];
+    }
+
+    const addr = mainAddress?.Address?.PostalAddress;
     const street  = getVal(addr?.StreetName);
     const city    = getVal(addr?.CityName);
     const state   = getVal(addr?.RegionCode);
     const country = getVal(addr?.CountryCode);
     const zip     = getVal(addr?.StreetPostalCode);
+
+    // Combine address fields into a single Billing_Address block
+    const billingAddress = [street, city, state, zip, country].filter(Boolean).join('\n');
+
+    // Email — EmailURI inside primary address block
+    const email = getVal(mainAddress?.Address?.EmailURI);
+
+    // Map 2-letter SAP CountryCode to Zoho's picklist country name
+    const countryName = country ? (COUNTRY_MAP[country.toUpperCase()] || country) : null;
+
+    // Map SAP CorrespondenceLanguageCode to Zoho's picklist Language (Spanish or English)
+    const langCode = getVal(mainAddress?.Address?.CorrespondenceLanguageCode);
+    let languageName = null;
+    if (langCode) {
+        const lower = langCode.toLowerCase();
+        if (lower === 'es') languageName = 'Spanish';
+        else if (lower === 'en') languageName = 'English';
+    }
 
     // Industry / Sector — CategoryCode in SAP (numeric), map if needed
     const industry = getVal(sapCustomer.IndustrySectorCode)
@@ -54,21 +144,38 @@ const mapSapCustomerToZohoAccount = (sapCustomer) => {
     // SAP internal Customer ID
     const sapCustomerId = getVal(sapCustomer.InternalID);
 
-    // Last modified date from SystemAdministrativeData
-    const lastModified = getVal(sapCustomer.SystemAdministrativeData?.LastChangeDateTime)
-        || getVal(sapCustomer.SystemAdministrativeData?.CreationDateTime);
+    // Customer Status from LifeCycleStatusCode
+    const lifeCycleStatusCode = getVal(sapCustomer.LifeCycleStatusCode);
+    const statusMap = {
+        "2": "Active",
+        "3": "Block",
+        "4": "Inactive"
+    };
+    const customerStatus = statusMap[lifeCycleStatusCode] || null;
+
+    // Payment Terms (CashDiscountTermsCode) from SalesArrangement
+    const salesArr = sapCustomer.SalesArrangement;
+    let cashDiscountTermsCode = null;
+    if (salesArr) {
+        const arr = Array.isArray(salesArr) ? salesArr : [salesArr];
+        const found = arr.find(s => s.CashDiscountTermsCode);
+        if (found) {
+            cashDiscountTermsCode = getVal(found.CashDiscountTermsCode);
+        }
+    }
+    const paymentTerms = cashDiscountTermsCode ? PAYMENT_TERMS_MAP[cashDiscountTermsCode] : null;
 
     return {
-        Account_Name:      orgName,
-        Tax_ID:            taxId,
-        Billing_Street:    street,
-        Billing_City:      city,
-        Billing_State:     state,
-        Billing_Country:   country,
-        Billing_Code:      zip,
-        Industry:          industry,
-        SAP_Customer_ID:   sapCustomerId,
-        SAP_Last_Modified: lastModified,
+        Account_Name:        orgName,
+        Tax_ID:              taxId,
+        Billing_Address:     billingAddress,
+        Main_email:          email,
+        Country:             countryName,
+        Language:            languageName,
+        Industry:            industry,
+        SAP_Customer_ID:     sapCustomerId,
+        Payment_Terms:       paymentTerms,
+        Customer_status_SAP: customerStatus,
     };
 };
 
@@ -98,10 +205,6 @@ const mapSapContactToZohoContact = (sapContact) => {
     // Related Account Tax ID — passed through by the service
     const relatedAccountTaxId = sapContact._parentTaxId;
 
-    // Last modified date is not directly on the embedded contact, 
-    // but the parent customer date is used if needed.
-    const lastModified = getVal(sapContact.LastChangedDateTime); 
-
     return {
         First_Name:        firstName,
         Last_Name:         lastName || firstName || 'Unknown',
@@ -110,7 +213,6 @@ const mapSapContactToZohoContact = (sapContact) => {
         Title:             jobTitle,
         Department:        department,
         SAP_Contact_ID:    sapContactId,
-        SAP_Last_Modified: lastModified,
         // Internal use — not sent to Zoho directly
         _relatedAccountTaxId: relatedAccountTaxId,
     };
