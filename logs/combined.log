@@ -13425,3 +13425,6 @@ Reconciling Deal 931793000005514192 (SAP Quote: 10189)...
 [2026-05-19 14:04:36] INFO: Server running. Trigger sync at http://localhost:3000/api/webhook/zoho-deal
 [2026-05-19 14:08:42] INFO: Server running. Trigger sync at http://localhost:3000/api/webhook/zoho-deal
 [2026-05-19 14:10:17] INFO: Server running. Trigger sync at http://localhost:3000/api/webhook/zoho-deal
+[2026-05-20 13:52:21] INFO: Server running. Trigger sync at http://localhost:3000/api/webhook/zoho-deal
+[2026-05-20 13:57:50] INFO: Server running. Trigger sync at http://localhost:3000/api/webhook/zoho-deal
+[2026-05-20 15:17:36] INFO: Server running. Trigger sync at http://localhost:3000/api/webhook/zoho-deal

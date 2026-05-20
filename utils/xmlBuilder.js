@@ -43,6 +43,7 @@ const buildSapXmlPayload = (zohoData, accountId, sapQuoteId = null) => {
   if (sapQuoteId) {
     const subformItems = zohoData.Product_Details || [];
     const sapZohoOwnerName = zohoData.Owner?.name || "";
+    const sapZohoCode = zohoData.Deal_Code || "";
     const sapContactName = zohoData.Contact_Name?.name || "";
     const sapDescription = zohoData.Deal_Name;
     const sapPaymentTerms = getCode("PaymentTerms", zohoData.Payment_Terms);
@@ -91,7 +92,7 @@ const buildSapXmlPayload = (zohoData, accountId, sapQuoteId = null) => {
                <PartyID>${sapSalesUnit}</PartyID>
             </SalesUnitParty>
             <SubmitIndicator>true</SubmitIndicator>
-            <a3z:DEALreferenceZOHO><![CDATA[${zohoData.id} ${sapZohoOwnerName}]]></a3z:DEALreferenceZOHO>
+            <a3z:DEALreferenceZOHO>${sapZohoCode} + ${sapZohoOwnerName}</a3z:DEALreferenceZOHO>
             <a3z:Personadecontacto>${sapContactName}</a3z:Personadecontacto>
             ${sapEstimatedTimeline ? `<a3z:DuracionProyectoEstimada>${sapEstimatedTimeline}</a3z:DuracionProyectoEstimada>` : ""}
             <a3z:Discount>${subformItems.some(item => (item.Discount && parseFloat(item.Discount) > 0)) ? "true" : "false"}</a3z:Discount>
@@ -146,6 +147,7 @@ const buildSapXmlPayload = (zohoData, accountId, sapQuoteId = null) => {
   const sapTotalAmount = parseFloat(zohoData.Estimated_Revenue || 0).toFixed(1);
   
   const sapBackgroundIntroES = zohoData.Background_intro_ES || "";
+  const sapZohoCode = zohoData.Deal_Code || "";
   const sapAgreedFeesEN = zohoData.Agreed_fees_sales_quote_EN || "";
   const sapEndNotesES = zohoData.End_notes_sales_quote_ES || "";
   const sapEndNotesEN = zohoData.End_notes_sales_quote_EN || "";
@@ -274,7 +276,7 @@ const buildSapXmlPayload = (zohoData, accountId, sapQuoteId = null) => {
             
             ${itemsXml}
             ${sapProbability ? `<a3z:ProbabilidadOfertaAsphalion>${sapProbability}</a3z:ProbabilidadOfertaAsphalion>` : ""}
-            <a3z:DEALreferenceZOHO>${zohoData.id} " + " ${sapZohoOwnerName}</a3z:DEALreferenceZOHO>
+            <a3z:DEALreferenceZOHO>${sapZohoCode} + ${sapZohoOwnerName}</a3z:DEALreferenceZOHO>
             <a3z:Personadecontacto>${sapContactName}</a3z:Personadecontacto>
             <a3z:DuracionProyectoEstimada>${sapEstimatedTimeline}</a3z:DuracionProyectoEstimada>
             <a3z:Discount>${subformItems.some(item => (item.Discount && parseFloat(item.Discount) > 0)) ? "true" : "false"}</a3z:Discount>
