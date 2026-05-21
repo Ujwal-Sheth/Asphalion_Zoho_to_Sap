@@ -3,6 +3,9 @@ const express = require('express');
 const connectDB = require('./config/db');
 const bodyParser = require('body-parser');
 const { runWeeklyReconciliation } = require('./cron/weeklySyncJob');
+// Run Accounts + Contacts sync module (registers periodic job and exposes a runner)
+const { runCrmSync } = require('./cron/accountContactSyncJob');
+const { writeSyncState } = require('./utils/accountContactSyncState');
 const syncController = require('./controllers/syncController');
 const sharepointController = require('./controllers/sharepointController');
 const { authenticateWebhook } = require('./middlewares/authMiddleware');
@@ -45,4 +48,16 @@ const logger = require('./utils/logger');
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     logger.info(`Server running. Trigger sync at http://localhost:${PORT}/api/webhook/zoho-deal`);
+});
+
+// Run Accounts+Contacts sync once on server start (non-blocking)
+setImmediate(() => {
+    if (process.env.CRM_SYNC_FULL_ON_START === 'true') {
+        logger.info('Forcing full CRM sync on startup by resetting last sync state.');
+        writeSyncState({ accountsLastSync: null, contactsLastSync: null });
+    }
+
+    runCrmSync().catch(err => {
+        logger.error(`Failed to run initial CRM sync: ${err && err.message ? err.message : err}`);
+    });
 });

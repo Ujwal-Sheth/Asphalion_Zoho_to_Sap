@@ -1,6 +1,6 @@
 const logger                              = require('../utils/logger');
 const { getSapContacts }                  = require('../services/sapAccountContactService');
-const { findAccountByTaxId, findContactByEmail, upsertZohoContact } = require('../services/zohoAccountContactService');
+const { findAccountByTaxId, findContactByEmail, findContactBySapId, upsertZohoContact } = require('../services/zohoAccountContactService');
 const { mapSapContactToZohoContact }      = require('../utils/accountContactMapper');
 const { readSyncState, writeSyncState }   = require('../utils/accountContactSyncState');
 
@@ -81,15 +81,24 @@ const syncContacts = async () => {
                     zohoPayload.Account_Name = { id: zohoAccount.id, name: zohoAccount.Account_Name };
                     logger.info(`🔗 [Contacts Sync] Linked contact ${internalId} to Zoho Account ${zohoAccount.id}`);
                 } else {
-                    logger.warn(`⚠️  [Contacts Sync] No Zoho Account found for Tax ID "${_relatedAccountTaxId}" — contact will be unlinked.`);
+                    logger.warn(`⚠️  [Contacts Sync] No Zoho Account found for Tax ID "${_relatedAccountTaxId}" — contact will not be linked.`);
                 }
             }
 
-            // ── 5. Search Zoho for existing Contact by Email ──────────────────
-            const existing = await withRetry(
-                () => findContactByEmail(mapped.Email),
-                `findContactByEmail(${mapped.Email})`
-            );
+            // ── 5. Prefer matching Zoho Contact by SAP_Contact_ID, then fall back to Email ──
+            let existing = null;
+            if (mapped.SAP_Contact_ID) {
+                existing = await withRetry(
+                    () => findContactBySapId(mapped.SAP_Contact_ID),
+                    `findContactBySapId(${mapped.SAP_Contact_ID})`
+                );
+            }
+            if (!existing) {
+                existing = await withRetry(
+                    () => findContactByEmail(mapped.Email),
+                    `findContactByEmail(${mapped.Email})`
+                );
+            }
 
             // ── 6. Upsert ─────────────────────────────────────────────────────
             const { id: zohoId, action } = await withRetry(

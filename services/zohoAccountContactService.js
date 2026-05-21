@@ -106,6 +106,16 @@ const findContactByEmail = async (email) => {
 };
 
 /**
+ * Search Zoho Contacts by SAP_Contact_ID field.
+ * @param {string} sapContactId
+ * @returns {Promise<Object|null>}
+ */
+const findContactBySapId = async (sapContactId) => {
+    if (!sapContactId) return null;
+    return searchByField('Contacts', 'SAP_Contact_ID', sapContactId);
+};
+
+/**
  * Create or update a Zoho Contact.
  * @param {Object} payload - Zoho field map
  * @param {string|null} existingId - Existing Zoho record ID (for update)
@@ -124,6 +134,7 @@ module.exports = {
     findAccountByTaxId,
     upsertZohoAccount,
     findContactByEmail,
+    findContactBySapId,
     upsertZohoContact,
     searchByField,
 };
