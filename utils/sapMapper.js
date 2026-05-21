@@ -146,6 +146,7 @@ const mapSapItemToZohoSubformItem = (sapItem) => {
         Unit_Price: price ? parseFloat(price.DecimalValue) : 0,
         Discount: discountVal,
         Optional: getVal(sapItem.OptionalIndicator) === 'true' || sapItem.OptionalIndicator === true,
+        Footnotes_Ingles1: getVal(sapItem.NotasalpieEN),
     };
 };
 
