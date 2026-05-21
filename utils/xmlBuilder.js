@@ -190,6 +190,7 @@ const buildSapXmlPayload = (zohoData, accountId, sapQuoteId = null) => {
       const sapProcessingTypeCode = getCode("PricingType", item.Pricing_Type);
       const sapAccordingToFee = (item.According_to_Fee === true || item.According_to_Fee === "true") ? "true" : "false";
       const sapOptional = (item.Optional === true || item.Optional === "true") ? "true" : "false";
+      const sapFootnotesEnglish = item.Footnotes_Ingles1 || item.Footnotes_Ingles || "";
       
       if (productCode) {
         itemsXml += `
@@ -234,7 +235,7 @@ const buildSapXmlPayload = (zohoData, accountId, sapQuoteId = null) => {
                     
                     <a3z:EstimacionIngresos currencyCode="EUR">${sapTotalAmount}</a3z:EstimacionIngresos>
                     <a3z:Segntarifa>${sapAccordingToFee}</a3z:Segntarifa>
-                   
+                    ${sapFootnotesEnglish ? `<a3z:NotasalpieEN><![CDATA[${sapFootnotesEnglish}]]></a3z:NotasalpieEN>` : ""}
                     <a3z:Ingresos0>false</a3z:Ingresos0>
                 </Items>
                 `;
