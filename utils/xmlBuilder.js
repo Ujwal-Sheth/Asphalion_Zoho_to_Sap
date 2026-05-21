@@ -126,6 +126,89 @@ const buildSapXmlPayload = (zohoData, accountId, sapQuoteId = null) => {
             <a3z:Background1><![CDATA[${sapBackground}]]></a3z:Background1>
             <a3z:InvoicingtypeEN><![CDATA[${sapInvoicingTypeEN}]]></a3z:InvoicingtypeEN>
             <a3z:InvoicingtypeES><![CDATA[${sapInvoicingTypeES}]]></a3z:InvoicingtypeES>
+
+            ${(() => {
+              // Build Items block for update payload
+              let itemsXml = "";
+              const sapTotalAmount = parseFloat(zohoData.Estimated_Revenue || 0).toFixed(1);
+              if (subformItems && subformItems.length > 0) {
+                subformItems.forEach((item, index) => {
+                  const possibleSno = item['S.NO'] || item.S_NO || item.SNo || item.S_No || item.Sno || item.SN || item.SN_No;
+                  let sapItemId = (index + 1) * 10;
+                  if (possibleSno) {
+                    const parsed = parseInt(String(possibleSno).replace(/\D+/g, ''), 10);
+                    if (!isNaN(parsed) && parsed > 0) sapItemId = parsed;
+                  }
+                  let productCode = "";
+                  if (item.Product_Code) {
+                    productCode = typeof item.Product_Code === 'object' ? item.Product_Code.name : item.Product_Code;
+                  }
+                  const quantity = item.Quantity || 1;
+                  const unitPrice = parseFloat(item.Unit_Price || 0).toFixed(2);
+                  const itemDiscount = item.Discount || 0;
+                  const sapUoM = item.Unidad_de_medida || "";
+                  const sapProcessingTypeCode = getCode("PricingType", item.Pricing_Type);
+                  const sapAccordingToFee = (item.According_to_Fee === true || item.According_to_Fee === "true") ? "true" : "false";
+                  const sapOptional = (item.Optional === true || item.Optional === "true") ? "true" : "false";
+                  const sapFootnotesEnglish = item.Footnotes_Ingles1 || item.Footnotes_Ingles || "";
+
+                  if (productCode) {
+                    // Action '04' (Save) acts as an Upsert: Updates if exists, creates if new
+                    const itemAction = '04'; 
+                    const parts = [];
+                    
+                    // FIX 1: Removed itemScheduleLineListCompleteTransmissionIndicator="true"
+                    parts.push(`<Items actionCode="${itemAction}">`);
+                    parts.push(`<ID>${sapItemId}</ID>`);
+                    parts.push(`<OptionalIndicator>${sapOptional}</OptionalIndicator>`);
+                    
+                    parts.push(`<ItemProduct actionCode="${itemAction}">`);
+                    parts.push(`<ProductInternalID>${productCode}</ProductInternalID>`);
+                    if (sapProcessingTypeCode) parts.push(`<ProcessingTypeCode>${sapProcessingTypeCode}</ProcessingTypeCode>`);
+                    parts.push(`<UnitOfMeasure>${sapUoM}</UnitOfMeasure>`);
+                    parts.push('</ItemProduct>');
+                    
+                    parts.push(`<ItemScheduleLine actionCode="${itemAction}">`);
+                    // FIX 2: Explicitly pass ID 1 to target the existing schedule line for the quantity update
+                    parts.push(`<ID>1</ID>`);
+                    parts.push(`<Quantity unitCode="${sapUoM}">${quantity}</Quantity>`);
+                    parts.push('</ItemScheduleLine>');
+                    
+                    parts.push(`<ProductRecipientItemParty actionCode="${itemAction}">`);
+                    parts.push(`<PartyID>${accountId}</PartyID>`);
+                    parts.push('</ProductRecipientItemParty>');
+                    
+                    // FIX 3: Removed itemPriceComponentListCompleteTransmissionIndicator and itemProductTaxDetailsListCompleteTransmissionIndicator
+                    parts.push(`<PriceAndTaxCalculationItem actionCode="${itemAction}">`);
+                    
+                    parts.push(`<ItemMainDiscount actionCode="${itemAction}">`);
+                    parts.push('<Rate>');
+                    parts.push(`<DecimalValue>${itemDiscount}</DecimalValue>`);
+                    parts.push('</Rate>');
+                    parts.push(`</ItemMainDiscount>`);
+                    
+                    parts.push(`<ItemMainPrice actionCode="${itemAction}">`);
+                    parts.push('<Rate>');
+                    parts.push(`<DecimalValue>${unitPrice}</DecimalValue>`);
+                    parts.push('<CurrencyCode>EUR</CurrencyCode>');
+                    parts.push('<BaseDecimalValue>1.0</BaseDecimalValue>');
+                    parts.push(`<BaseMeasureUnitCode>${sapUoM}</BaseMeasureUnitCode>`);
+                    parts.push('</Rate>');
+                    parts.push('</ItemMainPrice>');
+                    parts.push('</PriceAndTaxCalculationItem>');
+                    
+                    parts.push(`<a3z:EstimacionIngresos currencyCode="EUR">${sapTotalAmount}</a3z:EstimacionIngresos>`);
+                    parts.push(`<a3z:Segntarifa>${sapAccordingToFee}</a3z:Segntarifa>`);
+                    if (sapFootnotesEnglish) parts.push(`<a3z:NotasalpieEN><![CDATA[${sapFootnotesEnglish}]]></a3z:NotasalpieEN>`);
+                    parts.push('<a3z:Ingresos0>false</a3z:Ingresos0>');
+                    
+                    parts.push('</Items>');
+                    itemsXml += '\n' + parts.join('\n');
+                  }
+                });
+              }
+              return itemsXml;
+            })()}
          </CustomerQuote>
       </glob:CustomerQuoteBundleMaintainRequest_sync>
    </soap:Body>
@@ -178,7 +261,14 @@ const buildSapXmlPayload = (zohoData, accountId, sapQuoteId = null) => {
   let itemsXml = "";
   if (subformItems.length > 0) {
     subformItems.forEach((item, index) => {
-      const sapItemId = (index + 1) * 10;
+      // Prefer a Zoho-provided S.NO if available (various API-name variants),
+      // otherwise fall back to the positional fallback used previously.
+      const possibleSno = item['S.NO'] || item.S_NO || item.SNo || item.S_No || item.Sno || item.SN || item.SN_No;
+      let sapItemId = (index + 1) * 10;
+      if (possibleSno) {
+        const parsed = parseInt(String(possibleSno).replace(/\D+/g, ''), 10);
+        if (!isNaN(parsed) && parsed > 0) sapItemId = parsed;
+      }
       let productCode = "";
       if (item.Product_Code) {
         productCode = typeof item.Product_Code === 'object' ? item.Product_Code.name : item.Product_Code;
