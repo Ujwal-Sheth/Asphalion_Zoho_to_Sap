@@ -13,7 +13,7 @@ const getSalesUnit = (categoryText) => {
     CMC: "1101", // AS_CMC
     DW: "1150", // AS_DW
     MedTech: "1130", // AS_MD
-    Medtech: "1130",
+    Medtech: "1130", // AS_MD
     LCM: "1102", // AS_LCM
     PV: "1160", // AS_PV
     "Business Development": "1310", // AS_BD
