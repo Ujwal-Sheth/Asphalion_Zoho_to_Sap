@@ -1,23 +1,11 @@
+require('dotenv').config();
 const axios = require('axios');
-const { parseSapXml } = require('../utils/xmlParser');
+const { parseSapXml } = require('../utils/xmlParser'); // Adjust path as needed
+const logger = require('../utils/logger');             // Adjust path as needed
 
-/**
- * Fetches a list of SAP Customers (Accounts) using the Customer Query service.
- * Utilizes SAP Cursor (LastReturnedObjectID) for reliable pagination.
- */
-const getSapCustomers = async (changedAfter = null) => {
-    const dateFilter = changedAfter
-        ? `<SelectionByLastChangedDateTime>
-                <IntervalBoundaryTypeCode>3</IntervalBoundaryTypeCode>
-                <LowerBoundaryDateTime>${changedAfter}</LowerBoundaryDateTime>
-           </SelectionByLastChangedDateTime>`
-        : '';
-
-    const allCustomers = [];
-    const pageSize = 100; // Safe batch size for full XML payloads
-    const seenIds = new Set();
-    
-    // SAP Cursor for pagination
+const countSapAccounts = async () => {
+    logger.info("Starting lightweight count for SAP Accounts...");
+    let totalAccounts = 0;
     let lastObjectId = null;
     let hasMore = true;
 
@@ -37,15 +25,9 @@ const getSapCustomers = async (changedAfter = null) => {
                        <IntervalBoundaryTypeCode>1</IntervalBoundaryTypeCode>
                        <LowerBoundaryInternalID>*</LowerBoundaryInternalID>
                     </SelectionByInternalID>
-                    <SelectionByRoleCode>
-                       <InclusionExclusionCode>I</InclusionExclusionCode>
-                       <IntervalBoundaryTypeCode>1</IntervalBoundaryTypeCode>
-                       <LowerBoundaryRoleCode>CRM000</LowerBoundaryRoleCode>
-                    </SelectionByRoleCode>
-                    ${dateFilter}
                  </CustomerSelectionByIdentification>
                  <ProcessingConditions>
-                    <QueryHitsMaximumNumberValue>${pageSize}</QueryHitsMaximumNumberValue>
+                    <QueryHitsMaximumNumberValue>500</QueryHitsMaximumNumberValue>
                     <QueryHitsUnlimitedIndicator>false</QueryHitsUnlimitedIndicator>
                     ${paginationNode}
                  </ProcessingConditions>
@@ -69,19 +51,12 @@ const getSapCustomers = async (changedAfter = null) => {
             const resp = parsed?.Envelope?.Body?.CustomerByIdentificationResponse_sync;
             const customers = resp?.Customer;
             
-            if (!customers) break;
-
-            const custArr = Array.isArray(customers) ? customers : [customers];
-            
-            for (const c of custArr) {
-                const id = c?.InternalID?._ || c?.InternalID || null;
-                if (id && !seenIds.has(String(id))) {
-                    seenIds.add(String(id));
-                    allCustomers.push(c);
-                }
+            if (customers) {
+                const custArr = Array.isArray(customers) ? customers : [customers];
+                totalAccounts += custArr.length;
+                process.stdout.write(`\rCounting Accounts... ${totalAccounts}`);
             }
 
-            // Extract cursor for the next page
             const conditions = resp?.ProcessingConditions;
             const moreHits = conditions?.MoreHitsAvailableIndicator;
             hasMore = (typeof moreHits === 'object' ? moreHits._ : String(moreHits)).toLowerCase() === 'true';
@@ -91,37 +66,19 @@ const getSapCustomers = async (changedAfter = null) => {
                 lastObjectId = typeof returnedObjId === 'object' ? returnedObjId._ : String(returnedObjId);
                 if (!lastObjectId || lastObjectId === 'undefined') break;
             }
-
         } catch (err) {
-            throw new Error(`SAP Customer fetch failed: ${err.response?.data || err.message}`);
+            logger.error(`\nCount failed: ${err.message}`);
+            break;
         }
     }
-
-    return allCustomers;
+    
+    logger.info(`\n✅ Total SAP Accounts found: ${totalAccounts}`);
+    return totalAccounts;
 };
 
-/**
- * Fetches SAP Contacts via the QueryCustomerIn service (embedded contacts).
- * Utilizes SAP Cursor (LastReturnedObjectID) for reliable pagination.
- */
-const getSapContacts = async (changedAfter = null) => {
-    const dateFilter = changedAfter
-        ? `<SelectionByLastChangedDateTime>
-                <InclusionExclusionCode>I</InclusionExclusionCode>
-                <IntervalBoundaryTypeCode>3</IntervalBoundaryTypeCode>
-                <LowerBoundaryLastChangedDateTime>${changedAfter}</LowerBoundaryLastChangedDateTime>
-           </SelectionByLastChangedDateTime>`
-        : `<SelectionByInternalID>
-                <InclusionExclusionCode>I</InclusionExclusionCode>
-                <IntervalBoundaryTypeCode>1</IntervalBoundaryTypeCode>
-                <LowerBoundaryInternalID>*</LowerBoundaryInternalID>
-           </SelectionByInternalID>`;
-
-    const allContacts = [];
-    const pageSize = 50; // Conservative size to handle massive embedded contact payloads
-    const seenCustomerIds = new Set();
-    
-    // SAP Cursor for pagination
+const countSapContacts = async () => {
+    logger.info("\nStarting lightweight count for SAP Contacts...");
+    let totalContacts = 0;
     let lastObjectId = null;
     let hasMore = true;
 
@@ -136,13 +93,17 @@ const getSapContacts = async (changedAfter = null) => {
            <soapenv:Body>
               <glob:CustomerByElementsQuery_sync>
                  <CustomerSelectionByElements>
-                    ${dateFilter}
+                    <SelectionByInternalID>
+                       <InclusionExclusionCode>I</InclusionExclusionCode>
+                       <IntervalBoundaryTypeCode>1</IntervalBoundaryTypeCode>
+                       <LowerBoundaryInternalID>*</LowerBoundaryInternalID>
+                    </SelectionByInternalID>
                  </CustomerSelectionByElements>
                  <CustomerRequestedElements>
                     <ContactPersonTransmissionRequestCode>1</ContactPersonTransmissionRequestCode>
                  </CustomerRequestedElements>
                  <ProcessingConditions>
-                    <QueryHitsMaximumNumberValue>${pageSize}</QueryHitsMaximumNumberValue>
+                    <QueryHitsMaximumNumberValue>100</QueryHitsMaximumNumberValue>
                     <QueryHitsUnlimitedIndicator>false</QueryHitsUnlimitedIndicator>
                     ${paginationNode}
                  </ProcessingConditions>
@@ -166,41 +127,21 @@ const getSapContacts = async (changedAfter = null) => {
             const resp = parsed?.Envelope?.Body?.CustomerByElementsResponse_sync;
             const customers = resp?.Customer;
             
-            if (!customers) break;
-            
-            const customerArr = Array.isArray(customers) ? customers : [customers];
-            
-            for (const cust of customerArr) {
-                const cid = cust?.InternalID?._ || cust?.InternalID || null;
-                if (cid && !seenCustomerIds.has(String(cid))) {
-                    seenCustomerIds.add(String(cid));
-                    
+            if (customers) {
+                const customerArr = Array.isArray(customers) ? customers : [customers];
+                let batchContactCount = 0;
+                
+                for (const cust of customerArr) {
                     if (cust.ContactPerson) {
                         const contacts = Array.isArray(cust.ContactPerson) ? cust.ContactPerson : [cust.ContactPerson];
-                        
-                        // Extract parent Tax ID for Zoho linking
-                        const taxEntry = cust.TaxNumber;
-                        let parentTaxId = null;
-                        if (taxEntry) {
-                            const taxArr = Array.isArray(taxEntry) ? taxEntry : [taxEntry];
-                            const vatEntry = taxArr.find(t => {
-                                const code = t.TaxIdentificationNumberTypeCode;
-                                return (typeof code === 'object' ? code._ : String(code || '')) === '5';
-                            }) || taxArr[0];
-                            const partyTaxId = vatEntry?.PartyTaxID;
-                            parentTaxId = partyTaxId ? (typeof partyTaxId === 'object' ? partyTaxId._ : String(partyTaxId)).trim() : null;
-                        }
-                        if (!parentTaxId) parentTaxId = (typeof cust.DunAndBradstreetNumberID === 'object' ? cust.DunAndBradstreetNumberID?._ : cust.DunAndBradstreetNumberID) || null;
-
-                        contacts.forEach(contact => {
-                            contact._parentTaxId = parentTaxId;
-                            allContacts.push(contact);
-                        });
+                        batchContactCount += contacts.length;
                     }
                 }
+                
+                totalContacts += batchContactCount;
+                process.stdout.write(`\rCounting Contacts... ${totalContacts}`);
             }
 
-            // Extract cursor for the next page
             const conditions = resp?.ProcessingConditions;
             const moreHits = conditions?.MoreHitsAvailableIndicator;
             hasMore = (typeof moreHits === 'object' ? moreHits._ : String(moreHits)).toLowerCase() === 'true';
@@ -210,13 +151,20 @@ const getSapContacts = async (changedAfter = null) => {
                 lastObjectId = typeof returnedObjId === 'object' ? returnedObjId._ : String(returnedObjId);
                 if (!lastObjectId || lastObjectId === 'undefined') break;
             }
-
         } catch (err) {
-            throw new Error(`SAP Contact fetch (via Customer) failed: ${err.message}`);
+            logger.error(`\nCount failed: ${err.message}`);
+            break;
         }
     }
-
-    return allContacts;
+    
+    logger.info(`\n✅ Total SAP Contacts found: ${totalContacts}`);
+    return totalContacts;
 };
 
-module.exports = { getSapCustomers, getSapContacts };
+const run = async () => {
+    await countSapAccounts();
+    await countSapContacts();
+    process.exit(0);
+};
+
+run();

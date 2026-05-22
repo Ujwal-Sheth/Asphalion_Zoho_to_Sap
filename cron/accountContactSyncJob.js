@@ -20,8 +20,8 @@ const runCrmSync = async () => {
 
 // ── Scheduler ──────────────────────────────────────────────────────────────
 // Runs every 30 minutes
-cron.schedule('*/30 * * * *', () => {
-    runCrmSync();
-});
+// cron.schedule('*/30 * * * *', () => {
+//     runCrmSync();
+// });
 
 module.exports = { runCrmSync };

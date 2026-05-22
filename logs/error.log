@@ -743,3 +743,164 @@
 [2026-05-21 13:34:41] ERROR: ❌ [Contacts Sync] Failed for SAP Contact 1674: Request failed with status code 400
 [2026-05-21 13:34:52] ERROR: ❌ [Contacts Sync] Failed for SAP Contact 639: Request failed with status code 400
 [2026-05-21 13:35:11] ERROR: ❌ [Contacts Sync] Failed for SAP Contact 1670: Request failed with status code 400
+[2026-05-21 18:20:47] ERROR: ❌ [Accounts Sync] Failed to fetch SAP Customers: SAP Customer fetch failed: <soap-env:Envelope xmlns:soap-env="http://schemas.xmlsoap.org/soap/envelope/"><soap-env:Header/><soap-env:Body><soap-env:Fault><faultcode>soap-env:Server</faultcode><faultstring xml:lang="en">Web service processing error; more details in the web service error log on provider side (UTC timestamp 20260521125045; Transaction ID FA163E26256D1FE195A275E01F16CD8D)</faultstring><detail/></soap-env:Fault></soap-env:Body></soap-env:Envelope>
+[2026-05-21 18:20:48] ERROR: ❌ [Contacts Sync] Failed to fetch SAP Contacts: SAP Contact fetch (via Customer) failed: Request failed with status code 500
+[2026-05-21 18:24:49] ERROR: ❌ [Accounts Sync] Failed to fetch SAP Customers: SAP Customer fetch failed: <soap-env:Envelope xmlns:soap-env="http://schemas.xmlsoap.org/soap/envelope/"><soap-env:Header/><soap-env:Body><soap-env:Fault><faultcode>soap-env:Server</faultcode><faultstring xml:lang="en">Web service processing error; more details in the web service error log on provider side (UTC timestamp 20260521125447; Transaction ID FA163E26256D1FE195A287E1131B0D8D)</faultstring><detail/></soap-env:Fault></soap-env:Body></soap-env:Envelope>
+[2026-05-21 18:24:49] ERROR: ❌ [Contacts Sync] Failed to fetch SAP Contacts: SAP Contact fetch (via Customer) failed: Request failed with status code 500
+[2026-05-21 18:30:01] ERROR: ❌ [Accounts Sync] Failed to fetch SAP Customers: SAP Customer fetch failed: <soap-env:Envelope xmlns:soap-env="http://schemas.xmlsoap.org/soap/envelope/"><soap-env:Header/><soap-env:Body><soap-env:Fault><faultcode>soap-env:Server</faultcode><faultstring xml:lang="en">Web service processing error; more details in the web service error log on provider side (UTC timestamp 20260521125959; Transaction ID FA163E26256D1FE195A29F22D9308D8D)</faultstring><detail/></soap-env:Fault></soap-env:Body></soap-env:Envelope>
+[2026-05-21 18:30:02] ERROR: ❌ [Contacts Sync] Failed to fetch SAP Contacts: SAP Contact fetch (via Customer) failed: Request failed with status code 500
+[2026-05-21 18:47:19] ERROR: 
+Count failed: parseSapXml is not a function
+[2026-05-21 18:47:27] ERROR: 
+Count failed: parseSapXml is not a function
+[2026-05-21 19:24:09] ERROR: ❌ [Accounts Sync] Failed for SAP Customer WELS (Tax: B67482463): Request failed with status code 400
+[2026-05-21 19:25:13] ERROR: ❌ [Accounts Sync] Failed for SAP Customer ADMD (Tax: DK11169732): Request failed with status code 400
+[2026-05-21 19:25:55] ERROR: ❌ [Accounts Sync] Failed for SAP Customer MIRM (Tax: 37389194A): Request failed with status code 400
+[2026-05-21 19:26:34] ERROR: ❌ [Accounts Sync] Failed for SAP Customer VBIO (Tax: B88557327): Request failed with status code 400
+[2026-05-21 19:27:10] ERROR: ❌ [Accounts Sync] Failed for SAP Customer LADE (Tax: FR39443960570): Request failed with status code 400
+[2026-05-21 19:28:45] ERROR: ❌ [Accounts Sync] Failed for SAP Customer CSLB (Tax: DE341134213): Request failed with status code 400
+[2026-05-21 19:36:57] ERROR: ❌ [Accounts Sync] Failed to fetch SAP Customers: SAP Customer fetch failed: read ECONNRESET
+[2026-05-21 19:37:22] ERROR: ❌ [Accounts Sync] Failed for SAP Customer RUFB (Tax: 46843624F): Request failed with status code 400
+[2026-05-21 19:44:12] ERROR: ❌ [Contacts Sync] Failed for SAP Contact 4531: Request failed with status code 400
+[2026-05-21 19:44:19] ERROR: ❌ [Contacts Sync] Failed for SAP Contact 4533: Request failed with status code 400
+[2026-05-21 19:44:26] ERROR: ❌ [Contacts Sync] Failed for SAP Contact 3477: Request failed with status code 400
+[2026-05-21 19:44:34] ERROR: ❌ [Contacts Sync] Failed for SAP Contact 3490: Request failed with status code 400
+[2026-05-21 19:44:42] ERROR: ❌ [Contacts Sync] Failed for SAP Contact 3491: Request failed with status code 400
+[2026-05-21 19:44:49] ERROR: ❌ [Contacts Sync] Failed for SAP Contact 3492: Request failed with status code 400
+[2026-05-21 19:44:57] ERROR: ❌ [Contacts Sync] Failed for SAP Contact 3493: Request failed with status code 400
+[2026-05-21 19:45:52] ERROR: ❌ [Contacts Sync] Failed for SAP Contact 5235: Request failed with status code 400
+[2026-05-21 19:46:00] ERROR: ❌ [Contacts Sync] Failed for SAP Contact 5236: Request failed with status code 400
+[2026-05-21 19:46:58] ERROR: ❌ [Contacts Sync] Failed for SAP Contact 6320: Request failed with status code 400
+[2026-05-21 19:47:29] ERROR: ❌ [Contacts Sync] Failed for SAP Contact 5301: Request failed with status code 400
+[2026-05-21 19:47:38] ERROR: ❌ [Contacts Sync] Failed for SAP Contact 370: Request failed with status code 400
+[2026-05-21 19:47:40] ERROR: ❌ [Contacts Sync] Failed for SAP Contact 5309: Request failed with status code 400
+[2026-05-21 19:48:50] ERROR: ❌ [Contacts Sync] Failed for SAP Contact FM101016: Request failed with status code 400
+[2026-05-21 19:48:56] ERROR: ❌ [Contacts Sync] Failed for SAP Contact 2046: Request failed with status code 400
+[2026-05-21 19:49:48] ERROR: ❌ [Contacts Sync] Failed for SAP Contact FM102471: Request failed with status code 400
+[2026-05-21 19:50:00] ERROR: ❌ [Contacts Sync] Failed for SAP Contact FM100016: Request failed with status code 400
+[2026-05-21 19:50:23] ERROR: ❌ [Contacts Sync] Failed for SAP Contact FM101961: Request failed with status code 400
+[2026-05-21 19:50:51] ERROR: ❌ [Contacts Sync] Failed for SAP Contact 901: Request failed with status code 400
+[2026-05-21 19:51:00] ERROR: ❌ [Contacts Sync] Failed for SAP Contact 2232: Request failed with status code 400
+[2026-05-21 19:51:34] ERROR: ❌ [Contacts Sync] Failed for SAP Contact FM102108: Request failed with status code 400
+[2026-05-21 19:51:46] ERROR: ❌ [Contacts Sync] Failed for SAP Contact FM100970: Request failed with status code 400
+[2026-05-21 19:52:08] ERROR: ❌ [Contacts Sync] Failed for SAP Contact FM100284: Request failed with status code 400
+[2026-05-21 19:52:27] ERROR: ❌ [Contacts Sync] Failed for SAP Contact FM101680: Request failed with status code 400
+[2026-05-21 19:53:14] ERROR: ❌ [Contacts Sync] Failed for SAP Contact FM102470: Request failed with status code 400
+[2026-05-21 19:53:17] ERROR: ❌ [Contacts Sync] Failed for SAP Contact FM100785: Request failed with status code 400
+[2026-05-21 19:53:37] ERROR: ❌ [Contacts Sync] Failed for SAP Contact FM102833: Request failed with status code 400
+[2026-05-21 19:54:13] ERROR: ❌ [Contacts Sync] Failed for SAP Contact FM101692: Request failed with status code 400
+[2026-05-21 19:54:17] ERROR: ❌ [Contacts Sync] Failed for SAP Contact FM102499: Request failed with status code 400
+[2026-05-21 19:54:40] ERROR: ❌ [Contacts Sync] Failed for SAP Contact 1195: Request failed with status code 400
+[2026-05-21 19:54:48] ERROR: ❌ [Contacts Sync] Failed for SAP Contact 2140: Request failed with status code 400
+[2026-05-21 19:55:17] ERROR: ❌ [Contacts Sync] Failed for SAP Contact FM100911: Request failed with status code 400
+[2026-05-21 19:55:24] ERROR: ❌ [Contacts Sync] Failed for SAP Contact 791: Request failed with status code 400
+[2026-05-21 19:55:48] ERROR: ❌ [Contacts Sync] Failed for SAP Contact 1026: Request failed with status code 400
+[2026-05-21 19:56:13] ERROR: ❌ [Contacts Sync] Failed for SAP Contact 2149: Request failed with status code 400
+[2026-05-21 19:56:28] ERROR: ❌ [Contacts Sync] Failed for SAP Contact 662: Request failed with status code 400
+[2026-05-21 19:56:44] ERROR: ❌ [Contacts Sync] Failed for SAP Contact 4182: Request failed with status code 400
+[2026-05-21 19:57:50] ERROR: ❌ [Contacts Sync] Failed for SAP Contact FM101130: Request failed with status code 400
+[2026-05-21 19:58:36] ERROR: ❌ [Contacts Sync] Failed for SAP Contact FM100237: Request failed with status code 400
+[2026-05-21 19:59:53] ERROR: ❌ [Contacts Sync] Failed for SAP Contact FM102769: Request failed with status code 400
+[2026-05-21 20:00:03] ERROR: ❌ [Contacts Sync] Failed for SAP Contact FM101780: Request failed with status code 400
+[2026-05-21 20:00:11] ERROR: ❌ [Contacts Sync] Failed for SAP Contact FM100803: Request failed with status code 400
+[2026-05-21 20:00:46] ERROR: ❌ [Contacts Sync] Failed for SAP Contact 2387: Request failed with status code 400
+[2026-05-21 20:01:16] ERROR: ❌ [Contacts Sync] Failed for SAP Contact FM102110: Request failed with status code 400
+[2026-05-21 20:01:25] ERROR: ❌ [Contacts Sync] Failed for SAP Contact 585: Request failed with status code 400
+[2026-05-21 20:01:58] ERROR: ❌ [Contacts Sync] Failed for SAP Contact FM101182: Request failed with status code 400
+[2026-05-21 20:02:11] ERROR: ❌ [Contacts Sync] Failed for SAP Contact FM102982: Request failed with status code 400
+[2026-05-21 20:03:14] ERROR: ❌ [Contacts Sync] Failed for SAP Contact 1555: Request failed with status code 400
+[2026-05-21 20:03:22] ERROR: ❌ [Contacts Sync] Failed for SAP Contact 3819: Request failed with status code 400
+[2026-05-21 20:03:33] ERROR: ❌ [Contacts Sync] Failed for SAP Contact FM102715: Request failed with status code 400
+[2026-05-21 20:04:00] ERROR: ❌ [Contacts Sync] Failed for SAP Contact FM102400: Request failed with status code 400
+[2026-05-21 20:04:26] ERROR: ❌ [Contacts Sync] Failed for SAP Contact FM102715: Request failed with status code 400
+[2026-05-21 20:05:16] ERROR: ❌ [Contacts Sync] Failed for SAP Contact FM101294: Request failed with status code 400
+[2026-05-21 20:06:39] ERROR: ❌ [Contacts Sync] Failed for SAP Contact FM102081: Request failed with status code 400
+[2026-05-21 20:08:19] ERROR: ❌ [Contacts Sync] Failed for SAP Contact FM102713: Request failed with status code 400
+[2026-05-21 20:08:20] ERROR: ❌ [Contacts Sync] Failed for SAP Contact 2611: Request failed with status code 400
+[2026-05-21 20:09:13] ERROR: ❌ [Contacts Sync] Failed for SAP Contact FM100786: Request failed with status code 400
+[2026-05-21 20:09:21] ERROR: ❌ [Contacts Sync] Failed for SAP Contact FM100626: Request failed with status code 400
+[2026-05-21 20:10:09] ERROR: ❌ [Contacts Sync] Failed for SAP Contact 1692: Request failed with status code 400
+[2026-05-21 20:10:16] ERROR: ❌ [Contacts Sync] Failed for SAP Contact 2012: Request failed with status code 400
+[2026-05-21 20:10:28] ERROR: ❌ [Contacts Sync] Failed for SAP Contact 2759: Request failed with status code 400
+[2026-05-21 20:13:18] ERROR: ❌ [Contacts Sync] Failed for SAP Contact 2307: Request failed with status code 400
+[2026-05-21 20:13:26] ERROR: ❌ [Contacts Sync] Failed for SAP Contact FM102683: Request failed with status code 400
+[2026-05-21 20:14:06] ERROR: ❌ [Contacts Sync] Failed for SAP Contact FM102516: Request failed with status code 400
+[2026-05-21 20:14:48] ERROR: ❌ [Contacts Sync] Failed for SAP Contact FM100034: Request failed with status code 400
+[2026-05-21 20:16:14] ERROR: ❌ [Contacts Sync] Failed for SAP Contact FM102087: Request failed with status code 400
+[2026-05-21 20:16:34] ERROR: ❌ [Contacts Sync] Failed for SAP Contact 1324: Request failed with status code 400
+[2026-05-21 20:17:52] ERROR: ❌ [Contacts Sync] Failed for SAP Contact 5381: Request failed with status code 400
+[2026-05-21 20:18:37] ERROR: ❌ [Contacts Sync] Failed for SAP Contact FM101560: Request failed with status code 400
+[2026-05-21 20:18:48] ERROR: ❌ [Contacts Sync] Failed for SAP Contact FM101628: Request failed with status code 400
+[2026-05-21 20:19:47] ERROR: ❌ [Contacts Sync] Failed for SAP Contact FM102965: Request failed with status code 400
+[2026-05-21 20:20:09] ERROR: ❌ [Contacts Sync] Failed for SAP Contact FM101883: Request failed with status code 400
+[2026-05-21 20:21:05] ERROR: ❌ [Contacts Sync] Failed for SAP Contact 1101: Request failed with status code 400
+[2026-05-21 20:21:34] ERROR: ❌ [Contacts Sync] Failed for SAP Contact FM100152: Request failed with status code 400
+[2026-05-21 20:22:09] ERROR: ❌ [Contacts Sync] Failed for SAP Contact FM102430: Request failed with status code 400
+[2026-05-21 20:22:20] ERROR: ❌ [Contacts Sync] Failed for SAP Contact 4014: Request failed with status code 400
+[2026-05-21 20:23:11] ERROR: ❌ [Contacts Sync] Failed for SAP Contact FM101047: Request failed with status code 400
+[2026-05-21 20:25:11] ERROR: ❌ [Contacts Sync] Failed for SAP Contact 6407: Request failed with status code 400
+[2026-05-21 20:25:27] ERROR: ❌ [Contacts Sync] Failed for SAP Contact 1611: Request failed with status code 400
+[2026-05-21 20:26:16] ERROR: ❌ [Contacts Sync] Failed for SAP Contact 5751: Request failed with status code 400
+[2026-05-21 20:26:52] ERROR: ❌ [Contacts Sync] Failed for SAP Contact FM101456: Request failed with status code 400
+[2026-05-21 20:28:17] ERROR: ❌ [Contacts Sync] Failed for SAP Contact 1472: Request failed with status code 400
+[2026-05-21 20:29:15] ERROR: ❌ [Contacts Sync] Failed for SAP Contact FM100232: Request failed with status code 400
+[2026-05-21 20:29:33] ERROR: ❌ [Contacts Sync] Failed for SAP Contact 837: Request failed with status code 400
+[2026-05-21 20:29:37] ERROR: ❌ [Contacts Sync] Failed for SAP Contact FM102263: Request failed with status code 400
+[2026-05-21 20:29:46] ERROR: ❌ [Contacts Sync] Failed for SAP Contact FM101564: Request failed with status code 400
+[2026-05-21 20:31:35] ERROR: ❌ [Contacts Sync] Failed for SAP Contact FM101251: Request failed with status code 400
+[2026-05-21 20:31:59] ERROR: ❌ [Contacts Sync] Failed for SAP Contact 6135: Request failed with status code 400
+[2026-05-21 20:33:02] ERROR: ❌ [Contacts Sync] Failed for SAP Contact FM102731: Request failed with status code 400
+[2026-05-21 20:34:26] ERROR: ❌ [Contacts Sync] Failed for SAP Contact FM101593: Request failed with status code 400
+[2026-05-21 20:35:00] ERROR: ❌ [Contacts Sync] Failed for SAP Contact 5688: Request failed with status code 400
+[2026-05-21 20:35:53] ERROR: ❌ [Contacts Sync] Failed for SAP Contact FM100978: Request failed with status code 400
+[2026-05-21 20:36:02] ERROR: ❌ [Contacts Sync] Failed for SAP Contact FM102383: Request failed with status code 400
+[2026-05-21 20:37:03] ERROR: ❌ [Contacts Sync] Failed for SAP Contact 361: Request failed with status code 400
+[2026-05-21 20:37:19] ERROR: ❌ [Contacts Sync] Failed for SAP Contact 2721: Request failed with status code 400
+[2026-05-21 20:37:47] ERROR: ❌ [Contacts Sync] Failed for SAP Contact FM102744: Request failed with status code 400
+[2026-05-21 20:38:31] ERROR: ❌ [Contacts Sync] Failed for SAP Contact 920: Request failed with status code 400
+[2026-05-21 20:38:43] ERROR: ❌ [Contacts Sync] Failed for SAP Contact 1596: Request failed with status code 400
+[2026-05-21 20:39:09] ERROR: ❌ [Contacts Sync] Failed for SAP Contact 1993: Request failed with status code 400
+[2026-05-21 20:39:17] ERROR: ❌ [Contacts Sync] Failed for SAP Contact FM101742: Request failed with status code 400
+[2026-05-21 20:39:25] ERROR: ❌ [Contacts Sync] Failed for SAP Contact 746: Request failed with status code 400
+[2026-05-21 20:39:34] ERROR: ❌ [Contacts Sync] Failed for SAP Contact FM100262: Request failed with status code 400
+[2026-05-21 20:40:14] ERROR: ❌ [Contacts Sync] Failed for SAP Contact 1988: Request failed with status code 400
+[2026-05-21 20:40:52] ERROR: ❌ [Contacts Sync] Failed for SAP Contact FM101310: Request failed with status code 400
+[2026-05-21 20:41:01] ERROR: ❌ [Contacts Sync] Failed for SAP Contact FM101336: Request failed with status code 400
+[2026-05-22 11:33:31] ERROR: ❌ [Accounts Sync] Failed to fetch SAP Customers: SAP Customer fetch failed: read ECONNRESET
+[2026-05-22 12:08:55] ERROR: ❌ [Accounts Sync] Failed for SAP Customer CARO (Tax: X6916394H): Request failed with status code 400
+[2026-05-22 12:38:56] ERROR: ❌ [Contacts Sync] Failed for SAP Contact FM102715: Request failed with status code 400
+[2026-05-22 12:48:59] ERROR: ❌ [Contacts Sync] Failed for SAP Contact FM100029: Request failed with status code 400
+[2026-05-22 13:11:37] ERROR: ❌ [Contacts Sync] Failed for SAP Contact 7221: Request failed with status code 400
+[2026-05-22 13:18:50] ERROR: ❌ [Contacts Sync] Failed for SAP Contact 4395: Request failed with status code 400
+[2026-05-22 13:22:45] ERROR: ❌ [Contacts Sync] Failed for SAP Contact FM102012: Request failed with status code 400
+[2026-05-22 13:23:58] ERROR: ❌ [Contacts Sync] Failed for SAP Contact 6492: Request failed with status code 400
+[2026-05-22 13:24:26] ERROR: ❌ [Contacts Sync] Failed for SAP Contact 6224: Request failed with status code 400
+[2026-05-22 13:28:40] ERROR: ❌ [Contacts Sync] Failed for SAP Contact 601: Request failed with status code 400
+[2026-05-22 13:30:02] ERROR: ❌ [Contacts Sync] Failed for SAP Contact FM101945: Request failed with status code 400
+[2026-05-22 13:30:25] ERROR: ❌ [Contacts Sync] Failed for SAP Contact 4429: Request failed with status code 400
+[2026-05-22 13:31:46] ERROR: ❌ [Contacts Sync] Failed for SAP Contact FM101880: Request failed with status code 400
+[2026-05-22 13:39:58] ERROR: ❌ [Contacts Sync] Failed for SAP Contact 4263: Request failed with status code 400
+[2026-05-22 13:43:23] ERROR: ❌ [Contacts Sync] Failed for SAP Contact FM102013: Request failed with status code 400
+[2026-05-22 13:46:44] ERROR: ❌ [Contacts Sync] Failed for SAP Contact 471: Request failed with status code 400
+[2026-05-22 13:54:05] ERROR: ❌ [Contacts Sync] Failed for SAP Contact FM102075: Request failed with status code 400
+[2026-05-22 13:58:24] ERROR: ❌ [Contacts Sync] Failed for SAP Contact 354: Request failed with status code 400
+[2026-05-22 13:58:59] ERROR: ❌ [Contacts Sync] Failed for SAP Contact FM100084: Request failed with status code 400
+[2026-05-22 13:59:07] ERROR: ❌ [Contacts Sync] Failed for SAP Contact FM100596: Request failed with status code 400
+[2026-05-22 14:00:41] ERROR: ❌ [Contacts Sync] Failed for SAP Contact 7007: Request failed with status code 400
+[2026-05-22 14:04:02] ERROR: ❌ [Contacts Sync] Failed for SAP Contact 2036: Request failed with status code 400
+[2026-05-22 14:05:25] ERROR: ❌ [Contacts Sync] Failed for SAP Contact 6988: Request failed with status code 400
+[2026-05-22 14:08:57] ERROR: ❌ [Contacts Sync] Failed for SAP Contact FM100744: Request failed with status code 400
+[2026-05-22 14:11:32] ERROR: ❌ [Contacts Sync] Failed for SAP Contact 3705: Request failed with status code 400
+[2026-05-22 14:12:56] ERROR: ❌ [Contacts Sync] Failed for SAP Contact 5424: Request failed with status code 400
+[2026-05-22 14:13:28] ERROR: ❌ [Contacts Sync] Failed for SAP Contact 5650: Request failed with status code 400
+[2026-05-22 14:16:31] ERROR: ❌ [Contacts Sync] Failed for SAP Contact 5739: Request failed with status code 400
+[2026-05-22 14:16:55] ERROR: ❌ [Contacts Sync] Failed for SAP Contact 3899: Request failed with status code 400
+[2026-05-22 14:17:43] ERROR: ❌ [Contacts Sync] Failed for SAP Contact 7136: Request failed with status code 400
+[2026-05-22 14:20:41] ERROR: ❌ [Contacts Sync] Failed for SAP Contact 2357: Request failed with status code 400
+[2026-05-22 14:22:20] ERROR: ❌ [Contacts Sync] Failed for SAP Contact 2444: Request failed with status code 400
+[2026-05-22 14:22:28] ERROR: ❌ [Contacts Sync] Failed for SAP Contact 6876: Request failed with status code 400
+[2026-05-22 14:22:39] ERROR: ❌ [Contacts Sync] Failed for SAP Contact 7002: Request failed with status code 400
+[2026-05-22 14:23:24] ERROR: ❌ [Contacts Sync] Failed for SAP Contact 7065: Request failed with status code 400
+[2026-05-22 14:24:29] ERROR: ❌ [Contacts Sync] Failed for SAP Contact 6950: Request failed with status code 400
+[2026-05-22 14:26:07] ERROR: ❌ [Contacts Sync] Failed for SAP Contact 2508: Request failed with status code 400
+[2026-05-22 14:30:11] ERROR: ❌ [Contacts Sync] Failed for SAP Contact 7261: Request failed with status code 400
