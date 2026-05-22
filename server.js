@@ -51,13 +51,13 @@ app.listen(PORT, () => {
 });
 
 // Run Accounts+Contacts sync once on server start (non-blocking)
-setImmediate(() => {
-    if (process.env.CRM_SYNC_FULL_ON_START === 'true') {
-        logger.info('Forcing full CRM sync on startup by resetting last sync state.');
-        writeSyncState({ accountsLastSync: null, contactsLastSync: null });
-    }
+// setImmediate(() => {
+//     if (process.env.CRM_SYNC_FULL_ON_START === 'true') {
+//         logger.info('Forcing full CRM sync on startup by resetting last sync state.');
+//         writeSyncState({ accountsLastSync: null, contactsLastSync: null });
+//     }
 
-    runCrmSync().catch(err => {
-        logger.error(`Failed to run initial CRM sync: ${err && err.message ? err.message : err}`);
-    });
-});
+//     runCrmSync().catch(err => {
+//         logger.error(`Failed to run initial CRM sync: ${err && err.message ? err.message : err}`);
+//     });
+// });

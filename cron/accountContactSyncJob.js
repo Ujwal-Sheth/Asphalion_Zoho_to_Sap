@@ -24,4 +24,20 @@ const runCrmSync = async () => {
 //     runCrmSync();
 // });
 
+// cron.schedule('0 19 * * *', () => {
+//     runCrmSync();
+// }, {
+//     scheduled: true,
+//     timezone: "Europe/Madrid"
+// });
+
+
+// cron.schedule('43 12 * * *', () => {
+//     runCrmSync();
+// }, {
+//     scheduled: true,
+//     timezone: "Europe/Madrid"
+// });
+
+
 module.exports = { runCrmSync };

@@ -17506,3 +17506,41 @@ Reconciling Deal 931793000005514192 (SAP Quote: 10189)...
 [2026-05-21 17:06:52] INFO: Server running. Trigger sync at http://localhost:3000/api/webhook/zoho-deal
 [2026-05-21 17:16:32] INFO: Server running. Trigger sync at http://localhost:3000/api/webhook/zoho-deal
 [2026-05-21 17:22:22] INFO: Server running. Trigger sync at http://localhost:3000/api/webhook/zoho-deal
+[2026-05-22 15:48:37] INFO: Server running. Trigger sync at http://localhost:3000/api/webhook/zoho-deal
+[2026-05-22 15:49:00] INFO: 
+🔄 [CRM Sync] Starting SAP → Zoho CRM Sync: 2026-05-22T10:19:00.027Z
+[2026-05-22 15:49:00] INFO: 
+🏢 [Accounts Sync] Starting SAP → Zoho Account synchronization…
+[2026-05-22 15:49:00] INFO: 📅 [Accounts Sync] Incremental since: 2026-05-22T06:10:27.290Z
+[2026-05-22 15:51:50] INFO: Server running. Trigger sync at http://localhost:3000/api/webhook/zoho-deal
+[2026-05-22 15:52:00] INFO: 
+🔄 [CRM Sync] Starting SAP → Zoho CRM Sync: 2026-05-22T10:22:00.026Z
+[2026-05-22 15:52:00] INFO: 
+🏢 [Accounts Sync] Starting SAP → Zoho Account synchronization…
+[2026-05-22 15:52:00] INFO: 📅 [Accounts Sync] Incremental since: 2026-05-22T06:10:27.290Z
+[2026-05-22 15:54:56] INFO: Server running. Trigger sync at http://localhost:3000/api/webhook/zoho-deal
+[2026-05-22 15:55:00] INFO: 
+🔄 [CRM Sync] Starting SAP → Zoho CRM Sync: 2026-05-22T10:25:00.024Z
+[2026-05-22 15:55:00] INFO: 
+🏢 [Accounts Sync] Starting SAP → Zoho Account synchronization…
+[2026-05-22 15:55:00] INFO: 📅 [Accounts Sync] Incremental since: 2026-05-22T06:10:27.290Z
+[2026-05-22 15:55:33] INFO: Server running. Trigger sync at http://localhost:3000/api/webhook/zoho-deal
+[2026-05-22 15:56:00] INFO: 
+🔄 [CRM Sync] Starting SAP → Zoho CRM Sync: 2026-05-22T10:26:00.047Z
+[2026-05-22 15:56:00] INFO: 
+🏢 [Accounts Sync] Starting SAP → Zoho Account synchronization…
+[2026-05-22 15:56:00] INFO: 📅 [Accounts Sync] Incremental since: 2026-05-22T06:10:27.290Z
+[2026-05-22 15:57:12] INFO: Server running. Trigger sync at http://localhost:3000/api/webhook/zoho-deal
+[2026-05-22 15:58:00] INFO: 
+🔄 [CRM Sync] Starting SAP → Zoho CRM Sync: 2026-05-22T10:28:00.018Z
+[2026-05-22 15:58:00] INFO: 
+🏢 [Accounts Sync] Starting SAP → Zoho Account synchronization…
+[2026-05-22 15:58:00] INFO: 📅 [Accounts Sync] Incremental since: 2026-05-22T06:10:27.290Z
+[2026-05-22 16:12:07] INFO: Server running. Trigger sync at http://localhost:3000/api/webhook/zoho-deal
+[2026-05-22 16:13:00] INFO: 
+🔄 [CRM Sync] Starting SAP → Zoho CRM Sync: 2026-05-22T10:43:00.031Z
+[2026-05-22 16:13:00] INFO: 
+🏢 [Accounts Sync] Starting SAP → Zoho Account synchronization…
+[2026-05-22 16:13:00] INFO: 📅 [Accounts Sync] Incremental since: 2026-05-22T06:10:27.290Z
+[2026-05-22 18:09:14] INFO: Server running. Trigger sync at http://localhost:3000/api/webhook/zoho-deal
+[2026-05-22 18:17:49] INFO: Server running. Trigger sync at http://localhost:3000/api/webhook/zoho-deal
