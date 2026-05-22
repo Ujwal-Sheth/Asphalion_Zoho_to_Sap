@@ -134,8 +134,8 @@ exports.handleDraftProposalSync = async (req, res) => {
             sapCustomerId = accountData.SAP_Customer_ID || '';
         }
 
-        const expectedNamePart = `${actualDealName.replace(/ /g, '_').replace(/\//g, '-').replaceAll("%","_porciento")}_${dealCode}_${sapCustomerId}`;
-        // const expectedNamePart = `${dealCode}_${sapCustomerId}_${actualDealName.replace(/ /g, '_').replace(/\//g, '-').replaceAll("%","_porciento")}`;
+        // const expectedNamePart = `${actualDealName.replace(/ /g, '_').replace(/\//g, '-').replaceAll("%","_porciento")}_${dealCode}_${sapCustomerId}`;
+        const expectedNamePart = `${dealCode}_${sapCustomerId}_${actualDealName.replaceAll(/ /g, '_').replaceAll(/\//g, '-').replaceAll("%","_porciento")}`;
 
         // 1. Get Attachments
         const attachments = await zohoService.getDealAttachments(zohoDealId);
