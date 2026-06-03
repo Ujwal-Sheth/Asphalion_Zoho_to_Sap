@@ -17544,3 +17544,7 @@ Reconciling Deal 931793000005514192 (SAP Quote: 10189)...
 [2026-05-22 16:13:00] INFO: 📅 [Accounts Sync] Incremental since: 2026-05-22T06:10:27.290Z
 [2026-05-22 18:09:14] INFO: Server running. Trigger sync at http://localhost:3000/api/webhook/zoho-deal
 [2026-05-22 18:17:49] INFO: Server running. Trigger sync at http://localhost:3000/api/webhook/zoho-deal
+[2026-06-02 14:44:51] INFO: Server running. Trigger sync at http://localhost:3000/api/webhook/zoho-deal
+[2026-06-02 14:47:30] INFO: Server running. Trigger sync at http://localhost:3000/api/webhook/zoho-deal
+[2026-06-03 12:05:01] INFO: Server running. Trigger sync at http://localhost:3000/api/webhook/zoho-deal
+[2026-06-03 12:30:01] INFO: Server running. Trigger sync at http://localhost:3000/api/webhook/zoho-deal

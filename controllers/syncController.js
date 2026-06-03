@@ -29,6 +29,29 @@ const logToMongo = async (
   }
 };
 
+const extractSapErrorMessage = (sapErrorData) => {
+  if (!sapErrorData) return null;
+
+  if (typeof sapErrorData === 'string') {
+    const xmlMatch = sapErrorData.match(/<env:Text[^>]*>([^<]+)<\/env:Text>/i)
+      || sapErrorData.match(/<faultstring[^>]*>([^<]+)<\/faultstring>/i)
+      || sapErrorData.match(/<Text[^>]*>([^<]+)<\/Text>/i);
+    if (xmlMatch) {
+      return xmlMatch[1].trim();
+    }
+
+    const trimmed = sapErrorData.trim();
+    return trimmed ? trimmed.substring(0, 2000) : null;
+  }
+
+  try {
+    const jsonString = JSON.stringify(sapErrorData);
+    return jsonString.substring(0, 2000);
+  } catch {
+    return String(sapErrorData).substring(0, 2000);
+  }
+};
+
 exports.syncDealToSap = async (req, res) => {
   const dealId = req.params.dealId;
   let zohoDealData = null;
@@ -165,12 +188,31 @@ exports.syncDealToSap = async (req, res) => {
     });
   } catch (error) {
     let errorMessages = [error.message];
+    let sapErrorMessage = error.message;
+    let sapRawError = null;
+
     if (error.response && error.response.data) {
         console.error(`[!] SAP Error Response Data:\n`, error.response.data);
-        errorMessages = ["SAP API rejected the payload (Raw XML error recorded in database)"];
+        sapRawError = error.response.data;
+        const parsedMessage = extractSapErrorMessage(error.response.data);
+        sapErrorMessage = parsedMessage || error.message;
+        errorMessages = [sapErrorMessage];
     }
 
-    await logToMongo(dealId, sapAccountId, null, "ERROR", "SAP_POST_ERROR", errorMessages, error.response?.data || soapPayload);
+    await logToMongo(dealId, sapAccountId, null, "ERROR", "SAP_POST_ERROR", errorMessages, sapRawError || soapPayload);
+
+    try {
+      console.log(`Pushing SAP failure back to Zoho Deal ${dealId}...`);
+      await zohoService.updateDealField(dealId, {
+        SAP_Shipment_Status: "Error",
+        SAP_Error_Message: sapErrorMessage.substring(0, 2000),
+        SAP_Shipment_Date: getCurrentIsoDateTimeForZoho(),
+      });
+      console.log(`SUCCESS: Zoho Deal updated with SAP failure message.`);
+    } catch (zohoError) {
+      console.error(`Failed to update Zoho with SAP failure message:\n`, zohoError.message);
+    }
+
     return res.status(500).json({
       success: false,
       message: "Failed to post Quote to SAP",
