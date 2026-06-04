@@ -23,13 +23,13 @@ exports.uploadFileToSharePoint = async (fileName, fileBuffer, dealName, dealId, 
     const token = await getGraphToken();
     const siteId = process.env.MS_SHAREPOINT_SITE_ID || process.env.MS_SITE_ID; // Supporting both env naming conventions
     const driveId = process.env.MS_SHAREPOINT_DRIVE_ID || process.env.MS_DRIVE_ID;
-
+    const safeFileName = fileName ? fileName.replace(/[~#%&*{}\\:<>?\/|"]+/g, '').trim() : '';
     const safeDealName = dealName.replace(/[<>:"/\\|?*]+/g, '').trim();
     const safeAccountName = accountName ? accountName.replace(/[<>:"/\\|?*]+/g, '').trim() : '_Test_Client';
     
     const targetDealFolder = await getExistingDealFolderName(token, siteId, driveId, safeDealName, dealId, safeAccountName);
 
-    const fullPath = `${safeAccountName}/BD/Proposals/${targetDealFolder}/${fileName}`;
+    const fullPath = `${safeAccountName}/BD/Proposals/${targetDealFolder}/${safeFileName}`;
     const encodedPath = fullPath.split('/').map(segment => encodeURIComponent(segment)).join('/');
 
     try {
@@ -53,7 +53,8 @@ exports.uploadDraftProposal = async (fileName, fileBuffer, dealName, dealId) => 
 
     // Creates a folder for the deal, e.g., "DealName_12345/Proposal.pdf"
     const safeDealName = dealName.replace(/[<>:"/\\|?*]+/g, '').trim();
-    const fullPath = `${safeDealName}_${dealId}/${fileName}`;
+    const safeFileName = fileName ? fileName.replace(/[~#%&*{}\\:<>?\/|"]+/g, '').trim() : '';
+    const fullPath = `${safeDealName}_${dealId}/${safeFileName}`;
 
     const encodedPath = fullPath.split('/').map(segment => encodeURIComponent(segment)).join('/');
 
