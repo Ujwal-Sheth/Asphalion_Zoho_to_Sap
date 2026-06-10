@@ -146,7 +146,7 @@ const buildSapXmlPayload = (zohoData, accountId, sapQuoteId = null) => {
                   }
                   const quantity = item.Quantity || 1;
                   const unitPrice = parseFloat(item.Unit_Price || 0).toFixed(2);
-                  const itemDiscount = item.Discount || 0;
+                  const itemDiscount = parseFloat(item.Discount || 0).toFixed(2);
                   const sapUoM = item.Unidad_de_medida || "";
                   const sapProcessingTypeCode = getCode("PricingType", item.Pricing_Type);
                   const sapAccordingToFee = (item.According_to_Fee === true || item.According_to_Fee === "true") ? "true" : "false";
@@ -277,7 +277,7 @@ const buildSapXmlPayload = (zohoData, accountId, sapQuoteId = null) => {
       }
       const quantity = item.Quantity || 1;
       const unitPrice = parseFloat(item.Unit_Price || 0).toFixed(2);
-      const itemDiscount = item.Discount || 0;
+      const itemDiscount = parseFloat(item.Discount || 0).toFixed(2);
       const sapUoM = item.Unidad_de_medida || "";
       const sapProcessingTypeCode = getCode("PricingType", item.Pricing_Type);
       const sapAccordingToFee = (item.According_to_Fee === true || item.According_to_Fee === "true") ? "true" : "false";

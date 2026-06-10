@@ -904,3 +904,4 @@ Count failed: parseSapXml is not a function
 [2026-05-22 14:24:29] ERROR: ❌ [Contacts Sync] Failed for SAP Contact 6950: Request failed with status code 400
 [2026-05-22 14:26:07] ERROR: ❌ [Contacts Sync] Failed for SAP Contact 2508: Request failed with status code 400
 [2026-05-22 14:30:11] ERROR: ❌ [Contacts Sync] Failed for SAP Contact 7261: Request failed with status code 400
+[2026-06-05 15:32:11] ERROR: ❌ Failed to update Zoho Deal 931793000007062003: Failed to update deal 931793000007062003: Request failed with status code 400. Details: {"data":[{"code":"INVALID_DATA","details":{"api_name":"Excluding_Optional","maximum_decimal_place":2,"json_path":"$.data[0].Product_Details[18].Excluding_Optional"},"message":"invalid data","status":"error"}]}
