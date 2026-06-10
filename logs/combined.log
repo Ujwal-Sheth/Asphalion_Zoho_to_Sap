@@ -17758,3 +17758,24 @@ Reconciling Deal 931793000007106082 (SAP Quote: 133)...
 [2026-06-05 18:25:20] INFO: ✅ Deal 931793000007106082 successfully updated from SAP.
 [2026-06-05 18:25:20] INFO: 
 🏁 [CRON] Reconciliation Complete. Success: 2, Failed: 0
+[2026-06-10 13:54:12] INFO: Server running. Trigger sync at http://localhost:3000/api/webhook/zoho-deal
+[2026-06-10 14:51:46] INFO: Server running. Trigger sync at http://localhost:3000/api/webhook/zoho-deal
+[2026-06-10 15:43:05] INFO: Server running. Trigger sync at http://localhost:3000/api/webhook/zoho-deal
+[2026-06-10 15:43:41] INFO: Server running. Trigger sync at http://localhost:3000/api/webhook/zoho-deal
+[2026-06-10 15:44:25] INFO: Server running. Trigger sync at http://localhost:3000/api/webhook/zoho-deal
+[2026-06-10 15:46:54] INFO: Server running. Trigger sync at http://localhost:3000/api/webhook/zoho-deal
+[2026-06-10 15:48:55] INFO: Server running. Trigger sync at http://localhost:3000/api/webhook/zoho-deal
+[2026-06-10 15:50:25] INFO: Server running. Trigger sync at http://localhost:3000/api/webhook/zoho-deal
+[2026-06-10 15:52:10] INFO: Server running. Trigger sync at http://localhost:3000/api/webhook/zoho-deal
+[2026-06-10 15:52:26] INFO: Server running. Trigger sync at http://localhost:3000/api/webhook/zoho-deal
+[2026-06-10 15:54:11] INFO: Server running. Trigger sync at http://localhost:3000/api/webhook/zoho-deal
+[2026-06-10 15:54:57] INFO: Server running. Trigger sync at http://localhost:3000/api/webhook/zoho-deal
+[2026-06-10 15:56:44] INFO: Server running. Trigger sync at http://localhost:3000/api/webhook/zoho-deal
+[2026-06-10 16:03:31] INFO: Server running. Trigger sync at http://localhost:3000/api/webhook/zoho-deal
+[2026-06-10 16:05:20] INFO: Server running. Trigger sync at http://localhost:3000/api/webhook/zoho-deal
+[2026-06-10 16:08:11] INFO: Server running. Trigger sync at http://localhost:3000/api/webhook/zoho-deal
+[2026-06-10 16:16:41] INFO: Server running. Trigger sync at http://localhost:3000/api/webhook/zoho-deal
+[2026-06-10 16:17:56] INFO: Server running. Trigger sync at http://localhost:3000/api/webhook/zoho-deal
+[2026-06-10 16:21:13] INFO: Server running. Trigger sync at http://localhost:3000/api/webhook/zoho-deal
+[2026-06-10 16:25:20] INFO: Server running. Trigger sync at http://localhost:3000/api/webhook/zoho-deal
+[2026-06-10 16:28:13] INFO: Server running. Trigger sync at http://localhost:3000/api/webhook/zoho-deal

@@ -45,6 +45,7 @@ const buildSapXmlPayload = (zohoData, accountId, sapQuoteId = null) => {
     const subformItems = zohoData.Product_Details || [];
     const sapZohoOwnerName = zohoData.Owner?.name || "";
     const sapZohoCode = zohoData.Deal_Code || "";
+    const sapZohoDealID = zohoData.id || "";
     const sapContactName = zohoData.Contact_Name?.name || "";
     const sapDescription = zohoData.Deal_Name;
     const sapPaymentTerms = getCode("PaymentTerms", zohoData.Payment_Terms);
@@ -52,6 +53,7 @@ const buildSapXmlPayload = (zohoData, accountId, sapQuoteId = null) => {
     // const sapAcceptanceDate = formatDateOnly(zohoData.Acceptance_Date) || "";
     const sapValidityStart = formatDateTime(zohoData.Creation_Date) || "";
     const sapValidityEnd = formatDateTime(zohoData.Closing_Date) || "";
+    const sapSendingDate = formatDateOnly(zohoData.Sent_to_the_client_date) || "";
     const sapProductType = getCode("ProjectType", zohoData.Project_Type);
     const sapSource = getCode("Source", zohoData.Source || zohoData.Lead_Source);
     const sapTechnicalUnit = getCode("TechnicalUnit", zohoData.Main_Technical_Unit);
@@ -89,11 +91,13 @@ const buildSapXmlPayload = (zohoData, accountId, sapQuoteId = null) => {
             <Name languageCode="EN">${sapDescription}</Name>
             <CashDiscountTermsCode>${sapPaymentTerms}</CashDiscountTermsCode>
 
-            <SalesUnitParty actionCode="04">
+            <SalesUnitParty actionCode="02">
                <PartyID>${sapSalesUnit}</PartyID>
             </SalesUnitParty>
             <SubmitIndicator>true</SubmitIndicator>
             <a3z:DEALreferenceZOHO>${sapZohoCode} + ${sapZohoOwnerName}</a3z:DEALreferenceZOHO>
+            <a3z:ZohoDealID>${sapZohoDealID}</a3z:ZohoDealID>
+            ${sapSendingDate ? `<a3z:Fechadeenvo>${sapSendingDate}</a3z:Fechadeenvo>` : ""}
             <a3z:Personadecontacto>${sapContactName}</a3z:Personadecontacto>
             ${sapEstimatedTimeline ? `<a3z:DuracionProyectoEstimada>${sapEstimatedTimeline}</a3z:DuracionProyectoEstimada>` : ""}
             <a3z:Discount>${subformItems.some(item => (item.Discount && parseFloat(item.Discount) > 0)) ? "true" : "false"}</a3z:Discount>
@@ -230,9 +234,9 @@ const buildSapXmlPayload = (zohoData, accountId, sapQuoteId = null) => {
     : new Date().toISOString();
   const sapEstimatedTimeline = zohoData.Estimated_Project_Timeline_in_months || 0;
   const sapTotalAmount = parseFloat(zohoData.Estimated_Revenue || 0).toFixed(1);
-  
   const sapBackgroundIntroES = zohoData.Background_intro_ES || "";
   const sapZohoCode = zohoData.Deal_Code || "";
+  const sapZohoDealID = zohoData.id || "";
   const sapAgreedFeesEN = zohoData.Agreed_fees_sales_quote_EN || "";
   const sapEndNotesES = zohoData.End_notes_sales_quote_ES || "";
   const sapEndNotesEN = zohoData.End_notes_sales_quote_EN || "";
@@ -370,6 +374,8 @@ const buildSapXmlPayload = (zohoData, accountId, sapQuoteId = null) => {
             ${itemsXml}
             ${sapProbability ? `<a3z:ProbabilidadOfertaAsphalion>${sapProbability}</a3z:ProbabilidadOfertaAsphalion>` : ""}
             <a3z:DEALreferenceZOHO>${sapZohoCode} + ${sapZohoOwnerName}</a3z:DEALreferenceZOHO>
+            <a3z:ZohoDealID>${sapZohoDealID}</a3z:ZohoDealID>
+            ${sapSendingDate ? `<a3z:Fechadeenvo>${sapSendingDate}</a3z:Fechadeenvo>` : ""}
             <a3z:Personadecontacto>${sapContactName}</a3z:Personadecontacto>
             <a3z:DuracionProyectoEstimada>${sapEstimatedTimeline}</a3z:DuracionProyectoEstimada>
             <a3z:Discount>${subformItems.some(item => (item.Discount && parseFloat(item.Discount) > 0)) ? "true" : "false"}</a3z:Discount>
