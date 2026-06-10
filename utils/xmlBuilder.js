@@ -253,7 +253,7 @@ const buildSapXmlPayload = (zohoData, accountId, sapQuoteId = null) => {
   const sapInvoiceEmails = zohoData.Invoicing_emails || "";
   const sapProbability = getCode("Probability", zohoData.Approval);
   // const sapAcceptanceDate = zohoData.Acceptance_Date || "";
-
+  const sapSendingDate = formatDateOnly(zohoData.Sent_to_the_client_date) || "";
   const sapProductType = getCode("ProjectType", zohoData.Project_Type);
   const sapSource = getCode("Source", zohoData.Source || zohoData.Lead_Source);
   const sapTechnicalUnit = getCode("TechnicalUnit", zohoData.Main_Technical_Unit);
