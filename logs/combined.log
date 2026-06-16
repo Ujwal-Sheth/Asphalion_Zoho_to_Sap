@@ -17779,3 +17779,87 @@ Reconciling Deal 931793000007106082 (SAP Quote: 133)...
 [2026-06-10 16:21:13] INFO: Server running. Trigger sync at http://localhost:3000/api/webhook/zoho-deal
 [2026-06-10 16:25:20] INFO: Server running. Trigger sync at http://localhost:3000/api/webhook/zoho-deal
 [2026-06-10 16:28:13] INFO: Server running. Trigger sync at http://localhost:3000/api/webhook/zoho-deal
+[2026-06-10 19:03:41] INFO: Server running. Trigger sync at http://localhost:3000/api/webhook/zoho-deal
+[2026-06-11 12:25:09] INFO: Server running. Trigger sync at http://localhost:3000/api/webhook/zoho-deal
+[2026-06-11 12:39:02] INFO: Server running. Trigger sync at http://localhost:3000/api/webhook/zoho-deal
+[2026-06-11 12:41:46] INFO: Server running. Trigger sync at http://localhost:3000/api/webhook/zoho-deal
+[2026-06-11 12:43:47] INFO: Server running. Trigger sync at http://localhost:3000/api/webhook/zoho-deal
+[2026-06-12 12:06:40] INFO: Server running. Trigger sync at http://localhost:3000/api/webhook/zoho-deal
+[2026-06-12 14:29:50] INFO: Server running. Trigger sync at http://localhost:3000/api/webhook/zoho-deal
+[2026-06-12 17:17:59] INFO: Server running. Trigger sync at http://localhost:3000/api/webhook/zoho-deal
+[2026-06-12 17:18:50] INFO: Server running. Trigger sync at http://localhost:3000/api/webhook/zoho-deal
+[2026-06-12 17:26:34] INFO: Server running. Trigger sync at http://localhost:3000/api/webhook/zoho-deal
+[2026-06-12 17:27:23] INFO: Server running. Trigger sync at http://localhost:3000/api/webhook/zoho-deal
+[2026-06-12 17:28:30] INFO: Server running. Trigger sync at http://localhost:3000/api/webhook/zoho-deal
+[2026-06-16 12:10:50] INFO: 
+🔄 [CRON] Starting Weekly SAP-Zoho Reconciliation: 2026-06-16T06:40:50.474Z
+[2026-06-16 12:10:50] INFO: Server running. Trigger sync at http://localhost:3000/api/webhook/zoho-deal
+[2026-06-16 12:10:52] INFO: 📊 Found 8 Deals in Zoho linked to an SAP Quote.
+[2026-06-16 12:10:52] INFO: 
+Reconciling Deal 931793000003257096 (SAP Quote: 9531)...
+[2026-06-16 12:11:31] ERROR: ❌ Failed to update Zoho Deal 931793000003257096: Failed to update deal 931793000003257096: Request failed with status code 400. Details: {"data":[{"code":"LIMIT_EXCEEDED","details":{"api_name":"Product_Details","json_path":"$.data[0].Product_Details","info":"100"},"message":"Record insertion limit has been exceeded.","status":"error"}]}
+[2026-06-16 12:11:31] INFO: 
+Reconciling Deal 931793000003265071 (SAP Quote: 3032)...
+[2026-06-16 12:11:35] ERROR: ❌ Failed to update Zoho Deal 931793000003265071: Failed to update deal 931793000003265071: Request failed with status code 400. Details: {"data":[{"code":"INVALID_DATA","details":{"api_name":"Quantity","json_path":"$.data[0].Product_Details[1].Quantity","maximum_decimal_place":2},"message":"invalid data","status":"error"}]}
+[2026-06-16 12:11:35] INFO: 
+Reconciling Deal 931793000003272500 (SAP Quote: 5347)...
+[2026-06-16 12:11:39] ERROR: ❌ Failed to update Zoho Deal 931793000003272500: Failed to update deal 931793000003272500: Request failed with status code 400. Details: {"data":[{"code":"INVALID_DATA","details":{"maximum_length":2000,"api_name":"Agreed_fees_sales_quote_EN","json_path":"$.data[0].Agreed_fees_sales_quote_EN"},"message":"invalid data","status":"error"}]}
+[2026-06-16 12:11:39] INFO: 
+Reconciling Deal 931793000003272655 (SAP Quote: 5581)...
+[2026-06-16 12:11:46] ERROR: ❌ Failed to update Zoho Deal 931793000003272655: Failed to update deal 931793000003272655: Request failed with status code 400. Details: {"data":[{"code":"INVALID_DATA","details":{"maximum_length":2000,"api_name":"Agreed_fees_sales_quote_EN","json_path":"$.data[0].Agreed_fees_sales_quote_EN"},"message":"invalid data","status":"error"}]}
+[2026-06-16 12:11:46] INFO: 
+Reconciling Deal 931793000003273850 (SAP Quote: 5896)...
+[2026-06-16 12:11:53] ERROR: ❌ Failed to update Zoho Deal 931793000003273850: Failed to update deal 931793000003273850: Request failed with status code 400. Details: {"data":[{"code":"INVALID_DATA","details":{"maximum_length":2000,"api_name":"Agreed_fees_sales_quote_EN","json_path":"$.data[0].Agreed_fees_sales_quote_EN"},"message":"invalid data","status":"error"}]}
+[2026-06-16 12:11:53] INFO: 
+Reconciling Deal 931793000003275090 (SAP Quote: 6248)...
+[2026-06-16 12:11:56] ERROR: ❌ Failed to update Zoho Deal 931793000003275090: Failed to update deal 931793000003275090: Request failed with status code 400. Details: {"data":[{"code":"INVALID_DATA","details":{"api_name":"Quantity","json_path":"$.data[0].Product_Details[0].Quantity","maximum_decimal_place":2},"message":"invalid data","status":"error"}]}
+[2026-06-16 12:11:56] INFO: 
+Reconciling Deal 931793000003276236 (SAP Quote: 6452)...
+[2026-06-16 12:12:00] ERROR: ❌ Failed to update Zoho Deal 931793000003276236: Failed to update deal 931793000003276236: Request failed with status code 400. Details: {"data":[{"code":"INVALID_DATA","details":{"api_name":"Quantity","json_path":"$.data[0].Product_Details[3].Quantity","maximum_decimal_place":2},"message":"invalid data","status":"error"}]}
+[2026-06-16 12:12:00] INFO: 
+Reconciling Deal 931793000003276239 (SAP Quote: 6455)...
+[2026-06-16 12:12:04] ERROR: ❌ Failed to update Zoho Deal 931793000003276239: Failed to update deal 931793000003276239: Request failed with status code 400. Details: {"data":[{"code":"INVALID_DATA","details":{"api_name":"Quantity","json_path":"$.data[0].Product_Details[3].Quantity","maximum_decimal_place":2},"message":"invalid data","status":"error"}]}
+[2026-06-16 12:12:04] INFO: 
+🏁 [CRON] Reconciliation Complete. Success: 0, Failed: 8
+[2026-06-16 12:32:19] INFO: 
+🔄 [CRON] Starting Weekly SAP-Zoho Reconciliation: 2026-06-16T07:02:19.551Z
+[2026-06-16 12:32:19] INFO: Server running. Trigger sync at http://localhost:3000/api/webhook/zoho-deal
+[2026-06-16 12:32:21] INFO: 📊 Found 4 Deals in Zoho linked to an SAP Quote.
+[2026-06-16 12:32:21] INFO: 
+Reconciling Deal 931793000003265071 (SAP Quote: 3032)...
+[2026-06-16 12:32:25] INFO: ✅ Deal 931793000003265071 successfully updated from SAP.
+[2026-06-16 12:32:25] INFO: 
+Reconciling Deal 931793000003275090 (SAP Quote: 6248)...
+[2026-06-16 12:32:29] INFO: ✅ Deal 931793000003275090 successfully updated from SAP.
+[2026-06-16 12:32:29] INFO: 
+Reconciling Deal 931793000003276236 (SAP Quote: 6452)...
+[2026-06-16 12:32:33] INFO: ✅ Deal 931793000003276236 successfully updated from SAP.
+[2026-06-16 12:32:33] INFO: 
+Reconciling Deal 931793000003276239 (SAP Quote: 6455)...
+[2026-06-16 12:32:38] INFO: ✅ Deal 931793000003276239 successfully updated from SAP.
+[2026-06-16 12:32:38] INFO: 
+🏁 [CRON] Reconciliation Complete. Success: 4, Failed: 0
+[2026-06-16 12:59:42] INFO: 
+🔄 [CRON] Starting Weekly SAP-Zoho Reconciliation: 2026-06-16T07:29:42.807Z
+[2026-06-16 12:59:42] INFO: Server running. Trigger sync at http://localhost:3000/api/webhook/zoho-deal
+[2026-06-16 12:59:44] INFO: 📊 Found 3 Deals in Zoho linked to an SAP Quote.
+[2026-06-16 12:59:44] INFO: 
+Reconciling Deal 931793000003272500 (SAP Quote: 5347)...
+[2026-06-16 12:59:49] INFO: ✅ Deal 931793000003272500 successfully updated from SAP.
+[2026-06-16 12:59:49] INFO: 
+Reconciling Deal 931793000003272655 (SAP Quote: 5581)...
+[2026-06-16 12:59:58] INFO: ✅ Deal 931793000003272655 successfully updated from SAP.
+[2026-06-16 12:59:58] INFO: 
+Reconciling Deal 931793000003273850 (SAP Quote: 5896)...
+[2026-06-16 13:00:07] INFO: ✅ Deal 931793000003273850 successfully updated from SAP.
+[2026-06-16 13:00:07] INFO: 
+🏁 [CRON] Reconciliation Complete. Success: 3, Failed: 0
+[2026-06-16 14:01:04] INFO: 
+🔄 [CRON] Starting Weekly SAP-Zoho Reconciliation: 2026-06-16T08:31:04.894Z
+[2026-06-16 14:01:04] INFO: Server running. Trigger sync at http://localhost:3000/api/webhook/zoho-deal
+[2026-06-16 14:01:06] INFO: 📊 Found 1 Deals in Zoho linked to an SAP Quote.
+[2026-06-16 14:01:06] INFO: 
+Reconciling Deal 931793000007838116 (SAP Quote: 10137)...
+[2026-06-16 14:01:14] INFO: ✅ Deal 931793000007838116 successfully updated from SAP.
+[2026-06-16 14:01:14] INFO: 
+🏁 [CRON] Reconciliation Complete. Success: 1, Failed: 0

@@ -45,7 +45,13 @@ const checkSapAccountExists = async (sapAccountId) => {
         if (customers) {
             const customerArray = Array.isArray(customers) ? customers : [customers];
             const customer = customerArray[0];
-            const accountName = customer.Organisation?.FirstLineName || "Unknown Name";
+
+            const orgName = customer.Organisation?.FirstLineName;
+            const personName = customer.Person 
+                ? `${customer.Person.GivenName || ''} ${customer.Person.FamilyName || ''}`.trim() 
+                : null;
+            
+            const accountName = orgName || personName || "Unknown Name";
 
             console.log(`SUCCESS: Confirmed SAP Account ID ${sapAccountId} is valid. (Account Name: ${accountName})`);
             return true;

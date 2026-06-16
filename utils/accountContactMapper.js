@@ -79,11 +79,31 @@ for (const [zohoVal, sapCode] of Object.entries(SAP_MAPS.PaymentTerms || {})) {
  */
 const mapSapCustomerToZohoAccount = (sapCustomer) => {
     // Prefer Organisation name, fallback to Person name
-    const orgName = getVal(sapCustomer.Organisation?.FirstLineName)
-        || getVal(sapCustomer.Organisation?.FormattedName)
-        || getVal(sapCustomer.CommonPerson?.PersonName?.LastName)
-        || 'Unknown';
+    let accountName = getVal(sapCustomer.Organisation?.FirstLineName)
+        || getVal(sapCustomer.Organisation?.FormattedName);
 
+    // 2. Fallback to Person (GivenName + FamilyName)
+    if (!accountName) {
+        // SAP XML can sometimes put this under <Person> or <CommonPerson><PersonName>
+        const givenName = getVal(sapCustomer.Person?.GivenName) 
+            || getVal(sapCustomer.CommonPerson?.PersonName?.GivenName) 
+            || '';
+            
+        const familyName = getVal(sapCustomer.Person?.FamilyName) 
+            || getVal(sapCustomer.CommonPerson?.PersonName?.FamilyName) 
+            || getVal(sapCustomer.CommonPerson?.PersonName?.LastName) 
+            || '';
+
+        const personName = `${givenName} ${familyName}`.trim();
+        
+        if (personName) {
+            accountName = personName;
+        }
+    }
+
+    // 3. Final fallback
+    accountName = accountName || 'Unknown Name';
+    
     // Tax / CIF / NIF — SAP stores it in TaxNumber.PartyTaxID
     const taxEntry = sapCustomer.TaxNumber;
     let taxId = null;
@@ -166,7 +186,7 @@ const mapSapCustomerToZohoAccount = (sapCustomer) => {
     const paymentTerms = cashDiscountTermsCode ? PAYMENT_TERMS_MAP[cashDiscountTermsCode] : null;
 
     return {
-        Account_Name:        orgName,
+        Account_Name:        accountName,
         Tax_ID:              taxId,
         Billing_Address:     billingAddress,
         Main_email:          email,

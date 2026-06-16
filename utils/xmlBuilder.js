@@ -156,6 +156,7 @@ const buildSapXmlPayload = (zohoData, accountId, sapQuoteId = null) => {
                   const sapAccordingToFee = (item.According_to_Fee === true || item.According_to_Fee === "true") ? "true" : "false";
                   const sapOptional = (item.Optional === true || item.Optional === "true") ? "true" : "false";
                   const sapFootnotesEnglish = item.Footnotes_Ingles1 || item.Footnotes_Ingles || "";
+                  const sapActivityDescription = item.Activity_description || "";
 
                   if (productCode) {
                     // Action '04' (Save) acts as an Upsert: Updates if exists, creates if new
@@ -166,7 +167,7 @@ const buildSapXmlPayload = (zohoData, accountId, sapQuoteId = null) => {
                     parts.push(`<Items actionCode="${itemAction}">`);
                     parts.push(`<ID>${sapItemId}</ID>`);
                     parts.push(`<OptionalIndicator>${sapOptional}</OptionalIndicator>`);
-                    
+                    parts.push(`<Description>${sapActivityDescription}</Description>`);
                     parts.push(`<ItemProduct actionCode="${itemAction}">`);
                     parts.push(`<ProductInternalID>${productCode}</ProductInternalID>`);
                     if (sapProcessingTypeCode) parts.push(`<ProcessingTypeCode>${sapProcessingTypeCode}</ProcessingTypeCode>`);
@@ -206,7 +207,7 @@ const buildSapXmlPayload = (zohoData, accountId, sapQuoteId = null) => {
                     parts.push(`<a3z:Segntarifa>${sapAccordingToFee}</a3z:Segntarifa>`);
                     if (sapFootnotesEnglish) parts.push(`<a3z:NotasalpieEN><![CDATA[${sapFootnotesEnglish}]]></a3z:NotasalpieEN>`);
                     parts.push('<a3z:Ingresos0>false</a3z:Ingresos0>');
-                    
+
                     parts.push('</Items>');
                     itemsXml += '\n' + parts.join('\n');
                   }
@@ -287,12 +288,14 @@ const buildSapXmlPayload = (zohoData, accountId, sapQuoteId = null) => {
       const sapAccordingToFee = (item.According_to_Fee === true || item.According_to_Fee === "true") ? "true" : "false";
       const sapOptional = (item.Optional === true || item.Optional === "true") ? "true" : "false";
       const sapFootnotesEnglish = item.Footnotes_Ingles1 || item.Footnotes_Ingles || "";
+      const sapActivityDescription = item.Activity_description || "";
       
       if (productCode) {
         itemsXml += `
                 <Items itemScheduleLineListCompleteTransmissionIndicator="true" actionCode="01">
                     <ID>${sapItemId}</ID>
                     <OptionalIndicator>${sapOptional}</OptionalIndicator>
+                    <Description>${sapActivityDescription}</Description>
                     <ItemProduct actionCode="01">
                         <ProductInternalID>${productCode}</ProductInternalID>
                         ${sapProcessingTypeCode ? `<ProcessingTypeCode>${sapProcessingTypeCode}</ProcessingTypeCode>` : ""}
