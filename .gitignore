@@ -38,3 +38,11 @@ scripts/sap_account_TEPO.json
 scripts/sap_account_VALR.json
 scripts/sap_account_XAB.json
 scripts/syncSingleSapAccount_MATS.js
+scripts/sap_account_LNG.json
+scripts/checkEmptyXmlPayload.js
+scripts/inspectDealQuotePayload.js
+scripts/inspectSap.js
+scripts/sap_quote_payload_931793000006705001.xml
+scripts/sap_quote_payload_931793000007847007.xml
+scripts/inspectSap.js
+scripts/inspectSap.js

@@ -64,5 +64,9 @@ const inspectSapQuote = async (sapQuoteId) => {
 };
 
 // --- RUN THE INSPECTOR ---
-// Change this ID to whatever quote you want to look up
-inspectSapQuote('8142');
+const quoteIdToInspect = process.argv[2] || '8142';
+if (!quoteIdToInspect) {
+    console.error('Please provide a SAP Quote ID as the first argument.');
+    process.exit(1);
+}
+inspectSapQuote(quoteIdToInspect);

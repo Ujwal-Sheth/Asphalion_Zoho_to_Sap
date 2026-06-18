@@ -17863,3 +17863,12 @@ Reconciling Deal 931793000007838116 (SAP Quote: 10137)...
 [2026-06-16 14:01:14] INFO: ✅ Deal 931793000007838116 successfully updated from SAP.
 [2026-06-16 14:01:14] INFO: 
 🏁 [CRON] Reconciliation Complete. Success: 1, Failed: 0
+[2026-06-16 17:08:50] INFO: Server running. Trigger sync at http://localhost:3000/api/webhook/zoho-deal
+[2026-06-16 17:19:07] INFO: Server running. Trigger sync at http://localhost:3000/api/webhook/zoho-deal
+[2026-06-17 15:22:17] INFO: Server running. Trigger sync at http://localhost:3000/api/webhook/zoho-deal
+[2026-06-17 17:06:05] INFO: Server running. Trigger sync at http://localhost:3000/api/webhook/zoho-deal
+[2026-06-17 17:21:28] INFO: Server running. Trigger sync at http://localhost:3000/api/webhook/zoho-deal
+[2026-06-17 17:30:19] INFO: Server running. Trigger sync at http://localhost:3000/api/webhook/zoho-deal
+[2026-06-17 17:31:34] INFO: Server running. Trigger sync at http://localhost:3000/api/webhook/zoho-deal
+[2026-06-17 18:01:24] INFO: Server running. Trigger sync at http://localhost:3000/api/webhook/zoho-deal
+[2026-06-17 19:30:42] INFO: Server running. Trigger sync at http://localhost:3000/api/webhook/zoho-deal
