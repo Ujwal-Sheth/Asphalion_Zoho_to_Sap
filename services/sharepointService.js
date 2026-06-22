@@ -1,35 +1,52 @@
 const axios = require('axios');
 const { getGraphToken } = require('../utils/auth');
 
-const getExistingDealFolderName = async (token, siteId, driveId, safeDealName, dealId, safeAccountName) => {
-    const rawBasePath = `${safeAccountName}/BD/Proposals`;
-    const basePath = rawBasePath.split('/').map(segment => encodeURIComponent(segment)).join('/');
+const getExistingDealFolderNameBySAP = async (token, siteId, driveId, sapId, safeDealName, dealId) => {
     try {
-        const response = await axios.get(`https://graph.microsoft.com/v1.0/sites/${siteId}/drives/${driveId}/root:/${basePath}:/children`, {
+        // UPDATED: Using the exact Internal Name 'Client_x0020_Code' provided
+        const queryUrl = `https://graph.microsoft.com/v1.0/sites/${siteId}/drives/${driveId}/list/items?$expand=fields&$filter=fields/Client_x0020_Code eq '${sapId}'`;
+        
+        const response = await axios.get(queryUrl, {
             headers: { 'Authorization': `Bearer ${token}` }
         });
-        const targetFolderName = `${safeDealName}_${dealId}`;
-        const existingFolder = response.data.value.find(item => 
-            item.folder && item.name.toLowerCase() === targetFolderName.toLowerCase()
-        );
-        if (existingFolder) return existingFolder.name;
+
+        if (response.data.value && response.data.value.length > 0) {
+            const accountFolderItem = response.data.value[0]; 
+            const accountFolderName = accountFolderItem.name;
+            const targetDealFolder = `${safeDealName}_${dealId}`;
+            
+            return { accountFolderName, targetDealFolder };
+        }
     } catch (error) {
-        if (error.response && error.response.status !== 404) console.warn("Could not check folders:", error.message);
+        console.warn(`Could not find folder by Client Code (${sapId}):`, error.response ? JSON.stringify(error.response.data) : error.message);
     }
-    return `${safeDealName}_${dealId}`;
+    
+    return null;
 };
 
-exports.uploadFileToSharePoint = async (fileName, fileBuffer, dealName, dealId, accountName) => {
+exports.uploadFileToSharePoint = async (fileName, fileBuffer, dealName, dealId, sapId, accountName) => {
     const token = await getGraphToken();
-    const siteId = process.env.MS_SHAREPOINT_SITE_ID || process.env.MS_SITE_ID; // Supporting both env naming conventions
+    const siteId = process.env.MS_SHAREPOINT_SITE_ID || process.env.MS_SITE_ID;
     const driveId = process.env.MS_SHAREPOINT_DRIVE_ID || process.env.MS_DRIVE_ID;
     const safeFileName = fileName ? fileName.replace(/[~#%&*{}\\:<>?\/|"]+/g, '').trim() : '';
     const safeDealName = dealName.replace(/[<>:"/\\|?*]+/g, '').trim();
-    const safeAccountName = accountName ? accountName.replace(/[<>:"/\\|?*]+/g, '').trim() : '_Test_Client';
     
-    const targetDealFolder = await getExistingDealFolderName(token, siteId, driveId, safeDealName, dealId, safeAccountName);
+    // 1. Attempt to find the existing parent folder using the SAP ID
+    const folderData = await getExistingDealFolderNameBySAP(token, siteId, driveId, sapId, safeDealName, dealId);
 
-    const fullPath = `${safeAccountName}/BD/Proposals/${targetDealFolder}/${safeFileName}`;
+    let finalAccountFolderName;
+    let targetDealFolder = `${safeDealName}_${dealId}`;
+
+    if (folderData) {
+        // Success: Use the exact folder name returned by SharePoint
+        finalAccountFolderName = folderData.accountFolderName;
+    } else {
+        // Fallback: Build the path using the Account Name provided by Zoho
+        finalAccountFolderName = accountName ? accountName.replace(/[<>:"/\\|?*]+/g, '').trim() : '_Test_Client';
+    }
+
+    // 2. Build the final path
+    const fullPath = `${finalAccountFolderName}/BD/Proposals/${targetDealFolder}/${safeFileName}`;
     const encodedPath = fullPath.split('/').map(segment => encodeURIComponent(segment)).join('/');
 
     try {
