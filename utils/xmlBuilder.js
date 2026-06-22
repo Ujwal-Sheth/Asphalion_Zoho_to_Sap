@@ -95,8 +95,8 @@ const buildSapXmlPayload = (zohoData, accountId, sapQuoteId = null) => {
                <PartyID>${sapSalesUnit}</PartyID>
             </SalesUnitParty>
             <SubmitIndicator>true</SubmitIndicator>
-            <a3z:DEALreferenceZOHO>${sapZohoCode} + ${sapZohoOwnerName}</a3z:DEALreferenceZOHO>
-            <a3z:ZohoDealID>${sapZohoDealID}</a3z:ZohoDealID>
+            <a3z:DEALreferenceZOHO>${sapZohoOwnerName}</a3z:DEALreferenceZOHO>
+            <a3z:ZohoDealID>${sapZohoCode}</a3z:ZohoDealID>
             ${sapSendingDate ? `<a3z:Fechadeenvo>${sapSendingDate}</a3z:Fechadeenvo>` : ""}
             <a3z:Personadecontacto>${sapContactName}</a3z:Personadecontacto>
             ${sapEstimatedTimeline ? `<a3z:DuracionProyectoEstimada>${sapEstimatedTimeline}</a3z:DuracionProyectoEstimada>` : ""}
@@ -376,8 +376,8 @@ const buildSapXmlPayload = (zohoData, accountId, sapQuoteId = null) => {
             
             ${itemsXml}
             ${sapProbability ? `<a3z:ProbabilidadOfertaAsphalion>${sapProbability}</a3z:ProbabilidadOfertaAsphalion>` : ""}
-            <a3z:DEALreferenceZOHO>${sapZohoCode} + ${sapZohoOwnerName}</a3z:DEALreferenceZOHO>
-            <a3z:ZohoDealID>${sapZohoDealID}</a3z:ZohoDealID>
+            <a3z:DEALreferenceZOHO>${sapZohoOwnerName}</a3z:DEALreferenceZOHO>
+            <a3z:ZohoDealID>${sapZohoCode}</a3z:ZohoDealID>
             ${sapSendingDate ? `<a3z:Fechadeenvo>${sapSendingDate}</a3z:Fechadeenvo>` : ""}
             <a3z:Personadecontacto>${sapContactName}</a3z:Personadecontacto>
             <a3z:DuracionProyectoEstimada>${sapEstimatedTimeline}</a3z:DuracionProyectoEstimada>
