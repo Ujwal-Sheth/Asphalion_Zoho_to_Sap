@@ -3,8 +3,8 @@ const { getGraphToken } = require('../utils/auth');
 
 const getExistingDealFolderNameBySAP = async (token, siteId, driveId, sapId, safeDealName, dealId) => {
     try {
-        // UPDATED: Using the exact Internal Name 'Client_x0020_Code' provided
-        const queryUrl = `https://graph.microsoft.com/v1.0/sites/${siteId}/drives/${driveId}/list/items?$expand=fields&$filter=fields/Client_x0020_Code eq '${sapId}'`;
+        // FIX 1: Added ',driveItem' to the $expand parameter to fetch physical folder properties
+        const queryUrl = `https://graph.microsoft.com/v1.0/sites/${siteId}/drives/${driveId}/list/items?$expand=fields,driveItem&$filter=fields/Client_x0020_Code eq '${sapId}'`;
         
         const response = await axios.get(queryUrl, {
             headers: { 'Authorization': `Bearer ${token}` }
@@ -12,8 +12,18 @@ const getExistingDealFolderNameBySAP = async (token, siteId, driveId, sapId, saf
 
         if (response.data.value && response.data.value.length > 0) {
             const accountFolderItem = response.data.value[0]; 
-            const accountFolderName = accountFolderItem.name;
-            const targetDealFolder = `${safeDealName}_${dealId}`;
+            
+            // Added fallbacks to FileLeafRef or Title just in case driveItem fails to expand.
+            const accountFolderName = accountFolderItem.driveItem?.name 
+                                      || accountFolderItem.fields?.FileLeafRef 
+                                      || accountFolderItem.fields?.Title;
+
+            if (!accountFolderName) {
+                console.warn(`Found SAP ID ${sapId}, but couldn't resolve the folder name. Payload:`, accountFolderItem);
+                return null; // Force fallback to Account Name if name fails to resolve
+            }
+
+            const targetDealFolder = `${safeDealName}_${sapId}`;
             
             return { accountFolderName, targetDealFolder };
         }
@@ -35,7 +45,7 @@ exports.uploadFileToSharePoint = async (fileName, fileBuffer, dealName, dealId, 
     const folderData = await getExistingDealFolderNameBySAP(token, siteId, driveId, sapId, safeDealName, dealId);
 
     let finalAccountFolderName;
-    let targetDealFolder = `${safeDealName}_${dealId}`;
+    let targetDealFolder = `${safeDealName}_${sapId}`;
 
     if (folderData) {
         // Success: Use the exact folder name returned by SharePoint
