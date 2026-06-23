@@ -144,6 +144,13 @@ const mapSapCustomerToZohoAccount = (sapCustomer) => {
     // Email — EmailURI inside primary address block
     const email = getVal(mainAddress?.Address?.EmailURI);
 
+    // Phone can appear under the primary default address block,
+    // or as a top-level WorkplaceTelephone on some SAP Customer records.
+    const phone = getVal(mainAddress?.Address?.Telephone?.FormattedNumberDescription)
+        || getVal(mainAddress?.Address?.Telephone?.SubscriberID)
+        || getVal(sapCustomer.WorkplaceTelephone?.FormattedNumberDescription)
+        || getVal(sapCustomer.WorkplaceTelephone?.SubscriberID);
+
     // Map 2-letter SAP CountryCode to Zoho's picklist country name
     const countryName = country ? (COUNTRY_MAP[country.toUpperCase()] || country) : null;
 
@@ -185,7 +192,7 @@ const mapSapCustomerToZohoAccount = (sapCustomer) => {
     }
     const paymentTerms = cashDiscountTermsCode ? PAYMENT_TERMS_MAP[cashDiscountTermsCode] : null;
 
-    return {
+    const payload = {
         Account_Name:        accountName,
         Tax_ID:              taxId,
         Billing_Address:     billingAddress,
@@ -197,6 +204,12 @@ const mapSapCustomerToZohoAccount = (sapCustomer) => {
         Payment_Terms:       paymentTerms,
         Customer_status_SAP: customerStatus,
     };
+
+    if (phone) {
+        payload.Phone = phone;
+    }
+
+    return payload;
 };
 
 /**
