@@ -74,6 +74,7 @@ exports.handleQuoteApproval = async (req, res) => {
                 att.File_Name,
                 fileBuffer,
                 dealName,
+                zohoDealId,
                 sapId,
                 accountName
             );
