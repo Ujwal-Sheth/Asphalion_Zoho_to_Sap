@@ -50,7 +50,7 @@ const buildSapXmlPayload = (zohoData, accountId, sapQuoteId = null) => {
     const sapDescription = zohoData.Deal_Name;
     const sapPaymentTerms = getCode("PaymentTerms", zohoData.Payment_Terms);
     const sapEstimatedTimeline = zohoData.Estimated_Project_Timeline_in_months || "";
-    // const sapAcceptanceDate = formatDateOnly(zohoData.Acceptance_Date) || "";
+    const sapAcceptanceDate = formatDateOnly(zohoData.Acceptance_Date) || "";
     const sapValidityStart = formatDateTime(zohoData.Creation_Date) || "";
     const sapValidityEnd = formatDateTime(zohoData.Closing_Date) || "";
     const sapSendingDate = formatDateOnly(zohoData.Sent_to_the_client_date) || "";
@@ -254,7 +254,7 @@ const buildSapXmlPayload = (zohoData, accountId, sapQuoteId = null) => {
   const sapMailInvoiceRepository = zohoData.Mail_invoice_repository || "";
   const sapInvoiceEmails = zohoData.Invoicing_emails || "";
   const sapProbability = getCode("Probability", zohoData.Approval);
-  // const sapAcceptanceDate = zohoData.Acceptance_Date || "";
+  const sapAcceptanceDate = zohoData.Acceptance_Date || "";
   const sapSendingDate = formatDateOnly(zohoData.Sent_to_the_client_date) || "";
   const sapProductType = getCode("ProjectType", zohoData.Project_Type);
   const sapSource = getCode("Source", zohoData.Source || zohoData.Lead_Source);
