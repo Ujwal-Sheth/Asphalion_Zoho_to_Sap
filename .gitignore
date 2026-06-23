@@ -46,3 +46,4 @@ scripts/sap_quote_payload_931793000006705001.xml
 scripts/sap_quote_payload_931793000007847007.xml
 scripts/inspectSap.js
 scripts/inspectSap.js
+logs/combined.log
