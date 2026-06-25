@@ -21,7 +21,7 @@ const SAP_MAPS = {
   },
   TechnicalUnit: {
     "eSub_RegOps": "Z001",
-    "DATA_RegOps": "Z002",
+    "DATA_Regops": "Z002",
     CMC: "Z003",
     DW: "Z004",
     MedTech: "Z005",
@@ -35,7 +35,7 @@ const SAP_MAPS = {
   },
   Category: {
     "eSub_RegOps": "Z001",
-    "DATA_RegOps": "Z002",
+    "DATA_Regops": "Z002",
     CMC: "Z003",
     DW: "Z004",
     MedTech: "Z005",
