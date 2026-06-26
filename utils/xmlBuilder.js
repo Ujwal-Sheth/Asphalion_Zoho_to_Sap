@@ -8,7 +8,7 @@ const getCode = (mapName, zohoValue, fallback = "") => {
 
 const getSalesUnit = (categoryText) => {
   const salesUnitMapping = {
-    "eSub_RegOps": "1170", // AS_eSub RegOps
+    "eSUB_RegOps": "1170", // AS_eSub RegOps
     "DATA_Regops": "1190", // AS_DATA RegOps
     CMC: "1101", // AS_CMC
     DW: "1150", // AS_DW

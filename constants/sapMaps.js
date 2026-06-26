@@ -20,7 +20,7 @@ const SAP_MAPS = {
     "Recomendación externa": "Z01",
   },
   TechnicalUnit: {
-    "eSub_RegOps": "Z001",
+    "eSUB_RegOps": "Z001",
     "DATA_Regops": "Z002",
     CMC: "Z003",
     DW: "Z004",
@@ -34,7 +34,7 @@ const SAP_MAPS = {
     Others: "Z011",
   },
   Category: {
-    "eSub_RegOps": "Z001",
+    "eSUB_RegOps": "Z001",
     "DATA_Regops": "Z002",
     CMC: "Z003",
     DW: "Z004",
