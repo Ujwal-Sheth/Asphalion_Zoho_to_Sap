@@ -36,10 +36,12 @@ const formatDateTime = (dateStr) => {
   return isNaN(date.getTime()) ? null : date.toISOString().split('.')[0] + 'Z';
 };
 
-const buildSapXmlPayload = (zohoData, accountId, sapQuoteId = null) => {
+const buildSapXmlPayload = (zohoData, accountId, sapQuoteId = null, accountLanguage = 'English') => {
   console.log(`[XML] Building payload for Deal ID: ${zohoData.id}, Quote ID: ${sapQuoteId}`);
 
-
+  const lang = accountLanguage ? accountLanguage.toLowerCase() : 'english';
+  const isEnglish = lang.includes('en') || lang === 'english';
+  const isSpanish = lang.includes('es') || lang === 'spanish' || lang === 'español';
   // --- UPDATE FLOW ---
   if (sapQuoteId) {
     const subformItems = zohoData.Product_Details || [];
@@ -65,7 +67,7 @@ const buildSapXmlPayload = (zohoData, accountId, sapQuoteId = null) => {
     const sapProbability = getCode("Probability", zohoData.Approval);
     const sapTypeOfProduct = getCode("TypeOfProduct", zohoData.Type_of_Product);
     const sapStandBy = (zohoData.STAND_BY === true || zohoData.STAND_BY === "true") ? "true" : "false";
-
+    const sapPricingType = getCode("PricingType", zohoData.Price_Type);
     // Long text fields
     const sapBackgroundIntroES = zohoData.Background_intro_ES || "";
     const sapAgreedFeesEN = zohoData.Agreed_fees_sales_quote_EN || "";
@@ -153,12 +155,20 @@ const buildSapXmlPayload = (zohoData, accountId, sapQuoteId = null) => {
                   const unitPrice = parseFloat(item.Unit_Price || 0).toFixed(2);
                   const itemDiscount = parseFloat(item.Discount || 0).toFixed(2);
                   const sapUoM = item.Unidad_de_medida || "";
-                  const sapProcessingTypeCode = getCode("PricingType", item.Pricing_Type);
+                  // const sapProcessingTypeCode = getCode("PricingType", item.Pricing_Type);
                   const sapAccordingToFee = (item.According_to_Fee === true || item.According_to_Fee === "true") ? "true" : "false";
                   const sapOptional = (item.Optional === true || item.Optional === "true") ? "true" : "false";
                   const sapFootnotesEnglish = item.Footnotes_Ingles1 || item.Footnotes_Ingles || "";
+                  const sapFootnotesSpanish = item.Footnotes_Espa_ol || "";
                   const sapActivityDescription = item.Activity_description || "";
-
+                  let finalFootnote = " ";
+                  if (isEnglish) {
+                    finalFootnote = sapFootnotesEnglish;
+                  } else if (isSpanish) {
+                    finalFootnote = sapFootnotesSpanish;
+                  } else {
+                    finalFootnote = sapFootnotesEnglish || sapFootnotesSpanish || " ";
+                  }
                   if (productCode) {
                     // Action '04' (Save) acts as an Upsert: Updates if exists, creates if new
                     const itemAction = '04'; 
@@ -169,9 +179,9 @@ const buildSapXmlPayload = (zohoData, accountId, sapQuoteId = null) => {
                     parts.push(`<ID>${sapItemId}</ID>`);
                     parts.push(`<OptionalIndicator>${sapOptional}</OptionalIndicator>`);
                     parts.push(`<Description>${sapActivityDescription}</Description>`);
+                    if (sapPricingType) parts.push(`<ProcessingTypeCode>${sapPricingType}</ProcessingTypeCode>`);
                     parts.push(`<ItemProduct actionCode="${itemAction}">`);
                     parts.push(`<ProductInternalID>${productCode}</ProductInternalID>`);
-                    if (sapProcessingTypeCode) parts.push(`<ProcessingTypeCode>${sapProcessingTypeCode}</ProcessingTypeCode>`);
                     parts.push(`<UnitOfMeasure>${sapUoM}</UnitOfMeasure>`);
                     parts.push('</ItemProduct>');
                     
@@ -203,7 +213,12 @@ const buildSapXmlPayload = (zohoData, accountId, sapQuoteId = null) => {
                     parts.push('</Rate>');
                     parts.push('</ItemMainPrice>');
                     parts.push('</PriceAndTaxCalculationItem>');
-                    
+                    parts.push(`<ItemTextCollection actionCode="${itemAction}">`);
+                    parts.push(`<Text>`);
+                    parts.push(`<TypeCode>10024</TypeCode>`);
+                    parts.push(`<ContentText>${finalFootnote}</ContentText>`);
+                    parts.push(`</Text>`);
+                    parts.push(`</ItemTextCollection>`);
                     parts.push(`<a3z:EstimacionIngresos currencyCode="EUR">${sapTotalAmount}</a3z:EstimacionIngresos>`);
                     parts.push(`<a3z:Segntarifa>${sapAccordingToFee}</a3z:Segntarifa>`);
                     if (sapFootnotesEnglish) parts.push(`<a3z:NotasalpieEN><![CDATA[${sapFootnotesEnglish}]]></a3z:NotasalpieEN>`);
@@ -250,7 +265,7 @@ const buildSapXmlPayload = (zohoData, accountId, sapQuoteId = null) => {
   const sapActiveSubstance = zohoData.Active_substance || "";
   const sapIndication = zohoData.Indication || "";
   const sapStandBy = zohoData.STAND_BY ? "true" : "false";
-
+  const sapPricingType = getCode("PricingType", zohoData.Price_Type);
   const sapMailInvoiceRepository = zohoData.Mail_invoice_repository || "";
   const sapInvoiceEmails = zohoData.Invoicing_emails || "";
   const sapProbability = getCode("Probability", zohoData.Approval);
@@ -285,11 +300,20 @@ const buildSapXmlPayload = (zohoData, accountId, sapQuoteId = null) => {
       const unitPrice = parseFloat(item.Unit_Price || 0).toFixed(2);
       const itemDiscount = parseFloat(item.Discount || 0).toFixed(2);
       const sapUoM = item.Unidad_de_medida || "";
-      const sapProcessingTypeCode = getCode("PricingType", item.Pricing_Type);
+      // const sapProcessingTypeCode = getCode("PricingType", item.Pricing_Type);
       const sapAccordingToFee = (item.According_to_Fee === true || item.According_to_Fee === "true") ? "true" : "false";
       const sapOptional = (item.Optional === true || item.Optional === "true") ? "true" : "false";
       const sapFootnotesEnglish = item.Footnotes_Ingles1 || item.Footnotes_Ingles || "";
+      const sapFootnotesSpanish = item.Footnotes_Espa_ol || "";
       const sapActivityDescription = item.Activity_description || "";
+      let finalFootnote = " ";
+      if (isEnglish) {
+        finalFootnote = sapFootnotesEnglish;
+      } else if (isSpanish) {
+        finalFootnote = sapFootnotesSpanish;
+      } else {
+        finalFootnote = sapFootnotesEnglish || sapFootnotesSpanish || " ";
+      }
       
       if (productCode) {
         itemsXml += `
@@ -297,9 +321,9 @@ const buildSapXmlPayload = (zohoData, accountId, sapQuoteId = null) => {
                     <ID>${sapItemId}</ID>
                     <OptionalIndicator>${sapOptional}</OptionalIndicator>
                     <Description>${sapActivityDescription}</Description>
+                    ${sapPricingType ? `<ProcessingTypeCode>${sapPricingType}</ProcessingTypeCode>` : ""}
                     <ItemProduct actionCode="01">
                         <ProductInternalID>${productCode}</ProductInternalID>
-                        ${sapProcessingTypeCode ? `<ProcessingTypeCode>${sapProcessingTypeCode}</ProcessingTypeCode>` : ""}
                         <UnitOfMeasure>${sapUoM}</UnitOfMeasure>
                     </ItemProduct>
                     
@@ -332,7 +356,12 @@ const buildSapXmlPayload = (zohoData, accountId, sapQuoteId = null) => {
                             </Rate>
                         </ItemMainPrice>
                     </PriceAndTaxCalculationItem>
-                    
+                    <ItemTextCollection actionCode="01">
+                            <Text>
+                                <TypeCode>10024</TypeCode>
+                                <ContentText>${finalFootnote}</ContentText>
+                            </Text>
+                        </ItemTextCollection>
                     <a3z:EstimacionIngresos currencyCode="EUR">${sapTotalAmount}</a3z:EstimacionIngresos>
                     <a3z:Segntarifa>${sapAccordingToFee}</a3z:Segntarifa>
                     ${sapFootnotesEnglish ? `<a3z:NotasalpieEN><![CDATA[${sapFootnotesEnglish}]]></a3z:NotasalpieEN>` : ""}

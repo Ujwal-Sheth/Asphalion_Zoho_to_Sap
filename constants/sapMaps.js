@@ -162,9 +162,13 @@ const SAP_MAPS = {
     "Others": "134"
   },
   PricingType: {
-    "Fixed": "PBFP",
-    "T&M": "PBTM"
+    "Fixed": "APFP",
+    "T&M": "APTM"
   }
+  // APFP 
+  // PBFP
+  // APTM
+  // PBTM
 };
 
 module.exports = SAP_MAPS;

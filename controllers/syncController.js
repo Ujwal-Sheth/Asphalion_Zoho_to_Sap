@@ -58,6 +58,7 @@ exports.syncDealToSap = async (req, res) => {
   let sapAccountId = null; 
   let soapPayload = null;
   let existingQuoteId = null;
+  let accountLanguage = "English"
 
   try {
     // --- STEP 1: Fetch Deal from Zoho ---
@@ -73,8 +74,9 @@ exports.syncDealToSap = async (req, res) => {
     
     console.log(`[1.5/4] Fetching related Account from Zoho...`);
     const zohoAccountData = await zohoService.getRecord('Accounts', zohoDealData.Account_Name.id);
-
+    
     sapAccountId = zohoAccountData.SAP_Customer_ID || null;
+    accountLanguage = zohoAccountData.Language || "English";
 
     if (!sapAccountId) {
       throw new Error("No SAP Customer ID found on the related Zoho Account.");
@@ -113,7 +115,7 @@ exports.syncDealToSap = async (req, res) => {
         console.log(`[!] Deal ${dealId} already has SAP Quote ID (${existingQuoteId}). Routing to UPDATE flow.`);
     }
     console.log(`[3/4] Transforming Zoho JSON to SAP XML (${mode} mode)...`);
-    soapPayload = buildSapXmlPayload(zohoDealData, sapAccountId, existingQuoteId);
+    soapPayload = buildSapXmlPayload(zohoDealData, sapAccountId, existingQuoteId, accountLanguage);
     // console.log(`[DEBUG] Raw SOAP Payload:\n`, soapPayload);
   } catch (error) {
     console.error(`[!] Error building XML:`, error.message);

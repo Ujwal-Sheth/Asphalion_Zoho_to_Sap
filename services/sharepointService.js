@@ -22,10 +22,7 @@ const getExistingDealFolderNameBySAP = async (token, siteId, driveId, sapId, saf
                 console.warn(`Found SAP ID ${sapId}, but couldn't resolve the folder name. Payload:`, accountFolderItem);
                 return null; // Force fallback to Account Name if name fails to resolve
             }
-
-            const targetDealFolder = `${safeDealName}_${sapId}`;
-            
-            return { accountFolderName, targetDealFolder };
+            return accountFolderName;
         }
     } catch (error) {
         console.warn(`Could not find folder by Client Code (${sapId}):`, error.response ? JSON.stringify(error.response.data) : error.message);
@@ -34,29 +31,26 @@ const getExistingDealFolderNameBySAP = async (token, siteId, driveId, sapId, saf
     return null;
 };
 
-exports.uploadFileToSharePoint = async (fileName, fileBuffer, dealName, dealId, sapId, accountName) => {
+exports.uploadFileToSharePoint = async (fileName, fileBuffer, subFolder, sapId, accountName) => {
     const token = await getGraphToken();
     const siteId = process.env.MS_SHAREPOINT_SITE_ID || process.env.MS_SITE_ID;
     const driveId = process.env.MS_SHAREPOINT_DRIVE_ID || process.env.MS_DRIVE_ID;
     const safeFileName = fileName ? fileName.replace(/[~#%&*{}\\:<>?\/|"]+/g, '').trim() : '';
-    const safeDealName = dealName.replace(/[<>:"/\\|?*]+/g, '').trim();
+    // const safeDealName = dealName.replace(/[<>:"/\\|?*]+/g, '').trim();
     
     // 1. Attempt to find the existing parent folder using the SAP ID
-    const folderData = await getExistingDealFolderNameBySAP(token, siteId, driveId, sapId, safeDealName, dealId);
+    const fetchedFolderName = await getExistingDealFolderNameBySAP(token, siteId, driveId, sapId);
 
-    let finalAccountFolderName;
-    let targetDealFolder = `${safeDealName}_${sapId}`;
-
-    if (folderData) {
-        // Success: Use the exact folder name returned by SharePoint
-        finalAccountFolderName = folderData.accountFolderName;
-    } else {
-        // Fallback: Build the path using the Account Name provided by Zoho
-        finalAccountFolderName = accountName ? accountName.replace(/[<>:"/\\|?*]+/g, '').trim() : '_Test_Client';
+    if (!fetchedFolderName) {
+        // If the folder isn't found, abort immediately. The controller will catch this and log the error.
+        throw new Error(`Account folder for SAP ID '${sapId}' does not exist in SharePoint. Cannot route files.`);
     }
 
+    const finalAccountFolderName = fetchedFolderName;
+
+
     // 2. Build the final path
-    const fullPath = `${finalAccountFolderName}/BD/Proposals/${targetDealFolder}/${safeFileName}`;
+    const fullPath = `${finalAccountFolderName}/OBD/${subFolder}/${safeFileName}`;
     const encodedPath = fullPath.split('/').map(segment => encodeURIComponent(segment)).join('/');
 
     try {
