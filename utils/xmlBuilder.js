@@ -46,6 +46,11 @@ const buildSapXmlPayload = (zohoData, accountId, sapQuoteId = null, accountLangu
   if (sapQuoteId) {
     const subformItems = zohoData.Product_Details || [];
     const sapZohoOwnerName = zohoData.Owner?.name || "";
+
+    const zohoStage = zohoData.Stage || "";
+    const isLossStage = zohoStage.toLowerCase().includes("draft"); // Adjust if your exact stage name differs
+    const sapLossDate = isLossStage ? formatDateOnly(zohoData.Closing_Date) : "";
+
     const sapZohoCode = zohoData.Deal_Code || "";
     const sapZohoDealID = zohoData.id || "";
     const sapContactName = zohoData.Contact_Name?.name || "";
@@ -101,6 +106,7 @@ const buildSapXmlPayload = (zohoData, accountId, sapQuoteId = null, accountLangu
             <a3z:ZohoDealID>${sapZohoCode}</a3z:ZohoDealID>
             ${sapSendingDate ? `<a3z:Fechadeenvo>${sapSendingDate}</a3z:Fechadeenvo>` : ""}
             ${sapAcceptanceDate ? `<a3z:Fechadeaceptacin>${sapAcceptanceDate}</a3z:Fechadeaceptacin>` : ""}
+            ${sapLossDate ? `<a3z:Fechadeperdida>${sapLossDate}</a3z:Fechadeperdida>` : ""}
             <a3z:Personadecontacto>${sapContactName}</a3z:Personadecontacto>
             ${sapEstimatedTimeline ? `<a3z:DuracionProyectoEstimada>${sapEstimatedTimeline}</a3z:DuracionProyectoEstimada>` : ""}
             <a3z:Discount>${subformItems.some(item => (item.Discount && parseFloat(item.Discount) > 0)) ? "true" : "false"}</a3z:Discount>
@@ -161,6 +167,7 @@ const buildSapXmlPayload = (zohoData, accountId, sapQuoteId = null, accountLangu
                   const sapFootnotesEnglish = item.Footnotes_Ingles1 || item.Footnotes_Ingles || "";
                   const sapFootnotesSpanish = item.Footnotes_Espa_ol || "";
                   const sapActivityDescription = item.Activity_description || "";
+                  // const sapSalesForecast = parseFloat(item.Sales_Forecast || 0).toFixed(2); 
                   let finalFootnote = " ";
                   if (isEnglish) {
                     finalFootnote = sapFootnotesEnglish;
@@ -212,6 +219,13 @@ const buildSapXmlPayload = (zohoData, accountId, sapQuoteId = null, accountLangu
                     parts.push(`<BaseMeasureUnitCode>${sapUoM}</BaseMeasureUnitCode>`);
                     parts.push('</Rate>');
                     parts.push('</ItemMainPrice>');
+
+                    // parts.push(`<ItemProductTaxDetails actionCode="${itemAction}">`);
+                    // parts.push(`<TransactionCurrencyProductTax actionCode="${itemAction}">`);
+                    // parts.push(`<BaseAmount currencyCode="EUR">${sapSalesForecast}</BaseAmount>`);
+                    // parts.push('</TransactionCurrencyProductTax>');
+                    // parts.push('</ItemProductTaxDetails>');
+                    
                     parts.push('</PriceAndTaxCalculationItem>');
                     parts.push(`<ItemTextCollection actionCode="${itemAction}">`);
                     parts.push(`<Text>`);
@@ -240,6 +254,11 @@ const buildSapXmlPayload = (zohoData, accountId, sapQuoteId = null, accountLangu
     
   const subformItems = zohoData.Product_Details || [];
   const sapZohoOwnerName = zohoData.Owner?.name || "";
+
+  const zohoStage = zohoData.Stage || "";
+  const isLossStage = zohoStage.toLowerCase().includes("draft");
+  const sapLossDate = isLossStage ? formatDateOnly(zohoData.Closing_Date) : "";
+
   const sapContactName = zohoData.Contact_Name?.name || "";
   const sapDescription = zohoData.Deal_Name;
   const sapPaymentTerms = getCode("PaymentTerms", zohoData.Payment_Terms);
@@ -306,6 +325,7 @@ const buildSapXmlPayload = (zohoData, accountId, sapQuoteId = null, accountLangu
       const sapFootnotesEnglish = item.Footnotes_Ingles1 || item.Footnotes_Ingles || "";
       const sapFootnotesSpanish = item.Footnotes_Espa_ol || "";
       const sapActivityDescription = item.Activity_description || "";
+      // const sapSalesForecast = parseFloat(item.Sales_Forecast || 0).toFixed(2);
       let finalFootnote = " ";
       if (isEnglish) {
         finalFootnote = sapFootnotesEnglish;
@@ -354,7 +374,7 @@ const buildSapXmlPayload = (zohoData, accountId, sapQuoteId = null, accountLangu
                                 <BaseDecimalValue>1.0</BaseDecimalValue>
                                 <BaseMeasureUnitCode>${sapUoM}</BaseMeasureUnitCode>
                             </Rate>
-                        </ItemMainPrice>
+                        </ItemMainPrice> 
                     </PriceAndTaxCalculationItem>
                     <ItemTextCollection actionCode="01">
                             <Text>
@@ -372,6 +392,12 @@ const buildSapXmlPayload = (zohoData, accountId, sapQuoteId = null, accountLangu
     });
   }
 // <SubmitIndicator>true</SubmitIndicator> on line after <CashDiscountTermsCode>${sapPaymentTerms}</CashDiscountTermsCode>
+// Item level Sales Forecast
+//  <ItemProductTaxDetails actionCode="01">
+//                             <TransactionCurrencyProductTax actionCode="01">
+//                                 <BaseAmount currencyCode="EUR">${sapSalesForecast}</BaseAmount>
+//                             </TransactionCurrencyProductTax>
+//                         </ItemProductTaxDetails>
   return `
 <soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:glob="http://sap.com/xi/SAPGlobal20/Global" xmlns:a3z="http://sap.com/xi/AP/CustomerExtension/BYD/A3Z5O">
    <soap:Header/>
@@ -409,6 +435,7 @@ const buildSapXmlPayload = (zohoData, accountId, sapQuoteId = null, accountLangu
             <a3z:DEALreferenceZOHO>${sapZohoOwnerName}</a3z:DEALreferenceZOHO>
             <a3z:ZohoDealID>${sapZohoCode}</a3z:ZohoDealID>
             ${sapSendingDate ? `<a3z:Fechadeenvo>${sapSendingDate}</a3z:Fechadeenvo>` : ""}
+            ${sapLossDate ? `<a3z:Fechadeperdida>${sapLossDate}</a3z:Fechadeperdida>` : ""}
             <a3z:Personadecontacto>${sapContactName}</a3z:Personadecontacto>
             <a3z:DuracionProyectoEstimada>${sapEstimatedTimeline}</a3z:DuracionProyectoEstimada>
             <a3z:Discount>${subformItems.some(item => (item.Discount && parseFloat(item.Discount) > 0)) ? "true" : "false"}</a3z:Discount>
