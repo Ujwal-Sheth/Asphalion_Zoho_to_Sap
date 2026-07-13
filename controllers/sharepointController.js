@@ -28,6 +28,26 @@ exports.handleQuoteApproval = async (req, res) => {
             throw new Error("No Account linked to this Deal. Cannot fetch SAP ID.");
         }
 
+        const acceptanceType = dealData.Acceptance_Type || '';
+        let targetSubFolder = ''; 
+
+        if (acceptanceType === 'Master Agreement (MSA)') {
+            targetSubFolder = 'Contracts';
+        } else if (acceptanceType === 'CDA') {
+            targetSubFolder = 'CDAs';
+        } else if (acceptanceType === 'Zoho Signature') {
+            targetSubFolder = 'Proposals';
+        } else {
+            console.log(`⚠️ Unrecognized or empty Acceptance Type: '${acceptanceType}'. Aborting sync.`);
+            await ErrorLog.create({ 
+                dealId: zohoDealId, 
+                logType: 'INFO', 
+                stage: 'SHAREPOINT_SYNC_SKIPPED', 
+                messages: [`Unrecognized Acceptance Type: '${acceptanceType}'. Files intentionally left in Zoho.`] 
+            });
+            return;
+        }
+
         console.log(`[2/4] Fetching Account data to extract SAP ID...`);
         const accountData = await zohoService.getRecord('Accounts', dealData.Account_Name.id);
 
@@ -35,10 +55,18 @@ exports.handleQuoteApproval = async (req, res) => {
         const accountName = accountData.Account_Name || dealData.Account_Name.name || "Unknown_Account";
 
         if (!sapId) {
-            throw new Error("Linked Account does not have an SAP Customer ID.");
+            console.log(`⚠️ Client is a prospect (No SAP Code). Documents remain in Zoho cloud.`);
+            await ErrorLog.create({ 
+                dealId: zohoDealId, 
+                logType: 'INFO', 
+                stage: 'SHAREPOINT_SYNC_SKIPPED', 
+                messages: ['Client is a prospect. Files intentionally left in Zoho.'] 
+            });
+            return;
         }
 
         console.log(`✅ Extracted SAP ID: ${sapId}`);
+        console.log(`✅ Acceptance Type resolved to Folder: OBD/${targetSubFolder}`);
 
         console.log(`[3/4] Fetching Deal Attachments...`);
         const attachments = await zohoService.getDealAttachments(zohoDealId);
@@ -54,27 +82,29 @@ exports.handleQuoteApproval = async (req, res) => {
             console.log(`⬇️ Downloading: ${att.File_Name}`);
             const fileBuffer = await zohoService.downloadAttachment(zohoDealId, att.id);
 
-            // --- NEW: Dynamic Folder Routing Logic ---
-            // let targetSubFolder = 'bd'; // Fallback root folder
+            // --- Apply New Naming Convention ---
+            // 1. Generate YYMMDD string
+            const today = new Date();
+            const yy = String(today.getFullYear()).slice(-2);
+            const mm = String(today.getMonth() + 1).padStart(2, '0');
+            const dd = String(today.getDate()).padStart(2, '0');
+            const datePrefix = `${yy}${mm}${dd}`;
 
-            // // Convert to uppercase once for safe case-insensitive checking
-            // const upperFileName = att.File_Name.toUpperCase(); 
+            // 2. Separate the base name from the extension to avoid appending text after '.pdf'
+            const originalFileName = att.File_Name;
+            const lastDotIndex = originalFileName.lastIndexOf('.');
+            const baseName = lastDotIndex !== -1 ? originalFileName.substring(0, lastDotIndex) : originalFileName;
+            const extension = lastDotIndex !== -1 ? originalFileName.substring(lastDotIndex) : '';
 
-            // if (upperFileName.includes('SIGNED_DEAL_CONTRACT') || upperFileName.includes('ZOHO_SIGNED')) {
-            //     targetSubFolder = 'bd/Offers';
-            // } else if (upperFileName.startsWith('MSA') || upperFileName.startsWith('PO')) {
-            //     targetSubFolder = 'bd/Contracts';
-            // } else if (upperFileName.startsWith('NDA')) {
-            //     targetSubFolder = 'bd/CDAs';
-            // }
-            // -----------------------------------------
+            // 3. Construct the final file name: YYMMDD_[original]_[client]_Asphalion_final_fully signed
+            const newFileName = `${datePrefix}_${baseName}_${accountName}_Asphalion_final_fully signed${extension}`;
 
-            // console.log(`⬆️ Uploading to SharePoint -> /${targetSubFolder}...`);
+            console.log(`⬆️ Uploading to SharePoint -> Projects/[Account]/OBD/${targetSubFolder}/${newFileName}...`);
+
             const spUrl = await sharepointService.uploadFileToSharePoint(
-                att.File_Name,
+                newFileName, 
                 fileBuffer,
-                dealName,
-                zohoDealId,
+                targetSubFolder,
                 sapId,
                 accountName
             );
@@ -82,7 +112,6 @@ exports.handleQuoteApproval = async (req, res) => {
         }
 
         console.log(`\n[4/4] SHAREPOINT SYNC COMPLETE`);
-        console.log(`Successfully migrated ${uploadedFilesInfo.length} files.`);
 
         // --- Push Folder URL back to Zoho ---
         if (uploadedFilesInfo.length > 0) {
@@ -90,7 +119,6 @@ exports.handleQuoteApproval = async (req, res) => {
             let folderUrl = firstFileUrl.split('?')[0];
             // Navigates up two directories to capture the parent "bd" folder, not the specific subfolder
             folderUrl = folderUrl.substring(0, folderUrl.lastIndexOf('/'));
-            // folderUrl = folderUrl.substring(0, folderUrl.lastIndexOf('/'));
 
             console.log(`🔗 Updating Zoho Deal with SharePoint Folder URL...`);
             await zohoService.updateDealField(zohoDealId, {
@@ -99,7 +127,7 @@ exports.handleQuoteApproval = async (req, res) => {
             console.log(`✅ Folder URL successfully saved to Zoho.`);
         }
 
-        await ErrorLog.create({ dealId: zohoDealId, logType: 'INFO', stage: 'SHAREPOINT_SYNC_SUCCESS', messages: [`Synced ${uploadedFilesInfo.length} files to folder ${dealName}_${sapId}`] });
+        await ErrorLog.create({ dealId: zohoDealId, logType: 'INFO', stage: 'SHAREPOINT_SYNC_SUCCESS', messages: [`Synced ${uploadedFilesInfo.length} files to ${targetSubFolder} for SAP ID ${sapId}`] });
 
     } catch (error) {
         console.error(`\n❌ Error processing Deal ${zohoDealId}:`, error.message);
