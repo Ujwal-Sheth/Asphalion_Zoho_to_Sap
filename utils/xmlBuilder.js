@@ -386,7 +386,7 @@ const buildSapXmlPayload = (zohoData, accountId, sapQuoteId = null, accountLangu
                         </ItemTextCollection>
                     <a3z:EstimacionIngresos currencyCode="EUR">${sapTotalAmount}</a3z:EstimacionIngresos>
                     <a3z:Segntarifa>${sapAccordingToFee}</a3z:Segntarifa>
-                    ${sapFootnotesEnglish ? `<a3z:NotasalpieEN><![CDATA[${sapFootnotesEnglish}]]></a3z:NotasalpieEN>` : ""}
+                    ${sapFootnotesEnglish ? `<a3z:NotasalpieEN><![CDATA[${sapFootnotesEnglish}]]></a3z:NotasalpieEN>` : " "}
                     <a3z:Ingresos0>false</a3z:Ingresos0>
                 </Items>
                 `;
