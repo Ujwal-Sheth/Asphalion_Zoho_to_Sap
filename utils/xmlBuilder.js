@@ -164,8 +164,8 @@ const buildSapXmlPayload = (zohoData, accountId, sapQuoteId = null, accountLangu
                   // const sapProcessingTypeCode = getCode("PricingType", item.Pricing_Type);
                   const sapAccordingToFee = (item.According_to_Fee === true || item.According_to_Fee === "true") ? "true" : "false";
                   const sapOptional = (item.Optional === true || item.Optional === "true") ? "true" : "false";
-                  const sapFootnotesEnglish = item.Footnotes_Ingles1 || item.Footnotes_Ingles || "";
-                  const sapFootnotesSpanish = item.Footnotes_Ingles1 || item.Footnotes_Ingles || "";
+                  const sapFootnotesEnglish = item.Footnotes_Ingles1 || " ";
+                  const sapFootnotesSpanish = item.Footnotes_Ingles1 || " ";
                   // const sapFootnotesSpanish = item.Footnotes_Espa_ol || "";
                   const sapActivityDescription = item.Activity_description || "";
                   // const sapSalesForecast = parseFloat(item.Sales_Forecast || 0).toFixed(2); 
@@ -323,8 +323,8 @@ const buildSapXmlPayload = (zohoData, accountId, sapQuoteId = null, accountLangu
       // const sapProcessingTypeCode = getCode("PricingType", item.Pricing_Type);
       const sapAccordingToFee = (item.According_to_Fee === true || item.According_to_Fee === "true") ? "true" : "false";
       const sapOptional = (item.Optional === true || item.Optional === "true") ? "true" : "false";
-      const sapFootnotesEnglish = item.Footnotes_Ingles1 || item.Footnotes_Ingles || "";
-       const sapFootnotesSpanish = item.Footnotes_Ingles1 || item.Footnotes_Ingles || "";
+      const sapFootnotesEnglish = item.Footnotes_Ingles1 ||  " ";
+       const sapFootnotesSpanish = item.Footnotes_Ingles1 ||  " ";
       // const sapFootnotesSpanish = item.Footnotes_Espa_ol || "";
       const sapActivityDescription = item.Activity_description || "";
       // const sapSalesForecast = parseFloat(item.Sales_Forecast || 0).toFixed(2);

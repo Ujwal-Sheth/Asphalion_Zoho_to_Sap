@@ -114,9 +114,10 @@ exports.handleQuoteApproval = async (req, res) => {
         console.log(`\n[4/4] SHAREPOINT SYNC COMPLETE`);
 
         // --- Push Folder URL back to Zoho ---
+        // New Code from Here - Rider
         if (uploadedFilesInfo.length > 0) {
             console.log(`🔗 Resolving SharePoint folder URL directly via Graph...`);
-            const folderUrl = await sharepointService.resolveFolderUrl(sapId, targetSubFolder);
+            const folderUrl = await sharepointService.resolveDealFolderUrl(dealName, zohoDealId, sapId, accountName);
 
             if (folderUrl) {
                 await zohoService.updateDealField(zohoDealId, {
@@ -127,8 +128,8 @@ exports.handleQuoteApproval = async (req, res) => {
                 console.warn(`⚠️ Could not resolve folder URL; skipping Zoho update.`);
             }
         }
-
-        await ErrorLog.create({ dealId: zohoDealId, logType: 'INFO', stage: 'SHAREPOINT_SYNC_SUCCESS', messages: [`Synced ${uploadedFilesInfo.length} files to ${targetSubFolder} for SAP ID ${sapId}`] });
+         // New Code ends Here - Rider
+        await ErrorLog.create({ dealId: zohoDealId, logType: 'INFO', stage: 'SHAREPOINT_SYNC_SUCCESS', messages: [`Synced ${uploadedFilesInfo.length} files to folder ${dealName}_${sapId}`] });
 
     } catch (error) {
         console.error(`\n❌ Error processing Deal ${zohoDealId}:`, error.message);

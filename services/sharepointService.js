@@ -30,10 +30,9 @@ const getExistingDealFolderNameBySAP = async (token, siteId, driveId, sapId, saf
     
     return null;
 };
-
+//new code from here - Rider
 // Ask Graph directly for a folder's metadata (not a file's), so we always get
-// a stable path-style webUrl regardless of file type quirks (Office docs vs PDFs
-// return different webUrl formats when queried via the file upload response).
+// a stable path-style webUrl regardless of file type quirks (Office docs vs PDFs).
 const getFolderWebUrl = async (token, siteId, driveId, folderPath) => {
     const encodedFolderPath = folderPath.split('/').map(segment => encodeURIComponent(segment)).join('/');
     try {
@@ -48,25 +47,30 @@ const getFolderWebUrl = async (token, siteId, driveId, folderPath) => {
     }
 };
 
-// Resolves the same account/subfolder path used during upload, then fetches
+// Computes the same account/deal folder path used during upload, then resolves
 // its real webUrl from Graph. Call this once per deal, after all files are uploaded.
-exports.resolveFolderUrl = async (sapId, subFolder) => {
+exports.resolveDealFolderUrl = async (dealName, dealId, sapId, accountName) => {
     const token = await getGraphToken();
     const siteId = process.env.MS_SHAREPOINT_SITE_ID || process.env.MS_SITE_ID;
     const driveId = process.env.MS_SHAREPOINT_DRIVE_ID || process.env.MS_DRIVE_ID;
+    const safeDealName = dealName.replace(/[<>:"/\\|?*]+/g, '').trim();
 
-    const fetchedFolderName = await getExistingDealFolderNameBySAP(token, siteId, driveId, sapId);
+    const folderData = await getExistingDealFolderNameBySAP(token, siteId, driveId, sapId, safeDealName, dealId);
 
-    if (!fetchedFolderName) {
-        console.warn(`Could not resolve folder URL: no account folder found for SAP ID '${sapId}'.`);
-        return null;
+    let finalAccountFolderName;
+    const targetDealFolder = `${safeDealName}_${sapId}`;
+
+    if (folderData) {
+        finalAccountFolderName = folderData.accountFolderName;
+    } else {
+        finalAccountFolderName = accountName ? accountName.replace(/[<>:"/\\|?*]+/g, '').trim() : '_Test_Client';
     }
 
-    const folderPath = `${fetchedFolderName}/OBD/${subFolder}`;
+    const folderPath = `${finalAccountFolderName}/BD/Proposals/${targetDealFolder}`;
     return await getFolderWebUrl(token, siteId, driveId, folderPath);
 };
-
-exports.uploadFileToSharePoint = async (fileName, fileBuffer, subFolder, sapId, accountName) => {
+//new code ends here - Rider
+exports.uploadFileToSharePoint = async (fileName, fileBuffer, dealName, dealId, sapId, accountName) => {
     const token = await getGraphToken();
     const siteId = process.env.MS_SHAREPOINT_SITE_ID || process.env.MS_SITE_ID;
     const driveId = process.env.MS_SHAREPOINT_DRIVE_ID || process.env.MS_DRIVE_ID;
