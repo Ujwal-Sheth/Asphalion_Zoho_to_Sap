@@ -85,20 +85,21 @@ exports.handleQuoteApproval = async (req, res) => {
         console.log(`Successfully migrated ${uploadedFilesInfo.length} files.`);
 
         // --- Push Folder URL back to Zoho ---
+        // New Code from Here - Rider
         if (uploadedFilesInfo.length > 0) {
-            let firstFileUrl = uploadedFilesInfo[0].sharepointUrl;
-            let folderUrl = firstFileUrl.split('?')[0];
-            // Navigates up two directories to capture the parent "bd" folder, not the specific subfolder
-            folderUrl = folderUrl.substring(0, folderUrl.lastIndexOf('/'));
-            // folderUrl = folderUrl.substring(0, folderUrl.lastIndexOf('/'));
+            console.log(`🔗 Resolving SharePoint folder URL directly via Graph...`);
+            const folderUrl = await sharepointService.resolveDealFolderUrl(dealName, zohoDealId, sapId, accountName);
 
-            console.log(`🔗 Updating Zoho Deal with SharePoint Folder URL...`);
-            await zohoService.updateDealField(zohoDealId, {
-                [ZOHO_SP_FOLDER_FIELD_API_NAME]: folderUrl
-            });
-            console.log(`✅ Folder URL successfully saved to Zoho.`);
+            if (folderUrl) {
+                await zohoService.updateDealField(zohoDealId, {
+                    [ZOHO_SP_FOLDER_FIELD_API_NAME]: folderUrl
+                });
+                console.log(`✅ Folder URL successfully saved to Zoho.`);
+            } else {
+                console.warn(`⚠️ Could not resolve folder URL; skipping Zoho update.`);
+            }
         }
-
+         // New Code ends Here - Rider
         await ErrorLog.create({ dealId: zohoDealId, logType: 'INFO', stage: 'SHAREPOINT_SYNC_SUCCESS', messages: [`Synced ${uploadedFilesInfo.length} files to folder ${dealName}_${sapId}`] });
 
     } catch (error) {

@@ -33,7 +33,46 @@ const getExistingDealFolderNameBySAP = async (token, siteId, driveId, sapId, saf
     
     return null;
 };
+//new code from here - Rider
+// Ask Graph directly for a folder's metadata (not a file's), so we always get
+// a stable path-style webUrl regardless of file type quirks (Office docs vs PDFs).
+const getFolderWebUrl = async (token, siteId, driveId, folderPath) => {
+    const encodedFolderPath = folderPath.split('/').map(segment => encodeURIComponent(segment)).join('/');
+    try {
+        const response = await axios.get(
+            `https://graph.microsoft.com/v1.0/sites/${siteId}/drives/${driveId}/root:/${encodedFolderPath}`,
+            { headers: { 'Authorization': `Bearer ${token}` } }
+        );
+        return response.data.webUrl;
+    } catch (error) {
+        console.warn(`Could not resolve folder webUrl for "${folderPath}":`, error.response ? JSON.stringify(error.response.data) : error.message);
+        return null;
+    }
+};
 
+// Computes the same account/deal folder path used during upload, then resolves
+// its real webUrl from Graph. Call this once per deal, after all files are uploaded.
+exports.resolveDealFolderUrl = async (dealName, dealId, sapId, accountName) => {
+    const token = await getGraphToken();
+    const siteId = process.env.MS_SHAREPOINT_SITE_ID || process.env.MS_SITE_ID;
+    const driveId = process.env.MS_SHAREPOINT_DRIVE_ID || process.env.MS_DRIVE_ID;
+    const safeDealName = dealName.replace(/[<>:"/\\|?*]+/g, '').trim();
+
+    const folderData = await getExistingDealFolderNameBySAP(token, siteId, driveId, sapId, safeDealName, dealId);
+
+    let finalAccountFolderName;
+    const targetDealFolder = `${safeDealName}_${sapId}`;
+
+    if (folderData) {
+        finalAccountFolderName = folderData.accountFolderName;
+    } else {
+        finalAccountFolderName = accountName ? accountName.replace(/[<>:"/\\|?*]+/g, '').trim() : '_Test_Client';
+    }
+
+    const folderPath = `${finalAccountFolderName}/BD/Proposals/${targetDealFolder}`;
+    return await getFolderWebUrl(token, siteId, driveId, folderPath);
+};
+//new code ends here - Rider
 exports.uploadFileToSharePoint = async (fileName, fileBuffer, dealName, dealId, sapId, accountName) => {
     const token = await getGraphToken();
     const siteId = process.env.MS_SHAREPOINT_SITE_ID || process.env.MS_SITE_ID;
