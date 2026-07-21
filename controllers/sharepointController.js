@@ -82,10 +82,27 @@ exports.handleQuoteApproval = async (req, res) => {
             console.log(`⬇️ Downloading: ${att.File_Name}`);
             const fileBuffer = await zohoService.downloadAttachment(zohoDealId, att.id);
 
-            console.log(`⬆️ Uploading to SharePoint -> Projects/[Account]/OBD/${targetSubFolder}/${att.File_Name}...`);
+               // --- Apply New Naming Convention ---
+            // 1. Generate YYMMDD string
+            const today = new Date();
+            const yy = String(today.getFullYear()).slice(-2);
+            const mm = String(today.getMonth() + 1).padStart(2, '0');
+            const dd = String(today.getDate()).padStart(2, '0');
+            const datePrefix = `${yy}${mm}${dd}`;
+
+            // 2. Separate the base name from the extension to avoid appending text after '.pdf'
+            const originalFileName = att.File_Name;
+            const lastDotIndex = originalFileName.lastIndexOf('.');
+            const baseName = lastDotIndex !== -1 ? originalFileName.substring(0, lastDotIndex) : originalFileName;
+            const extension = lastDotIndex !== -1 ? originalFileName.substring(lastDotIndex) : '';
+
+            // 3. Construct the final file name: YYMMDD_[original]_[client]_Asphalion_final_fully signed
+            const newFileName = `${datePrefix}_${baseName}_${accountName}_Asphalion_final_fully signed${extension}`;
+
+            console.log(`⬆️ Uploading to SharePoint -> Projects/[Account]/OBD/${targetSubFolder}/${newFileName}...`);
 
             const spUrl = await sharepointService.uploadFileToSharePoint(
-                att.File_Name, 
+                newFileName, 
                 fileBuffer,
                 targetSubFolder,
                 sapId,
