@@ -35,7 +35,7 @@ exports.handleQuoteApproval = async (req, res) => {
             targetSubFolder = 'Contracts';
         } else if (acceptanceType === 'CDA') {
             targetSubFolder = 'CDAs';
-        } else if (acceptanceType === 'Zoho Signature') {
+        } else if (['Zoho Signature', 'Email', 'Purchase Order (PO)'].includes(acceptanceType)) {
             targetSubFolder = 'Proposals';
         } else {
             console.log(`⚠️ Unrecognized or empty Acceptance Type: '${acceptanceType}'. Aborting sync.`);
@@ -82,27 +82,10 @@ exports.handleQuoteApproval = async (req, res) => {
             console.log(`⬇️ Downloading: ${att.File_Name}`);
             const fileBuffer = await zohoService.downloadAttachment(zohoDealId, att.id);
 
-            // --- Apply New Naming Convention ---
-            // 1. Generate YYMMDD string
-            const today = new Date();
-            const yy = String(today.getFullYear()).slice(-2);
-            const mm = String(today.getMonth() + 1).padStart(2, '0');
-            const dd = String(today.getDate()).padStart(2, '0');
-            const datePrefix = `${yy}${mm}${dd}`;
-
-            // 2. Separate the base name from the extension to avoid appending text after '.pdf'
-            const originalFileName = att.File_Name;
-            const lastDotIndex = originalFileName.lastIndexOf('.');
-            const baseName = lastDotIndex !== -1 ? originalFileName.substring(0, lastDotIndex) : originalFileName;
-            const extension = lastDotIndex !== -1 ? originalFileName.substring(lastDotIndex) : '';
-
-            // 3. Construct the final file name: YYMMDD_[original]_[client]_Asphalion_final_fully signed
-            const newFileName = `${datePrefix}_${baseName}_${accountName}_Asphalion_final_fully signed${extension}`;
-
-            console.log(`⬆️ Uploading to SharePoint -> Projects/[Account]/OBD/${targetSubFolder}/${newFileName}...`);
+            console.log(`⬆️ Uploading to SharePoint -> Projects/[Account]/OBD/${targetSubFolder}/${att.File_Name}...`);
 
             const spUrl = await sharepointService.uploadFileToSharePoint(
-                newFileName, 
+                att.File_Name, 
                 fileBuffer,
                 targetSubFolder,
                 sapId,
@@ -114,22 +97,20 @@ exports.handleQuoteApproval = async (req, res) => {
         console.log(`\n[4/4] SHAREPOINT SYNC COMPLETE`);
 
         // --- Push Folder URL back to Zoho ---
-        // New Code from Here - Rider
         if (uploadedFilesInfo.length > 0) {
-            console.log(`🔗 Resolving SharePoint folder URL directly via Graph...`);
-            const folderUrl = await sharepointService.resolveDealFolderUrl(dealName, zohoDealId, sapId, accountName);
+            let firstFileUrl = uploadedFilesInfo[0].sharepointUrl;
+            let folderUrl = firstFileUrl.split('?')[0];
+            // Navigates up two directories to capture the parent "bd" folder, not the specific subfolder
+            folderUrl = folderUrl.substring(0, folderUrl.lastIndexOf('/'));
 
-            if (folderUrl) {
-                await zohoService.updateDealField(zohoDealId, {
-                    [ZOHO_SP_FOLDER_FIELD_API_NAME]: folderUrl
-                });
-                console.log(`✅ Folder URL successfully saved to Zoho.`);
-            } else {
-                console.warn(`⚠️ Could not resolve folder URL; skipping Zoho update.`);
-            }
+            console.log(`🔗 Updating Zoho Deal with SharePoint Folder URL...`);
+            await zohoService.updateDealField(zohoDealId, {
+                [ZOHO_SP_FOLDER_FIELD_API_NAME]: folderUrl
+            });
+            console.log(`✅ Folder URL successfully saved to Zoho.`);
         }
-         // New Code ends Here - Rider
-        await ErrorLog.create({ dealId: zohoDealId, logType: 'INFO', stage: 'SHAREPOINT_SYNC_SUCCESS', messages: [`Synced ${uploadedFilesInfo.length} files to folder ${dealName}_${sapId}`] });
+
+        await ErrorLog.create({ dealId: zohoDealId, logType: 'INFO', stage: 'SHAREPOINT_SYNC_SUCCESS', messages: [`Synced ${uploadedFilesInfo.length} files to ${targetSubFolder} for SAP ID ${sapId}`] });
 
     } catch (error) {
         console.error(`\n❌ Error processing Deal ${zohoDealId}:`, error.message);
