@@ -72,7 +72,7 @@ const buildSapXmlPayload = (zohoData, accountId, sapQuoteId = null, accountLangu
     const sapProbability = getCode("Probability", zohoData.Approval);
     const sapTypeOfProduct = getCode("TypeOfProduct", zohoData.Type_of_Product);
     const sapStandBy = (zohoData.STAND_BY === true || zohoData.STAND_BY === "true") ? "true" : "false";
-    const sapPricingType = getCode("PricingType", zohoData.Price_Type);
+    // const sapPricingType = getCode("PricingType", zohoData.Price_Type);
     // Long text fields
     const sapBackgroundIntroES = zohoData.Background_intro_ES || "";
     const sapAgreedFeesEN = zohoData.Agreed_fees_sales_quote_EN || "";
@@ -161,7 +161,7 @@ const buildSapXmlPayload = (zohoData, accountId, sapQuoteId = null, accountLangu
                   const unitPrice = parseFloat(item.Unit_Price || 0).toFixed(2);
                   const itemDiscount = parseFloat(item.Discount || 0).toFixed(2);
                   const sapUoM = item.Unidad_de_medida || "";
-                  // const sapProcessingTypeCode = getCode("PricingType", item.Pricing_Type);
+                  const sapProcessingTypeCode = getCode("PricingType", item.Pricing_Type);
                   const sapAccordingToFee = (item.According_to_Fee === true || item.According_to_Fee === "true") ? "true" : "false";
                   const sapOptional = (item.Optional === true || item.Optional === "true") ? "true" : "false";
                   const sapFootnotesEnglish = item.Footnotes_Ingles1 || " ";
@@ -187,7 +187,7 @@ const buildSapXmlPayload = (zohoData, accountId, sapQuoteId = null, accountLangu
                     parts.push(`<ID>${sapItemId}</ID>`);
                     parts.push(`<OptionalIndicator>${sapOptional}</OptionalIndicator>`);
                     parts.push(`<Description>${sapActivityDescription}</Description>`);
-                    if (sapPricingType) parts.push(`<ProcessingTypeCode>${sapPricingType}</ProcessingTypeCode>`);
+                    if (sapProcessingTypeCode) parts.push(`<ProcessingTypeCode>${sapProcessingTypeCode}</ProcessingTypeCode>`);
                     parts.push(`<ItemProduct actionCode="${itemAction}">`);
                     parts.push(`<ProductInternalID>${productCode}</ProductInternalID>`);
                     parts.push(`<UnitOfMeasure>${sapUoM}</UnitOfMeasure>`);
@@ -285,7 +285,7 @@ const buildSapXmlPayload = (zohoData, accountId, sapQuoteId = null, accountLangu
   const sapActiveSubstance = zohoData.Active_substance || "";
   const sapIndication = zohoData.Indication || "";
   const sapStandBy = zohoData.STAND_BY ? "true" : "false";
-  const sapPricingType = getCode("PricingType", zohoData.Price_Type);
+  // const sapPricingType = getCode("PricingType", zohoData.Price_Type);
   const sapMailInvoiceRepository = zohoData.Mail_invoice_repository || "";
   const sapInvoiceEmails = zohoData.Invoicing_emails || "";
   const sapProbability = getCode("Probability", zohoData.Approval);
@@ -320,7 +320,7 @@ const buildSapXmlPayload = (zohoData, accountId, sapQuoteId = null, accountLangu
       const unitPrice = parseFloat(item.Unit_Price || 0).toFixed(2);
       const itemDiscount = parseFloat(item.Discount || 0).toFixed(2);
       const sapUoM = item.Unidad_de_medida || "";
-      // const sapProcessingTypeCode = getCode("PricingType", item.Pricing_Type);
+      const sapProcessingTypeCode = getCode("PricingType", item.Pricing_Type);
       const sapAccordingToFee = (item.According_to_Fee === true || item.According_to_Fee === "true") ? "true" : "false";
       const sapOptional = (item.Optional === true || item.Optional === "true") ? "true" : "false";
       const sapFootnotesEnglish = item.Footnotes_Ingles1 ||  " ";
@@ -343,7 +343,7 @@ const buildSapXmlPayload = (zohoData, accountId, sapQuoteId = null, accountLangu
                     <ID>${sapItemId}</ID>
                     <OptionalIndicator>${sapOptional}</OptionalIndicator>
                     <Description>${sapActivityDescription}</Description>
-                    ${sapPricingType ? `<ProcessingTypeCode>${sapPricingType}</ProcessingTypeCode>` : ""}
+                    ${sapProcessingTypeCode ? `<ProcessingTypeCode>${sapProcessingTypeCode}</ProcessingTypeCode>` : ""}
                     <ItemProduct actionCode="01">
                         <ProductInternalID>${productCode}</ProductInternalID>
                         <UnitOfMeasure>${sapUoM}</UnitOfMeasure>
