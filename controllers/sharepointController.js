@@ -23,6 +23,7 @@ exports.handleQuoteApproval = async (req, res) => {
     try {
         console.log(`[1/4] Fetching Deal data to find linked Account...`);
         const dealData = await zohoService.getRecord('Deals', zohoDealId);
+        const dealCode = dealData.Deal_Code || '';
 
         if (!dealData.Account_Name || !dealData.Account_Name.id) {
             throw new Error("No Account linked to this Deal. Cannot fetch SAP ID.");
@@ -99,14 +100,16 @@ exports.handleQuoteApproval = async (req, res) => {
             // 3. Construct the final file name: YYMMDD_[original]_[client]_Asphalion_final_fully signed
             const newFileName = `${datePrefix}_${baseName}_${accountName}_Asphalion_final_fully signed${extension}`;
 
-            console.log(`⬆️ Uploading to SharePoint -> Projects/[Account]/BD/${targetSubFolder}/${newFileName}...`);
+            console.log(`⬆️ Uploading to SharePoint -> Projects/[Account]/BD/${targetSubFolder}/[DealName]/${newFileName}...`);
 
             const spUrl = await sharepointService.uploadFileToSharePoint(
                 newFileName, 
                 fileBuffer,
                 targetSubFolder,
                 sapId,
-                accountName
+                accountName,
+                dealName,
+                dealCode
             );
             uploadedFilesInfo.push({ fileName: att.File_Name, sharepointUrl: spUrl });
         }
