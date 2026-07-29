@@ -50,7 +50,7 @@ exports.uploadFileToSharePoint = async (fileName, fileBuffer, subFolder, sapId, 
 
 
     // 2. Build the final path
-    const fullPath = `${finalAccountFolderName}/OBD/${subFolder}/${safeFileName}`;
+    const fullPath = `${finalAccountFolderName}/BD/${subFolder}/${safeFileName}`;
     const encodedPath = fullPath.split('/').map(segment => encodeURIComponent(segment)).join('/');
 
     try {

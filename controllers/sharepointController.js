@@ -66,7 +66,7 @@ exports.handleQuoteApproval = async (req, res) => {
         }
 
         console.log(`✅ Extracted SAP ID: ${sapId}`);
-        console.log(`✅ Acceptance Type resolved to Folder: OBD/${targetSubFolder}`);
+        console.log(`✅ Acceptance Type resolved to Folder: BD/${targetSubFolder}`);
 
         console.log(`[3/4] Fetching Deal Attachments...`);
         const attachments = await zohoService.getDealAttachments(zohoDealId);
@@ -99,7 +99,7 @@ exports.handleQuoteApproval = async (req, res) => {
             // 3. Construct the final file name: YYMMDD_[original]_[client]_Asphalion_final_fully signed
             const newFileName = `${datePrefix}_${baseName}_${accountName}_Asphalion_final_fully signed${extension}`;
 
-            console.log(`⬆️ Uploading to SharePoint -> Projects/[Account]/OBD/${targetSubFolder}/${newFileName}...`);
+            console.log(`⬆️ Uploading to SharePoint -> Projects/[Account]/BD/${targetSubFolder}/${newFileName}...`);
 
             const spUrl = await sharepointService.uploadFileToSharePoint(
                 newFileName, 
