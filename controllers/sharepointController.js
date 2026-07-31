@@ -82,14 +82,27 @@ exports.handleQuoteApproval = async (req, res) => {
         for (const att of attachments) {
             console.log(`⬇️ Downloading: ${att.File_Name}`);
             const fileBuffer = await zohoService.downloadAttachment(zohoDealId, att.id);
-
+            
                // --- Apply New Naming Convention ---
             // 1. Generate YYMMDD string
-            const today = new Date();
-            const yy = String(today.getFullYear()).slice(-2);
-            const mm = String(today.getMonth() + 1).padStart(2, '0');
-            const dd = String(today.getDate()).padStart(2, '0');
+            const rawAttDate = att.Created_Time || att.CreatedTime || att.File_Uploaded_Time || att.Modified_Time;
+            let attDate = att.Created_Time ? new Date(att.Created_Time) : null;
+
+            if (!attDate || isNaN(attDate.getTime())) {
+                console.warn(`⚠️ Could not resolve attachment date for "${att.File_Name}" (id: ${att.id}). Falling back to today's date.`);
+                attDate = new Date();
+            }
+
+            const yy = String(attDate.getFullYear()).slice(-2);
+            const mm = String(attDate.getMonth() + 1).padStart(2, '0');
+            const dd = String(attDate.getDate()).padStart(2, '0');
             const datePrefix = `${yy}${mm}${dd}`;
+
+            // const today = new Date();
+            // const yy = String(today.getFullYear()).slice(-2);
+            // const mm = String(today.getMonth() + 1).padStart(2, '0');
+            // const dd = String(today.getDate()).padStart(2, '0');
+            // const datePrefix = `${yy}${mm}${dd}`;
 
             // 2. Separate the base name from the extension to avoid appending text after '.pdf'
             const originalFileName = att.File_Name;

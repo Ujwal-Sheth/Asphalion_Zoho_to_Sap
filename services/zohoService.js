@@ -8,7 +8,7 @@ exports.getDealAttachments = async (dealId) => {
             `${process.env.ZOHO_API_DOMAIN}/Deals/${dealId}/Attachments`,
             {
                 headers: { 'Authorization': `Zoho-oauthtoken ${token}` },
-                params: { fields: 'id,File_Name,Size' }
+                params: { fields: 'id,File_Name,Size,Created_Time' }
             }
         );
         return response.data.data || [];
