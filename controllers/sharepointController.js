@@ -111,7 +111,7 @@ exports.handleQuoteApproval = async (req, res) => {
             const extension = lastDotIndex !== -1 ? originalFileName.substring(lastDotIndex) : '';
 
             // 3. Construct the final file name: YYMMDD_[original]_[client]_Asphalion_final_fully signed
-            const newFileName = `${datePrefix}_${baseName}_${accountName}_Asphalion_final_fully signed${extension}`;
+            const newFileName = `${datePrefix}_${baseName}_${sapId}${extension}`;
 
             console.log(`⬆️ Uploading to SharePoint -> Projects/[Account]/BD/${targetSubFolder}/[DealName]/${newFileName}...`);
 
