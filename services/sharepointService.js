@@ -2,28 +2,31 @@ const axios = require('axios');
 const { getGraphToken } = require('../utils/auth');
 
 const getExistingDealFolderNameBySAP = async (token, siteId, driveId, sapId, safeDealName, dealId) => {
+
+    let nextUrl = `https://graph.microsoft.com/v1.0/sites/${siteId}/drives/${driveId}/list/items?$expand=fields,driveItem&$filter=fields/Client_x0020_Code eq '${sapId}'`;
+
     try {
-        // FIX 1: Added ',driveItem' to the $expand parameter to fetch physical folder properties
-        const queryUrl = `https://graph.microsoft.com/v1.0/sites/${siteId}/drives/${driveId}/list/items?$expand=fields,driveItem&$filter=fields/Client_x0020_Code eq '${sapId}'`;
-        
-        const response = await axios.get(queryUrl, {
-            headers: { 'Authorization': `Bearer ${token}` }
-        });
+        while (nextUrl) {
+            const response = await axios.get(nextUrl, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
 
-        if (response.data.value && response.data.value.length > 0) {
-            const accountFolderItem = response.data.value[0]; 
-            
-            // Added fallbacks to FileLeafRef or Title just in case driveItem fails to expand.
-            const accountFolderName = accountFolderItem.driveItem?.name 
-                                      || accountFolderItem.fields?.FileLeafRef 
-                                      || accountFolderItem.fields?.Title;
+            if (response.data.value && response.data.value.length > 0) {
+                const accountFolderItem = response.data.value[0];
 
-            if (!accountFolderName) {
-                console.warn(`Found SAP ID ${sapId}, but couldn't resolve the folder name. Payload:`, accountFolderItem);
-                return null; // Force fallback to Account Name if name fails to resolve
+                const accountFolderName = accountFolderItem.driveItem?.name
+                                          || accountFolderItem.fields?.FileLeafRef
+                                          || accountFolderItem.fields?.Title;
+
+                if (!accountFolderName) {
+                    console.warn(`Found SAP ID ${sapId}, but couldn't resolve the folder name. Payload:`, accountFolderItem);
+                    return null;
+                }
+                return accountFolderName;
             }
-            // const targetDealFolder = `${safeDealName}`;
-            return accountFolderName;
+
+            // No match on this page — follow pagination if there is more
+            nextUrl = response.data['@odata.nextLink'] || null;
         }
     } catch (error) {
         console.warn(`Could not find folder by Client Code (${sapId}):`, error.response ? JSON.stringify(error.response.data) : error.message);
