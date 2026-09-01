@@ -49,7 +49,7 @@ const COUNTRY_MAP = {
     'GB': 'United Kingdom',
     'VA': 'Vatican City',
     'CR': 'Costa Rica',
-    'US': 'Estados Unidos',
+    'US': 'United States',
     'JP': 'Japón',
     'AR': 'Argentina',
     'CN': 'China',
