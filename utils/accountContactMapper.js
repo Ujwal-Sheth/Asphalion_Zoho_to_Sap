@@ -50,10 +50,10 @@ const COUNTRY_MAP = {
     'VA': 'Vatican City',
     'CR': 'Costa Rica',
     'US': 'United States',
-    'JP': 'Japón',
+    'JP': 'Japan',
     'AR': 'Argentina',
     'CN': 'China',
-    'BR': 'Brasil'
+    'BR': 'Brazil'
 };
 
 /**
