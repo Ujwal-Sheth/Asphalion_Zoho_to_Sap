@@ -393,7 +393,7 @@ const buildSapXmlPayload = (zohoData, accountId, sapQuoteId = null, accountLangu
       }
     });
   }
-// <SubmitIndicator>true</SubmitIndicator> on line after <CashDiscountTermsCode>${sapPaymentTerms}</CashDiscountTermsCode>
+// After  </ItemMainPrice> 
 // Item level Sales Forecast
 //  <ItemProductTaxDetails actionCode="01">
 //                             <TransactionCurrencyProductTax actionCode="01">
