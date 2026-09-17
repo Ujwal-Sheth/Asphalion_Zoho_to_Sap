@@ -69,6 +69,19 @@ exports.uploadFileToSharePoint = async (fileName, fileBuffer, subFolder, sapId, 
     }
 };
 
+const getContainingFolderWebUrl = async (token, siteId, driveId, folderPath) => {
+    const encodedFolderPath = folderPath.split('/').map(segment => encodeURIComponent(segment)).join('/');
+    try {
+        const response = await axios.get(
+            `https://graph.microsoft.com/v1.0/sites/${siteId}/drives/${driveId}/root:/${encodedFolderPath}`,
+            { headers: { 'Authorization': `Bearer ${token}` } }
+        );
+        return response.data.webUrl;
+    } catch (error) {
+        console.warn(`Could not resolve draft folder webUrl for "${folderPath}":`, error.response ? JSON.stringify(error.response.data) : error.message);
+        return null;
+    }
+};
 
 
 exports.uploadDraftProposal = async (fileName, fileBuffer, dealName, dealId) => {
@@ -79,7 +92,8 @@ exports.uploadDraftProposal = async (fileName, fileBuffer, dealName, dealId) => 
     // Creates a folder for the deal, e.g., "DealName_12345/Proposal.pdf"
     const safeDealName = dealName.replace(/[<>:"/\\|?*]+/g, '').trim();
     const safeFileName = fileName ? fileName.replace(/[~#%&*{}\\:<>?\/|"]+/g, '').trim() : '';
-    const fullPath = `${safeDealName}_${dealId}/${safeFileName}`;
+    const folderPath = `${safeDealName}_${dealId}`;
+    const fullPath = `${folderPath}/${safeFileName}`;
 
     const encodedPath = fullPath.split('/').map(segment => encodeURIComponent(segment)).join('/');
 
@@ -89,7 +103,13 @@ exports.uploadDraftProposal = async (fileName, fileBuffer, dealName, dealId) => 
             fileBuffer,
             { headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/octet-stream' } }
         );
-        return response.data.webUrl; // Returns the shareable SharePoint link
+
+        const folderUrl = await getContainingFolderWebUrl(token, siteId, driveId, folderPath);
+         if (folderUrl) return folderUrl;
+
+        const fileUrl = response.data.webUrl;
+        return fileUrl.substring(0, fileUrl.lastIndexOf('/'));
+        // return response.data.webUrl; // Returns the shareable SharePoint link
     } catch (error) {
         throw new Error(`Failed to upload Draft to SP: ${error.response ? JSON.stringify(error.response.data) : error.message}`);
     }
