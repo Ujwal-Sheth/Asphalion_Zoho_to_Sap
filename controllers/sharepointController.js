@@ -5,6 +5,25 @@ const ErrorLog = require('../models/errorLogModel'); // Added your unified error
 const ZOHO_SP_FOLDER_FIELD_API_NAME = "SharePoint_Folder_URL";
 const ZOHO_SP_LINK_FIELD_API_NAME = "Sharepoint_Draft_Link";
 
+// Builds the Spanish failure note shown on the Deal when the SharePoint sync stops
+const buildSyncFailureNote = (error) => {
+    let motivo;
+    if (error.code === 'SP_FOLDER_NOT_FOUND') {
+        motivo = `no se ha encontrado carpeta de cliente para el SAP ID ${error.sapId}.`;
+    } else if (error.code === 'SP_FOLDER_AMBIGUOUS') {
+        motivo = `se han encontrado varias carpetas para el SAP ID ${error.sapId}.`;
+    } else {
+        motivo = `error técnico durante la sincronización (${error.message}).`;
+    }
+    return {
+        title: 'Sincronización con SharePoint fallida: documentos NO enviados',
+        content:
+            `Sincronización con SharePoint fallida: documentos NO enviados.\n` +
+            `Motivo: ${motivo}\n` +
+            `Qué hacer: revisa el SAP ID de la cuenta y la carpeta del cliente en SharePoint y vuelve a pasar la oferta a Send to Sharepoint, o contacta con el administrador del CRM.`
+    };
+};
+
 exports.handleQuoteApproval = async (req, res) => {
     // Immediately respond to Zoho to prevent timeouts
     res.status(202).json({ message: "Webhook accepted, processing files in background." });
@@ -147,7 +166,20 @@ exports.handleQuoteApproval = async (req, res) => {
 
     } catch (error) {
         console.error(`\n❌ Error processing Deal ${zohoDealId}:`, error.message);
-        await ErrorLog.create({ dealId: zohoDealId, logType: 'ERROR', stage: 'SHAREPOINT_SYNC_FAILED', messages: [error.message] });
+        try {
+            await ErrorLog.create({ dealId: zohoDealId, logType: 'ERROR', stage: 'SHAREPOINT_SYNC_FAILED', messages: [error.message] });
+        } catch (logErr) {
+            console.error(`⚠️ Could not save error log for Deal ${zohoDealId}:`, logErr.message);
+        }
+
+        // Make the failure visible on the Deal (Notes + Timeline)
+        try {
+            const note = buildSyncFailureNote(error);
+            await zohoService.addNoteToDeal(zohoDealId, note.title, note.content);
+            console.log(`📝 Failure note added to Deal ${zohoDealId}`);
+        } catch (noteErr) {
+            console.error(`⚠️ Could not add failure note to Deal ${zohoDealId}:`, noteErr.message);
+        }
     }
 };
 

@@ -129,3 +129,40 @@ exports.searchProductsByCode = async (productCode) => {
         return [];
     }
 }
+
+// exports.getExpenseProductIds = async (productIds = []) => {
+//     const ids = [...new Set(productIds.filter(Boolean).map(String))];
+//     const result = new Set();
+//     if (!ids.length) return result;
+
+//     try {
+//         for (let i = 0; i < ids.length; i += 50) {          // COQL IN limit: 50
+//             const chunk = ids.slice(i, i + 50).join(',');
+//             const rows = await exports.runCoqlQuery(
+//                 `select id from Products where id in (${chunk}) and Expense_Product = true`
+//             );
+//             rows.forEach(r => result.add(String(r.id)));
+//         }
+//     } catch (error) {
+//         console.error('[ZOHO] Could not read Expense_Product – position type sent as usual:', error.message);
+//     }
+//     return result;
+// };
+
+
+// Adds a Note to a Deal (shown in the Deal's Notes and Timeline)
+exports.addNoteToDeal = async (dealId, title, content) => {
+    const token = await getAccessToken();
+    try {
+        const response = await axios.post(
+            `${process.env.ZOHO_API_DOMAIN}/Deals/${dealId}/Notes`,
+            { data: [{ Note_Title: title, Note_Content: content }] },
+            { headers: { 'Authorization': `Zoho-oauthtoken ${token}` } }
+        );
+        return response.data;
+    } catch (error) {
+        const details = error.response && error.response.data ? JSON.stringify(error.response.data) : '';
+        throw new Error(`Failed to add note to deal ${dealId}: ${error.message}. Details: ${details}`);
+    }
+};
+ 
