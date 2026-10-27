@@ -26,7 +26,7 @@ app.get('/', (req, res) => {
 });
 
 //Sync Route
-app.get('/api/sync-deal/:dealId', syncController.syncDealToSap);
+app.get('/api/sync-deal/:dealId', authenticateWebhook, syncController.syncDealToSap);
 // app.post('/api/webhook/zoho-deal', authenticateWebhook, syncController.handleWebhook);
 
 // 1. The SAP ByDesign Integration Route
