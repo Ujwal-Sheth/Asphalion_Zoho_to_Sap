@@ -130,24 +130,24 @@ exports.searchProductsByCode = async (productCode) => {
     }
 }
 
-// exports.getExpenseProductIds = async (productIds = []) => {
-//     const ids = [...new Set(productIds.filter(Boolean).map(String))];
-//     const result = new Set();
-//     if (!ids.length) return result;
+exports.getExpenseProductIds = async (productIds = []) => {
+    const ids = [...new Set(productIds.filter(Boolean).map(String))];
+    const result = new Set();
+    if (!ids.length) return result;
 
-//     try {
-//         for (let i = 0; i < ids.length; i += 50) {          // COQL IN limit: 50
-//             const chunk = ids.slice(i, i + 50).join(',');
-//             const rows = await exports.runCoqlQuery(
-//                 `select id from Products where id in (${chunk}) and Expense_Product = true`
-//             );
-//             rows.forEach(r => result.add(String(r.id)));
-//         }
-//     } catch (error) {
-//         console.error('[ZOHO] Could not read Expense_Product – position type sent as usual:', error.message);
-//     }
-//     return result;
-// };
+    try {
+        for (let i = 0; i < ids.length; i += 50) {          // COQL IN limit: 50
+            const chunk = ids.slice(i, i + 50).join(',');
+            const rows = await exports.runCoqlQuery(
+                `select id from Products where id in (${chunk}) and Expense_Product = true`
+            );
+            rows.forEach(r => result.add(String(r.id)));
+        }
+    } catch (error) {
+        console.error('[ZOHO] Could not read Expense_Product – position type sent as usual:', error.message);
+    }
+    return result;
+};
 
 
 // Adds a Note to a Deal (shown in the Deal's Notes and Timeline)

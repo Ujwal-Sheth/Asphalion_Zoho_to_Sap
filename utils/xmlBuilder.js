@@ -36,7 +36,21 @@ const formatDateTime = (dateStr) => {
   return isNaN(date.getTime()) ? null : date.toISOString().split('.')[0] + 'Z';
 };
 
-const buildSapXmlPayload = (zohoData, accountId, sapQuoteId = null, accountLanguage = 'English') => {
+// [B-01] Tipo de Posición: expense products never get TipodePosicinOfertaZoho.
+// expenseProductIds = Set of Zoho Product record IDs with Expense_Product = true
+// (resolved by the caller before building the payload).
+const getPositionType = (item, expenseProductIds) => {
+  const productId = item.Product_Code && typeof item.Product_Code === 'object' ? item.Product_Code.id : null;
+  if (productId && expenseProductIds && expenseProductIds.has(productId)) {
+    console.log(`[XML] Expense product ${item.Product_Code.name} - TipodePosicinOfertaZoho not sent`);
+    return "";
+  }
+  const pt = typeof item.Pricing_Type === 'string' ? item.Pricing_Type.trim() : item.Pricing_Type;
+  return getCode("PricingType", pt);
+};
+
+// [B-01] new optional parameter: expenseProductIds
+const buildSapXmlPayload = (zohoData, accountId, sapQuoteId = null, accountLanguage = 'English', expenseProductIds = new Set()) => {
   console.log(`[XML] Building payload for Deal ID: ${zohoData.id}, Quote ID: ${sapQuoteId}`);
 
   const lang = accountLanguage ? accountLanguage.toLowerCase() : 'english';
@@ -161,7 +175,8 @@ const buildSapXmlPayload = (zohoData, accountId, sapQuoteId = null, accountLangu
                   const unitPrice = parseFloat(item.Unit_Price || 0).toFixed(2);
                   const itemDiscount = parseFloat(item.Discount || 0).toFixed(2);
                   const sapUoM = item.Unidad_de_medida || "";
-                  const sapProcessingTypeCode = getCode("PricingType", item.Pricing_Type);
+                  // const sapProcessingTypeCode = getCode("PricingType", item.Pricing_Type);
+                  const sapZohoPositionType = getPositionType(item, expenseProductIds); // [B-01]
                   const sapAccordingToFee = (item.According_to_Fee === true || item.According_to_Fee === "true") ? "true" : "false";
                   const sapOptional = (item.Optional === true || item.Optional === "true") ? "true" : "false";
                   const sapFootnotesEnglish = item.Footnotes_Ingles1 || " ";
@@ -187,7 +202,7 @@ const buildSapXmlPayload = (zohoData, accountId, sapQuoteId = null, accountLangu
                     parts.push(`<ID>${sapItemId}</ID>`);
                     parts.push(`<OptionalIndicator>${sapOptional}</OptionalIndicator>`);
                     parts.push(`<Description>${sapActivityDescription}</Description>`);
-                    if (sapProcessingTypeCode) parts.push(`<ProcessingTypeCode>${sapProcessingTypeCode}</ProcessingTypeCode>`);
+                    // if (sapProcessingTypeCode) parts.push(`<ProcessingTypeCode>${sapProcessingTypeCode}</ProcessingTypeCode>`);
                     parts.push(`<ItemProduct actionCode="${itemAction}">`);
                     parts.push(`<ProductInternalID>${productCode}</ProductInternalID>`);
                     parts.push(`<UnitOfMeasure>${sapUoM}</UnitOfMeasure>`);
@@ -234,6 +249,7 @@ const buildSapXmlPayload = (zohoData, accountId, sapQuoteId = null, accountLangu
                     parts.push(`<ContentText>${finalFootnote}</ContentText>`);
                     parts.push(`</Text>`);
                     parts.push(`</ItemTextCollection>`);
+                    if (sapZohoPositionType) parts.push(`<a3z:TipodePosicinOfertaZoho>${sapZohoPositionType}</a3z:TipodePosicinOfertaZoho>`);
                     parts.push(`<a3z:EstimacionIngresos currencyCode="EUR">${sapTotalAmount}</a3z:EstimacionIngresos>`);
                     parts.push(`<a3z:Segntarifa>${sapAccordingToFee}</a3z:Segntarifa>`);
                     if (sapFootnotesEnglish) parts.push(`<a3z:NotasalpieEN><![CDATA[${sapFootnotesEnglish}]]></a3z:NotasalpieEN>`);
@@ -320,7 +336,8 @@ const buildSapXmlPayload = (zohoData, accountId, sapQuoteId = null, accountLangu
       const unitPrice = parseFloat(item.Unit_Price || 0).toFixed(2);
       const itemDiscount = parseFloat(item.Discount || 0).toFixed(2);
       const sapUoM = item.Unidad_de_medida || "";
-      const sapProcessingTypeCode = getCode("PricingType", item.Pricing_Type);
+      // const sapProcessingTypeCode = getCode("PricingType", item.Pricing_Type);
+      const sapZohoPositionType = getPositionType(item, expenseProductIds); // [B-01]
       const sapAccordingToFee = (item.According_to_Fee === true || item.According_to_Fee === "true") ? "true" : "false";
       const sapOptional = (item.Optional === true || item.Optional === "true") ? "true" : "false";
       const sapFootnotesEnglish = item.Footnotes_Ingles1 ||  " ";
@@ -336,14 +353,14 @@ const buildSapXmlPayload = (zohoData, accountId, sapQuoteId = null, accountLangu
       } else {
         finalFootnote = sapFootnotesEnglish || sapFootnotesSpanish || " ";
       }
-      
+      // ${sapProcessingTypeCode ? `<ProcessingTypeCode>${sapProcessingTypeCode}</ProcessingTypeCode>` : ""} on line 349 below <Desctiption>${sapActivityDescription}</Description>
       if (productCode) {
         itemsXml += `
                 <Items itemScheduleLineListCompleteTransmissionIndicator="true" actionCode="01">
                     <ID>${sapItemId}</ID>
                     <OptionalIndicator>${sapOptional}</OptionalIndicator>
                     <Description>${sapActivityDescription}</Description>
-                    ${sapProcessingTypeCode ? `<ProcessingTypeCode>${sapProcessingTypeCode}</ProcessingTypeCode>` : ""}
+                    
                     <ItemProduct actionCode="01">
                         <ProductInternalID>${productCode}</ProductInternalID>
                         <UnitOfMeasure>${sapUoM}</UnitOfMeasure>
@@ -384,6 +401,7 @@ const buildSapXmlPayload = (zohoData, accountId, sapQuoteId = null, accountLangu
                                 <ContentText>${finalFootnote}</ContentText>
                             </Text>
                         </ItemTextCollection>
+                    ${sapZohoPositionType ? `<a3z:TipodePosicinOfertaZoho>${sapZohoPositionType}</a3z:TipodePosicinOfertaZoho>` : ""}  
                     <a3z:EstimacionIngresos currencyCode="EUR">${sapTotalAmount}</a3z:EstimacionIngresos>
                     <a3z:Segntarifa>${sapAccordingToFee}</a3z:Segntarifa>
                     ${sapFootnotesEnglish ? `<a3z:NotasalpieEN><![CDATA[${sapFootnotesEnglish}]]></a3z:NotasalpieEN>` : " "}
@@ -473,4 +491,4 @@ const buildSapXmlPayload = (zohoData, accountId, sapQuoteId = null, accountLangu
     `.trim();
 };
 // ${sapAcceptanceDate ? `<a3z:Fechadeaceptacin>${sapAcceptanceDate}</a3z:Fechadeaceptacin>` : ""} line 376
-module.exports = { buildSapXmlPayload };
+module.exports = { buildSapXmlPayload, getPositionType }; // [B-01] getPositionType exported for tests

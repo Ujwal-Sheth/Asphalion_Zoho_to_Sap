@@ -115,7 +115,11 @@ exports.syncDealToSap = async (req, res) => {
         console.log(`[!] Deal ${dealId} already has SAP Quote ID (${existingQuoteId}). Routing to UPDATE flow.`);
     }
     console.log(`[3/4] Transforming Zoho JSON to SAP XML (${mode} mode)...`);
-    soapPayload = buildSapXmlPayload(zohoDealData, sapAccountId, existingQuoteId, accountLanguage);
+    // [B-01] Tipo de Posición: expense products get no TipodePosicinOfertaZoho (create + update)
+    const productIds = (zohoDealData.Product_Details || []).map(i => i.Product_Code && i.Product_Code.id);
+    const expenseProductIds = await zohoService.getExpenseProductIds(productIds);
+    console.log(`[B-01] Expense products on deal: ${expenseProductIds.size}`);
+    soapPayload = buildSapXmlPayload(zohoDealData, sapAccountId, existingQuoteId, accountLanguage, expenseProductIds);
     // console.log(`[DEBUG] Raw SOAP Payload:\n`, soapPayload);
   } catch (error) {
     console.error(`[!] Error building XML:`, error.message);
