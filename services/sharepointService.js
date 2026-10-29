@@ -1,77 +1,87 @@
 const axios = require('axios');
 const { getGraphToken } = require('../utils/auth');
 
-// SharePoint folder content type IDs always start with 0x0120
-const isFolderItem = (item) =>
-    Boolean(item?.driveItem?.folder) ||
-    (item?.contentType?.id || '').startsWith('0x0120');
-
-// True when the item sits directly under the drive root (e.g. Projects/<Account>)
-const isTopLevelItem = (item, rootId) =>
-    item?.driveItem?.parentReference?.id === rootId ||
-    (item?.driveItem?.parentReference?.path || '').endsWith('root:');
+// Graph GET with diagnostics: 1 retry on 401 (fresh token) and on 429/503 (Retry-After)
+const graphGet = async (url, tokenRef, label) => {
+    for (let attempt = 1; attempt <= 3; attempt++) {
+        try {
+            return await axios.get(url, { headers: { 'Authorization': `Bearer ${tokenRef.token}` } });
+        } catch (error) {
+            const status = error.response?.status;
+            const body = error.response?.data ? JSON.stringify(error.response.data).slice(0, 500) : error.message;
+            console.warn(`⚠️ Graph ${label} failed (attempt ${attempt}, status ${status}): ${body}`);
+            if (attempt < 3 && status === 401) { tokenRef.token = await getGraphToken(true); continue; }
+            if (attempt < 3 && (status === 429 || status === 503)) {
+                const wait = (parseInt(error.response.headers?.['retry-after'], 10) || 5) * 1000;
+                await new Promise(r => setTimeout(r, wait));
+                continue;
+            }
+            const err = new Error(`Graph ${label} failed with status ${status}: ${body}`);
+            err.status = status;
+            throw err;
+        }
+    }
+};
 
 /**
  * Resolves the ACCOUNT FOLDER for a given SAP ID.
  *
- * FIX (Oct 2026): the previous version returned value[0] from the Client Code
- * query without checking the item type. Files inside the account folder also
- * carry Client_Code (e.g. "Ochi et al. 2024 not relevant.pdf" -> BBS), so a FILE
- * could be returned and its name was used as the account folder, creating
- * orphan root folders like "Projects/<file name>/BD/Proposals/...".
- *
- * Now: only folders located directly under the drive root are accepted;
- * 0 matches or >1 matches abort the sync (no orphan folders are ever created).
+ * v2 (Oct 2026): instead of searching every list item with that Client Code
+ * (files included - tens of thousands for big clients such as APF, which made the
+ * lookup slow and failed with 401), it reads ONLY the top-level folders of the
+ * library (one per client) and compares their Client Code.
+ * Speed no longer depends on how many files a client has.
+ * Rules unchanged: exactly one matching top-level folder, otherwise error, never create.
  */
-const getAccountFolderBySAP = async (token, siteId, driveId, sapId) => {
-    const headers = {
-        'Authorization': `Bearer ${token}`,
-        'Prefer': 'HonorNonIndexedQueriesWarningMayFailRandomly'
-    };
+// Short-lived cache so the folder is resolved once per sync, not once per attachment
+const folderCache = new Map(); // key: sapId -> { folder, expires }
+const FOLDER_CACHE_MS = 5 * 60 * 1000;
 
-    // Keeps Graph's response body in the error so it reaches ErrorLog and the Deal note
-    const graphGet = async (url) => {
-        try {
-            return await axios.get(url, { headers });
-        } catch (error) {
-            throw new Error(`Failed to look up SP account folder for SAP ID '${sapId}': ${error.response ? JSON.stringify(error.response.data) : error.message}`);
-        }
-    };
+const getAccountFolderBySAP = async (siteId, driveId, sapId) => {
+    const cacheKey = String(sapId).trim().toUpperCase();
+    const cached = folderCache.get(cacheKey);
+    if (cached && cached.expires > Date.now()) {
+        console.log(`SAP ${sapId}: folder reused from this sync (${cached.folder.name}).`);
+        return cached.folder;
+    }
+    const folder = await resolveAccountFolderBySAP(siteId, driveId, sapId);
+    folderCache.set(cacheKey, { folder, expires: Date.now() + FOLDER_CACHE_MS });
+    return folder;
+};
 
-     const rootRes = await graphGet(
-        `https://graph.microsoft.com/v1.0/sites/${siteId}/drives/${driveId}/root?$select=id`
-    );
-    const rootId = rootRes.data.id;
+const resolveAccountFolderBySAP = async (siteId, driveId, sapId) => {
+    const tokenRef = { token: await getGraphToken() };
+    const wanted = String(sapId).trim().toUpperCase();
 
-    const safeSap = String(sapId).replace(/'/g, "''");
-    let nextUrl = `https://graph.microsoft.com/v1.0/sites/${siteId}/drives/${driveId}/list/items` +
-        `?$expand=fields,driveItem&$filter=fields/Client_x0020_Code eq '${safeSap}'`;
+    let nextUrl = `https://graph.microsoft.com/v1.0/sites/${siteId}/drives/${driveId}/root/children` +
+        `?$select=id,name,webUrl,folder&$expand=listItem($expand=fields($select=Client_x0020_Code))&$top=200`;
 
     const candidates = [];
-    let ignored = 0;
+    let scanned = 0;
+    let page = 0;
 
     while (nextUrl) {
-        const response = await axios.get(nextUrl, { headers });
+        page++;
+        const response = await graphGet(nextUrl, tokenRef, `root folders page ${page}`);
         for (const item of response.data.value || []) {
-            if (isFolderItem(item) && isTopLevelItem(item, rootId)) {
-                candidates.push(item);
-            } else {
-                ignored++;
-            }
+            scanned++;
+            if (!item.folder) continue;
+            const code = item.listItem?.fields?.Client_x0020_Code;
+            if (code && String(code).trim().toUpperCase() === wanted) candidates.push(item);
         }
         nextUrl = response.data['@odata.nextLink'] || null;
     }
 
-    console.log(`SAP ${sapId}: ${candidates.length} top-level folder match(es), ${ignored} non-folder/nested item(s) ignored.`);
+    console.log(`SAP ${sapId}: ${candidates.length} top-level folder match(es) among ${scanned} root item(s) (${page} page(s)).`);
 
     if (candidates.length === 0) {
-        const err = new Error(`Account folder for SAP ID '${sapId}' not found at SharePoint root (${ignored} non-folder items with that Client Code were ignored). Cannot route files.`);
+        const err = new Error(`Account folder for SAP ID '${sapId}' not found at SharePoint root (${scanned} root items checked). Cannot route files.`);
         err.code = 'SP_FOLDER_NOT_FOUND';
         err.sapId = sapId;
         throw err;
     }
     if (candidates.length > 1) {
-        const names = candidates.map(c => c.driveItem?.name).join(', ');
+        const names = candidates.map(c => c.name).join(', ');
         const err = new Error(`Ambiguous SAP ID '${sapId}': ${candidates.length} top-level folders match (${names}). Cannot route files.`);
         err.code = 'SP_FOLDER_AMBIGUOUS';
         err.sapId = sapId;
@@ -79,11 +89,7 @@ const getAccountFolderBySAP = async (token, siteId, driveId, sapId) => {
     }
 
     const folder = candidates[0];
-    return {
-        id: folder.driveItem.id,
-        name: folder.driveItem.name,
-        webUrl: folder.driveItem.webUrl
-    };
+    return { id: folder.id, name: folder.name, webUrl: folder.webUrl };
 };
 
 exports.uploadFileToSharePoint = async (fileName, fileBuffer, subFolder, sapId, accountName, dealName, dealCode) => {
@@ -94,7 +100,7 @@ exports.uploadFileToSharePoint = async (fileName, fileBuffer, subFolder, sapId, 
     const safeDealName = dealName.replace(/[<>:"/\\|?*]+/g, '').trim();
 
     // 1. Resolve the account folder (throws if not found / ambiguous -> no orphan folders)
-    const accountFolder = await getAccountFolderBySAP(token, siteId, driveId, sapId);
+    const accountFolder = await getAccountFolderBySAP(siteId, driveId, sapId);
     console.log(`📁 Account folder resolved: ${accountFolder.name} (${accountFolder.webUrl})`);
 
     // 2. Build the path RELATIVE to the account folder item (not to the drive root)

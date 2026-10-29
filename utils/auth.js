@@ -34,8 +34,9 @@ module.exports = {
     },
 
     // Used exclusively by the SharePoint service
-    async getGraphToken() {
-        if (graphAccessToken && Date.now() < graphTokenExpiry) {
+    // forceRefresh = true ignores the cached token (used when Graph answers 401)
+    async getGraphToken(forceRefresh = false) {
+        if (!forceRefresh && graphAccessToken && Date.now() < graphTokenExpiry) {
             return graphAccessToken;
         }
         try {

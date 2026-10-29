@@ -7,20 +7,24 @@ const ZOHO_SP_LINK_FIELD_API_NAME = "Sharepoint_Draft_Link";
 
 // Builds the Spanish failure note shown on the Deal when the SharePoint sync stops
 const buildSyncFailureNote = (error) => {
-    let motivo;
-    if (error.code === 'SP_FOLDER_NOT_FOUND') {
-        motivo = `no se ha encontrado carpeta de cliente para el SAP ID ${error.sapId}.`;
-    } else if (error.code === 'SP_FOLDER_AMBIGUOUS') {
-        motivo = `se han encontrado varias carpetas para el SAP ID ${error.sapId}.`;
-    } else {
-        motivo = `error técnico durante la sincronización (${error.message}).`;
+    const title = 'Sincronización con SharePoint fallida: documentos NO enviados';
+    if (error.code === 'SP_FOLDER_NOT_FOUND' || error.code === 'SP_FOLDER_AMBIGUOUS') {
+        const motivo = error.code === 'SP_FOLDER_NOT_FOUND'
+            ? `no se ha encontrado carpeta de cliente para el SAP ID ${error.sapId}.`
+            : `se han encontrado varias carpetas para el SAP ID ${error.sapId}.`;
+        return {
+            title,
+            content:
+                `Motivo: ${motivo}\n` +
+                `Qué hacer: revisa el SAP ID de la cuenta y la carpeta del cliente en SharePoint y vuelve a pasar la oferta a Send to Sharepoint, o contacta con el administrador del CRM.`
+        };
     }
+    // Technical error: only ask to contact the CRM admin (full detail stays in the log)
     return {
-        title: 'Sincronización con SharePoint fallida: documentos NO enviados',
+        title,
         content:
-            `Sincronización con SharePoint fallida: documentos NO enviados.\n` +
-            `Motivo: ${motivo}\n` +
-            `Qué hacer: revisa el SAP ID de la cuenta y la carpeta del cliente en SharePoint y vuelve a pasar la oferta a Send to Sharepoint, o contacta con el administrador del CRM.`
+            `Motivo: error técnico durante la sincronización.\n` +
+            `Qué hacer: contacta con el administrador del CRM.`
     };
 };
 
@@ -132,7 +136,7 @@ exports.handleQuoteApproval = async (req, res) => {
             // 3. Construct the final file name: YYMMDD_[original]_[client]_Asphalion_final_fully signed
             const newFileName = `${datePrefix}_${baseName}_${sapId}${extension}`;
 
-            console.log(`⬆️ Uploading to SharePoint -> Projects/[Account]/BD/${targetSubFolder}/[DealName]/${newFileName}...`);
+            console.log(`⬆️ Uploading ${newFileName} -> client folder for SAP ID ${sapId} / BD/${targetSubFolder}/${dealName}_${dealCode}`);
 
             const spUrl = await sharepointService.uploadFileToSharePoint(
                 newFileName, 
@@ -169,7 +173,7 @@ exports.handleQuoteApproval = async (req, res) => {
         try {
             await ErrorLog.create({ dealId: zohoDealId, logType: 'ERROR', stage: 'SHAREPOINT_SYNC_FAILED', messages: [error.message] });
         } catch (logErr) {
-            console.error(`⚠️ Could not save error log for Deal ${zohoDealId}:`, logErr.message);
+            console.error(`⚠ Could not save error log for Deal ${zohoDealId}:`, logErr.message);
         }
 
         // Make the failure visible on the Deal (Notes + Timeline)
