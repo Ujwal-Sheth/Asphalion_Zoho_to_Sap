@@ -53,15 +53,25 @@ exports.handleQuoteApproval = async (req, res) => {
         }
 
         const acceptanceType = dealData.Acceptance_Type || '';
-        let targetSubFolder = ''; 
+       // --- NEW (03/11/2026, Marina GO): deal attachments always go to BD/Proposals, whatever the Acceptance Type.
+        //     Signed CDAs/MSAs from Zoho Contracts are archived separately (P-06).
+        const KNOWN_ACCEPTANCE_TYPES = ['Zoho Signature', 'Email', 'Purchase Order (PO)', 'Master Agreement (MSA)', 'CDA'];
+        const targetSubFolder = 'Proposals';
 
-        if (acceptanceType === 'Master Agreement (MSA)') {
-            targetSubFolder = 'Contracts';
-        } else if (acceptanceType === 'CDA') {
-            targetSubFolder = 'CDAs';
-        } else if (['Zoho Signature', 'Email', 'Purchase Order (PO)'].includes(acceptanceType)) {
-            targetSubFolder = 'Proposals';
-        } else {
+        // --- OLD routing by Acceptance Type (in use until 11/2026). To restore it:
+        //     1) comment the two NEW lines above (KNOWN_ACCEPTANCE_TYPES and targetSubFolder),
+        //     2) uncomment the block below,
+        //     3) replace the line "if (!KNOWN_ACCEPTANCE_TYPES.includes(acceptanceType)) {" with "} else {".
+        // let targetSubFolder = '';
+        // if (acceptanceType === 'Master Agreement (MSA)') {
+        //     targetSubFolder = 'Contracts';
+        // } else if (acceptanceType === 'CDA') {
+        //     targetSubFolder = 'CDAs';
+        // } else if (['Zoho Signature', 'Email', 'Purchase Order (PO)'].includes(acceptanceType)) {
+        //     targetSubFolder = 'Proposals';
+        // } else {
+
+        if (!KNOWN_ACCEPTANCE_TYPES.includes(acceptanceType)) {
             console.log(`⚠️ Unrecognized or empty Acceptance Type: '${acceptanceType}'. Aborting sync.`);
             await ErrorLog.create({ 
                 dealId: zohoDealId, 
@@ -90,7 +100,8 @@ exports.handleQuoteApproval = async (req, res) => {
         }
 
         console.log(`✅ Extracted SAP ID: ${sapId}`);
-        console.log(`✅ Acceptance Type resolved to Folder: BD/${targetSubFolder}`);
+        // console.log(`✅ Acceptance Type resolved to Folder: BD/${targetSubFolder}`); //OLD
+        console.log(`✅ Destination folder: BD/${targetSubFolder} (Acceptance Type: ${acceptanceType})`);
 
         console.log(`[3/4] Fetching Deal Attachments...`);
         const attachments = await zohoService.getDealAttachments(zohoDealId);
