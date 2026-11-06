@@ -1,4 +1,5 @@
 const SAP_MAPS = require('../constants/sapMaps');
+const { formatDateOnly: formatLossDate } = require('./dateUtils'); // [P-08] Europe/Madrid day, date-only kept as-is
 
 // Helper function to safely get a mapped code, returning a fallback if not found
 const getCode = (mapName, zohoValue, fallback = "") => {
@@ -36,6 +37,28 @@ const formatDateTime = (dateStr) => {
   return isNaN(date.getTime()) ? null : date.toISOString().split('.')[0] + 'Z';
 };
 
+const LOSS_STAGE = "loss";
+const LOSS_DATE_FIELD = "Loss_Date"; 
+const LOSS_DATE_FALLBACK_TO_CLOSING = true;
+
+const getSapLossDate = (zohoData, fallbackToClosing = LOSS_DATE_FALLBACK_TO_CLOSING) => {
+  const stage = (zohoData.Stage || "").trim().toLowerCase();
+  if (stage !== LOSS_STAGE) return "";
+  let src = zohoData[LOSS_DATE_FIELD];
+  let origin = LOSS_DATE_FIELD;
+  if (!src && fallbackToClosing && zohoData.Closing_Date) {
+    src = zohoData.Closing_Date;
+    origin = "Closing_Date (fallback)";
+  }
+  if (!src) {
+    console.log(`[P-08] Deal ${zohoData.id}: Stage Loss but ${LOSS_DATE_FIELD} empty - Fechadeperdida not sent`);
+    return "";
+  }
+  const out = formatLossDate(src) || "";
+  console.log(`[P-08] Deal ${zohoData.id}: Fechadeperdida=${out || "(invalid)"} from ${origin}`);
+  return out;
+};
+
 // [B-01] Tipo de Posición: expense products never get TipodePosicinOfertaZoho.
 // expenseProductIds = Set of Zoho Product record IDs with Expense_Product = true
 // (resolved by the caller before building the payload).
@@ -61,9 +84,7 @@ const buildSapXmlPayload = (zohoData, accountId, sapQuoteId = null, accountLangu
     const subformItems = zohoData.Product_Details || [];
     const sapZohoOwnerName = zohoData.Owner?.name || "";
 
-    const zohoStage = zohoData.Stage || "";
-    const isLossStage = zohoStage.toLowerCase().includes("draft"); // Adjust if your exact stage name differs
-    const sapLossDate = isLossStage ? formatDateOnly(zohoData.Closing_Date) : "";
+    const sapLossDate = getSapLossDate(zohoData); // [P-08]
 
     const sapZohoCode = zohoData.Deal_Code || "";
     const sapZohoDealID = zohoData.id || "";
@@ -272,9 +293,7 @@ const buildSapXmlPayload = (zohoData, accountId, sapQuoteId = null, accountLangu
   const subformItems = zohoData.Product_Details || [];
   const sapZohoOwnerName = zohoData.Owner?.name || "";
 
-  const zohoStage = zohoData.Stage || "";
-  const isLossStage = zohoStage.toLowerCase().includes("draft");
-  const sapLossDate = isLossStage ? formatDateOnly(zohoData.Closing_Date) : "";
+  const sapLossDate = getSapLossDate(zohoData); // [P-08]
 
   const sapContactName = zohoData.Contact_Name?.name || "";
   const sapDescription = zohoData.Deal_Name;
@@ -483,7 +502,6 @@ const buildSapXmlPayload = (zohoData, accountId, sapQuoteId = null, accountLangu
             ${sapIndication ? `<a3z:Indicacin><![CDATA[${sapIndication}]]></a3z:Indicacin>` : ""}
             ${sapInvoiceEmails ? `<a3z:Correosdefacturacin><![CDATA[${sapInvoiceEmails}]]></a3z:Correosdefacturacin>` : ""}
             <a3z:STANDBY>${sapStandBy}</a3z:STANDBY>
-           <a3z:ProbabilidadOfertaAsphalion>107</a3z:ProbabilidadOfertaAsphalion>
          </CustomerQuote>
       </glob:CustomerQuoteBundleMaintainRequest_sync>
    </soap:Body>
@@ -491,4 +509,4 @@ const buildSapXmlPayload = (zohoData, accountId, sapQuoteId = null, accountLangu
     `.trim();
 };
 // ${sapAcceptanceDate ? `<a3z:Fechadeaceptacin>${sapAcceptanceDate}</a3z:Fechadeaceptacin>` : ""} line 376
-module.exports = { buildSapXmlPayload, getPositionType }; // [B-01] getPositionType exported for tests
+module.exports = { buildSapXmlPayload, getPositionType, getSapLossDate }; // [B-01] getPositionType exported for tests
